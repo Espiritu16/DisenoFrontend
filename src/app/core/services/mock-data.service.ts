@@ -20,9 +20,10 @@ export class MockDataService {
     { id: 'ALT-3', title: 'Corte no programado', description: 'Interrupción temporal por reparación de fuga.', type: 'corte', zone: 'Zona El Molino' }
   ];
   private iotData: LecturaIoT[] = [
-    { id: 'TQ-01', reservorio: 'Reservorio Norte', zone: 'Anexo Norte', levelPct: 22, trend: 'bajando', updatedAt: 'hace 2 min' },
-    { id: 'TQ-02', reservorio: 'Reservorio Centro', zone: 'Sector Centro', levelPct: 64, trend: 'estable', updatedAt: 'hace 1 min' },
-    { id: 'TQ-03', reservorio: 'Tanque Alto', zone: 'Sector Alto', levelPct: 38, trend: 'subiendo', updatedAt: 'hace 3 min' }
+    { id: 'LIM-01', reservorio: 'Reservorio Rímac Norte', zone: 'San Juan de Lurigancho', levelPct: 22, trend: 'bajando', updatedAt: 'hace 2 min' },
+    { id: 'LIM-02', reservorio: 'Reservorio Costa Sur', zone: 'Villa El Salvador', levelPct: 64, trend: 'estable', updatedAt: 'hace 1 min' },
+    { id: 'LIM-03', reservorio: 'Tanque Metropolitano', zone: 'Comas', levelPct: 38, trend: 'subiendo', updatedAt: 'hace 3 min' },
+    { id: 'LIM-04', reservorio: 'Reservorio Este', zone: 'Ate', levelPct: 47, trend: 'estable', updatedAt: 'hace 4 min' }
   ];
   private metricasData: MetricaAtencion[] = [
     { zone: 'Sector Alto', total: 18, promedioHorasResolucion: 5.1 },

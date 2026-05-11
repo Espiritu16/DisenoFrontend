@@ -53,3 +53,53 @@
   color: var(--color-brand-primary);
   border-color: rgba(0,51,102,0.28);
 }
+
+@media (max-width: 960px) {
+  .admin-module .grid-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .sensor-card {
+    padding: 0.82rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .module-head {
+    text-align: center;
+  }
+
+  .module-copy {
+    max-width: 34ch;
+    margin-inline: auto;
+  }
+
+  .threshold-card {
+    text-align: center;
+  }
+
+  .threshold-card input[type='range'] {
+    margin-top: 0.35rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .admin-module .grid-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sensor-card {
+    text-align: center;
+  }
+
+  .sensor-card .flex {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .sensor-value {
+    font-size: 1.5rem;
+    line-height: 1.05;
+  }
+}

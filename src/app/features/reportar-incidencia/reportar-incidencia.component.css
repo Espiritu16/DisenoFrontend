@@ -222,10 +222,6 @@
     line-height: 0.98;
   }
 
-  .report-hero h1 br {
-    display: none;
-  }
-
   .report-copy {
     max-width: 32ch;
     margin-top: 0.45rem;

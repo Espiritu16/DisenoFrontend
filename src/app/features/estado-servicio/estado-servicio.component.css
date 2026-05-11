@@ -246,6 +246,10 @@
     width: min(100%, 260px);
   }
 
+  .status-metrics .metric-card {
+    text-align: center;
+  }
+
   .status-actions {
     gap: 0.55rem;
   }

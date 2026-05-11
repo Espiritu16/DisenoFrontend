@@ -151,3 +151,33 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .contact-hero__grid {
+    text-align: center;
+    justify-items: center;
+  }
+
+  .contact-kicker {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+
+  .contact-hero__title {
+    margin-top: 0.2rem;
+    font-size: clamp(2rem, 12vw, 3rem);
+    line-height: 0.98;
+  }
+
+  .contact-hero__copy {
+    max-width: 32ch;
+    margin-top: 0.45rem;
+    font-size: 0.93rem;
+    line-height: 1.45;
+  }
+
+  .contact-hero__panel {
+    text-align: left;
+    width: 100%;
+  }
+}

@@ -172,10 +172,6 @@
     line-height: 0.98;
   }
 
-  .tracking-hero h1 br {
-    display: none;
-  }
-
   .tracking-copy {
     margin-top: 0.45rem;
     font-size: 0.93rem;
@@ -192,7 +188,7 @@
   .metric-card {
     padding: 0.65rem 0.75rem;
     border-radius: 0.72rem;
-    text-align: left;
+    text-align: center;
   }
 
   .metric-card strong {

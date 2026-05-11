@@ -44,8 +44,15 @@
 
         <div class="full">
           <label class="field-label">Dirección</label>
-          <input #direccionInput class="input mt-1" [(ngModel)]="direccion" placeholder="Ej. Av. Principal 123" />
-          <p class="field-help">Se autocompleta al seleccionar un punto en el mapa (puedes editarla manualmente).</p>
+          <input
+            #direccionInput
+            class="input mt-1"
+            [(ngModel)]="direccion"
+            placeholder="Se completa automáticamente desde el mapa"
+            readonly
+            aria-readonly="true"
+          />
+          <p class="field-help">Se autocompleta al seleccionar un punto en el mapa o usar tu ubicación actual.</p>
           <p *ngIf="resolvingAddress" class="field-pending">Buscando dirección...</p>
         </div>
 

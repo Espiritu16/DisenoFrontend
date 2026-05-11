@@ -167,7 +167,7 @@
   font-size: 0.75rem;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 960px) {
   .status-hero__grid {
     grid-template-columns: 1fr;
   }
@@ -177,7 +177,7 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 640px) {
   .alerts-grid {
     grid-template-columns: 1fr;
   }

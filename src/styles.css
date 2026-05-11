@@ -8,6 +8,22 @@
   --color-bg-card: #F4F3F8;
   --color-bg-dim: #DAD9DE;
   --color-border: #DAD9DE;
+
+  --bp-sm: 640px;
+  --bp-md: 960px;
+  --bp-lg: 1200px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -16,7 +32,20 @@ body {
   color: var(--color-text-main);
 }
 
-.app-shell { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.app-shell {
+  width: min(1200px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1rem;
+}
+
 .page-title { font-size: 1.75rem; font-weight: 700; color: var(--color-brand-primary); }
 .card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1rem; box-shadow: 0 6px 16px rgba(0,0,0,0.04); }
 .btn-primary { background: var(--color-brand-primary); color: var(--color-on-brand); border-radius: .5rem; padding: .6rem .9rem; font-weight: 600; }
@@ -26,5 +55,50 @@ body {
 .input { width:100%; border:1px solid var(--color-border); border-radius:.5rem; padding:.55rem .7rem; background:var(--color-on-brand); }
 .select { width:100%; border:1px solid var(--color-border); border-radius:.5rem; padding:.55rem .7rem; background:var(--color-on-brand); }
 .table-wrap { overflow:auto; }
-.table { width:100%; border-collapse: collapse; }
+.table { width:100%; border-collapse: collapse; min-width: 560px; }
 .table th,.table td { padding:.6rem; border-bottom:1px solid var(--color-border); text-align:left; }
+
+button,
+a,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .app-shell {
+    width: min(100%, calc(100% - 1.5rem));
+    padding: 0.9rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .app-shell {
+    width: min(100%, calc(100% - 1.2rem));
+    padding: 0.8rem;
+  }
+
+  .table {
+    min-width: 520px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    width: min(100%, calc(100% - 1rem));
+    padding: 0.7rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    padding: 0.85rem;
+  }
+
+  .table {
+    min-width: 500px;
+  }
+}

@@ -134,7 +134,7 @@
   flex: 0 0 1.15rem;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 960px) {
   .contact-grid {
     grid-template-columns: 1fr 1.2fr;
     align-items: start;
@@ -146,7 +146,7 @@
   }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 960px) {
   .contact-hero__grid {
     grid-template-columns: 1fr;
   }

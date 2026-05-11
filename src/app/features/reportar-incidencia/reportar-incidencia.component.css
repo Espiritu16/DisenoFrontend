@@ -185,11 +185,83 @@
 @media (max-width: 960px) {
   .report-hero__grid {
     grid-template-columns: 1fr;
+    min-height: 0;
+    padding-top: 0.55rem;
+    padding-bottom: 0.8rem;
+  }
+
+  .report-hero h1 {
+    font-size: clamp(2.2rem, 9.2vw, 3.9rem);
+  }
+
+  .report-copy {
+    margin-top: 0.55rem;
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  .report-help {
+    max-width: none;
   }
 }
 
 @media (max-width: 640px) {
+  .report-hero__grid {
+    text-align: center;
+    justify-items: center;
+  }
+
+  .report-kicker {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+
+  .report-hero h1 {
+    margin-top: 0.2rem;
+    font-size: clamp(2rem, 12vw, 3rem);
+    line-height: 0.98;
+  }
+
+  .report-hero h1 br {
+    display: none;
+  }
+
+  .report-copy {
+    max-width: 32ch;
+    margin-top: 0.45rem;
+    font-size: 0.93rem;
+    line-height: 1.45;
+  }
+
+  .report-help {
+    text-align: left;
+    width: 100%;
+    padding: 0.75rem 0.8rem;
+    font-size: 0.88rem;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .map-head {
+    align-items: stretch;
+  }
+
+  .map-head .btn-secondary {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .report-actions {
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  .report-actions .btn-primary,
+  .report-actions .btn-secondary {
+    width: min(100%, 280px);
+    justify-content: center;
+    text-align: center;
   }
 }

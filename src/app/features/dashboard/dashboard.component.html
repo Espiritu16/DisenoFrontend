@@ -1,0 +1,89 @@
+<section class="admin-dashboard app-shell space-y-4">
+  <header class="dashboard-hero card">
+    <div>
+      <p class="dashboard-kicker">Panel operativo</p>
+      <h1 class="page-title">Dashboard de gestión</h1>
+      <p class="dashboard-copy">Prioriza incidencias, revisa reportes ciudadanos y monitorea nivel de servicio en un solo lugar.</p>
+    </div>
+    <div class="dashboard-hero-actions">
+      <a class="btn-secondary" routerLink="/administrador/incidencias">Gestionar incidencias</a>
+      <a class="btn-secondary" routerLink="/administrador/monitoreo-iot">Ver monitoreo IoT</a>
+    </div>
+  </header>
+
+  <div class="kpi-grid">
+    <article class="card kpi-card">
+      <p class="kpi-label">Incidencias activas</p>
+      <p class="kpi-value">{{ incidenciasActivas }}</p>
+    </article>
+    <article class="card kpi-card">
+      <p class="kpi-label">Nivel promedio IoT</p>
+      <p class="kpi-value">{{ nivelPromedioIot }}%</p>
+    </article>
+    <article class="card kpi-card">
+      <p class="kpi-label">Casos críticos</p>
+      <p class="kpi-value">{{ casosCriticos }}</p>
+    </article>
+  </div>
+
+  <div class="card filter-bar">
+    <div>
+      <label class="text-sm">Zona</label>
+      <select class="select" [(ngModel)]="zoneFilter">
+        <option>Todas</option>
+        <option>Sector Alto</option>
+        <option>Sector Centro</option>
+        <option>Anexo Norte</option>
+        <option>Zona El Molino</option>
+      </select>
+    </div>
+    <div>
+      <label class="text-sm">Estado</label>
+      <select class="select" [(ngModel)]="statusFilter">
+        <option>Todos</option>
+        <option>Pendiente</option>
+        <option>En proceso</option>
+        <option>Resuelto</option>
+      </select>
+    </div>
+    <span class="results-label">Mostrando {{ filtered.length }} incidencia(s)</span>
+  </div>
+
+  <div class="grid xl:grid-cols-2 gap-4">
+    <section class="card table-wrap">
+      <h2 class="table-title">Incidencias operativas</h2>
+      <table class="table">
+        <thead>
+          <tr><th>ID</th><th>Zona</th><th>Tipo</th><th>Estado</th><th>Severidad</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let i of filtered">
+            <td>{{ i.id }}</td>
+            <td>{{ i.zone }}</td>
+            <td>{{ i.tipo }}</td>
+            <td><span class="status-pill">{{ i.status }}</span></td>
+            <td><span class="severity-pill">{{ i.severity }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card table-wrap">
+      <h2 class="table-title">Reportes ciudadanos recientes</h2>
+      <table class="table">
+        <thead>
+          <tr><th>ID</th><th>Fecha</th><th>Zona</th><th>Tipo</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of reportes">
+            <td>{{ r.id }}</td>
+            <td>{{ r.createdAt }}</td>
+            <td>{{ r.zone }}</td>
+            <td>{{ r.tipo }}</td>
+            <td><span class="status-pill">{{ r.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</section>

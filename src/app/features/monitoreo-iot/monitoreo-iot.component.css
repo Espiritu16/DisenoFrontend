@@ -1,0 +1,55 @@
+:host { display: block; }
+
+.admin-module {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.module-head {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+}
+
+.module-kicker {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-brand-primary);
+  font-weight: 700;
+}
+
+.module-copy {
+  margin-top: 0.45rem;
+  color: var(--color-text-muted);
+}
+
+.threshold-card {
+  border: 1px solid var(--color-border);
+}
+
+.sensor-card {
+  border: 1px solid var(--color-border);
+}
+
+.sensor-value {
+  margin-top: 0.35rem;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--color-brand-primary);
+}
+
+.status-pill {
+  display: inline-block;
+  background: rgba(0,229,255,0.16);
+  color: var(--color-brand-primary);
+  border: 1px solid rgba(0,229,255,0.36);
+  border-radius: 999px;
+  padding: 0.2rem 0.52rem;
+  font-size: 0.74rem;
+}
+
+.status-pill--critical {
+  background: rgba(0,51,102,0.12);
+  color: var(--color-brand-primary);
+  border-color: rgba(0,51,102,0.28);
+}

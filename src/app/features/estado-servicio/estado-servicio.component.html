@@ -1,0 +1,69 @@
+<div class="status-design">
+  <section class="status-hero">
+    <div class="app-shell status-hero__grid">
+      <div>
+        <p class="status-kicker">Monitoreo comunitario</p>
+        <h1>ESTADO DEL<br />SERVICIO EN<br />TU ZONA</h1>
+        <p class="status-copy">Consulta alertas activas, incidencias recientes y prioriza acciones rápidas de reporte.</p>
+      </div>
+      <div class="status-metrics">
+        <article class="metric-card">
+          <span>Total alertas</span>
+          <strong>{{ totalAlertas }}</strong>
+        </article>
+        <article class="metric-card metric-card--risk">
+          <span>Alertas de riesgo</span>
+          <strong>{{ alertasRiesgo }}</strong>
+        </article>
+        <article class="metric-card metric-card--info">
+          <span>Alertas informativas</span>
+          <strong>{{ alertasInfo }}</strong>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="app-shell py-5 space-y-5">
+    <section class="card status-actions">
+      <a routerLink="/reportar" class="btn-primary">Reportar incidencia</a>
+      <a routerLink="/mis-reportes" class="btn-secondary">Ver seguimiento</a>
+    </section>
+
+    <section>
+      <div class="section-title-line">
+        <span class="section-title-line__line"></span>
+        <h2>ALERTAS ACTIVAS</h2>
+        <span class="section-title-line__line"></span>
+      </div>
+      <div class="alerts-grid">
+        <article class="alert-card" *ngFor="let alerta of alertas">
+          <p class="alert-badge" [class.alert-badge--risk]="alerta.type === 'riesgo'" [class.alert-badge--info]="alerta.type !== 'riesgo'">
+            {{ alerta.type === 'riesgo' ? 'RIESGO' : 'INFORMATIVA' }}
+          </p>
+          <h3>{{ alerta.title }}</h3>
+          <p>{{ alerta.description }}</p>
+          <small>Zona: {{ alerta.zone }}</small>
+        </article>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="table-title">Últimos reportes de la comunidad</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>ID</th><th>Zona</th><th>Tipo</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of reportes">
+              <td>{{ r.id }}</td>
+              <td>{{ r.zone }}</td>
+              <td>{{ r.tipo }}</td>
+              <td><span class="status-pill">{{ r.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+</div>

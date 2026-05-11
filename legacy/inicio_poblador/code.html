@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inicio del Poblador - AQUACOMUNIDAD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e7e8e9",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f8f9fa",
+                    "secondary-fixed-dim": "#93ccff",
+                    "error-container": "#ffdad6",
+                    "surface": "#f8f9fa",
+                    "secondary-fixed": "#cce5ff",
+                    "primary-container": "#0056b3",
+                    "outline-variant": "#c2c6d4",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#2e3132",
+                    "tertiary-fixed-dim": "#44dfab",
+                    "tertiary-container": "#00664a",
+                    "on-tertiary-fixed": "#002116",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-surface-variant": "#424752",
+                    "surface-dim": "#d9dadb",
+                    "inverse-primary": "#acc7ff",
+                    "primary": "#003f87",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#bbd0ff",
+                    "on-secondary-fixed": "#001d31",
+                    "outline": "#727784",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#67fcc6",
+                    "surface-variant": "#e1e3e4",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#edeeef",
+                    "on-secondary-container": "#003a5c",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#001a40",
+                    "primary-fixed-dim": "#acc7ff",
+                    "on-tertiary-fixed-variant": "#00513a",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-tint": "#115cb9",
+                    "on-surface": "#191c1d",
+                    "on-tertiary-container": "#51e9b4",
+                    "error": "#ba1a1a",
+                    "secondary": "#006398",
+                    "primary-fixed": "#d7e2ff",
+                    "tertiary": "#004c36",
+                    "on-secondary-fixed-variant": "#004b73",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-primary-fixed-variant": "#004491",
+                    "on-background": "#191c1d",
+                    "secondary-container": "#00a9fd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "24px",
+                    "gutter": "16px",
+                    "sm": "0.5rem",
+                    "lg": "1.5rem",
+                    "md": "1rem",
+                    "xs": "0.25rem",
+                    "xl": "2rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "h2": ["Inter"],
+                    "h1": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "status-badge": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "status-badge": ["12px", {"lineHeight": "1", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: #f8f9fa; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-h2 text-h2 docked full-width top-0 bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center w-full px-container-margin py-sm max-w-full z-40 fixed">
+<div class="font-h1 text-h1 text-primary dark:text-secondary-fixed-dim font-bold tracking-tight">
+            AQUACOMUNIDAD
+        </div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform p-2 rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-outline-variant">notifications</span>
+</button>
+<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform p-2 rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-outline-variant">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-[80px] pb-[100px] px-container-margin md:hidden">
+<!-- Saludo -->
+<div class="mb-lg mt-md">
+<h1 class="font-h1 text-h1 text-on-surface">Hola, Juan 👋</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Resumen del servicio en tu zona</p>
+</div>
+<!-- Bento Grid: Estado y Alertas -->
+<div class="grid grid-cols-2 gap-4 mb-xl">
+<!-- Estado del Agua -->
+<div class="col-span-2 bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-lg shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center justify-between">
+<div>
+<h2 class="font-h2 text-h2 text-on-surface mb-xs">Nivel del Tanque</h2>
+<div class="flex items-center gap-2">
+<span class="bg-[#e6f4ea] text-[#137333] px-2 py-1 rounded font-status-badge text-status-badge uppercase tracking-wider">Óptimo</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Sector Norte</span>
+</div>
+</div>
+<div class="h-16 w-16 bg-[#e6f4ea] rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[#137333]" data-weight="fill" style="font-size: 32px;">water_drop</span>
+</div>
+</div>
+<!-- Alertas -->
+<div class="col-span-2 bg-[#fff8e1] border border-[#ffecb3] rounded-xl p-md flex items-start gap-3">
+<span class="material-symbols-outlined text-[#f57f17] mt-1" data-weight="fill">warning</span>
+<div>
+<h3 class="font-label-sm text-label-sm text-[#f57f17] font-bold">Mantenimiento Programado</h3>
+<p class="font-body-md text-body-md text-[#f57f17] text-sm mt-1">Corte leve hoy de 14:00 a 16:00 hs por mejoras en la red.</p>
+</div>
+</div>
+<!-- Acciones Rápidas -->
+<button class="col-span-1 bg-primary-container text-on-primary-container rounded-xl p-md flex flex-col items-center justify-center gap-2 shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-size: 28px;">campaign</span>
+<span class="font-label-sm text-label-sm text-center">Reportar Incidencia</span>
+</button>
+<button class="col-span-1 bg-surface-container-lowest border border-outline-variant/30 text-on-surface rounded-xl p-md flex flex-col items-center justify-center gap-2 shadow-sm hover:bg-surface-container-low transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-size: 28px;">history</span>
+<span class="font-label-sm text-label-sm text-center">Mis Reportes</span>
+</button>
+</div>
+<!-- Incidencias Recientes -->
+<section>
+<div class="flex justify-between items-end mb-md">
+<h2 class="font-h2 text-h2 text-on-surface">Comunidad</h2>
+<button class="font-label-sm text-label-sm text-primary">Ver mapa</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Tarjeta Incidencia 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">location_on</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Av. Principal 123</span>
+</div>
+<span class="bg-[#e1f5fe] text-secondary px-2 py-1 rounded font-status-badge text-status-badge uppercase">En Proceso</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-medium">Baja presión de agua</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-1">Reportado hace 2 horas</p>
+</div>
+<!-- Tarjeta Incidencia 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">location_on</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Calle Los Pinos 45</span>
+</div>
+<span class="bg-[#fff8e1] text-[#f57f17] px-2 py-1 rounded font-status-badge text-status-badge uppercase">Pendiente</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-medium">Fuga en la vereda</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-1">Reportado hace 5 horas</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-label-sm text-label-sm fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-lowest dark:bg-surface-dim border-t border-outline-variant/30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] fixed bottom-0 left-0 w-full flex justify-around items-center px-gutter pb-4 pt-2 md:hidden">
+<!-- Active Tab: Inicio -->
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-full px-md py-xs active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1" data-weight="fill">home</span>
+<span>Inicio</span>
+</button>
+<!-- Inactive Tab: Reportar -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-90 transition-all rounded-full">
+<span class="material-symbols-outlined mb-1">campaign</span>
+<span>Reportar</span>
+</button>
+<!-- Inactive Tab: Historial -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-90 transition-all rounded-full">
+<span class="material-symbols-outlined mb-1">history</span>
+<span>Historial</span>
+</button>
+</nav>
+</body></html>

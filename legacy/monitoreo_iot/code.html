@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Monitoreo IoT - AQUACOMUNIDAD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e7e8e9",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8f9fa",
+                        "secondary-fixed-dim": "#93ccff",
+                        "error-container": "#ffdad6",
+                        "surface": "#f8f9fa",
+                        "secondary-fixed": "#cce5ff",
+                        "primary-container": "#0056b3",
+                        "outline-variant": "#c2c6d4",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "tertiary-fixed-dim": "#44dfab",
+                        "tertiary-container": "#00664a",
+                        "on-tertiary-fixed": "#002116",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-surface-variant": "#424752",
+                        "surface-dim": "#d9dadb",
+                        "inverse-primary": "#acc7ff",
+                        "primary": "#003f87",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#bbd0ff",
+                        "on-secondary-fixed": "#001d31",
+                        "outline": "#727784",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#67fcc6",
+                        "surface-variant": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#edeeef",
+                        "on-secondary-container": "#003a5c",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001a40",
+                        "primary-fixed-dim": "#acc7ff",
+                        "on-tertiary-fixed-variant": "#00513a",
+                        "surface-container-low": "#f3f4f5",
+                        "surface-tint": "#115cb9",
+                        "on-surface": "#191c1d",
+                        "on-tertiary-container": "#51e9b4",
+                        "error": "#ba1a1a",
+                        "secondary": "#006398",
+                        "primary-fixed": "#d7e2ff",
+                        "tertiary": "#004c36",
+                        "on-secondary-fixed-variant": "#004b73",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary-fixed-variant": "#004491",
+                        "on-background": "#191c1d",
+                        "secondary-container": "#00a9fd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "24px",
+                        "gutter": "16px",
+                        "sm": "0.5rem",
+                        "lg": "1.5rem",
+                        "md": "1rem",
+                        "xs": "0.25rem",
+                        "xl": "2rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "h2": ["Inter"],
+                        "h1": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "status-badge": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h2": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "h1": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "status-badge": ["12px", { "lineHeight": "1", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased md:pl-64">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-container-margin py-sm max-w-full z-40 bg-surface dark:bg-surface-dim shadow-sm docked full-width top-0 sticky">
+<div class="font-h1 text-h1 text-primary dark:text-secondary-fixed-dim">
+            AQUACOMUNIDAD
+        </div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform p-xs rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform p-xs rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col py-lg space-y-xs h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-dim border-r border-outline-variant/20 z-50">
+<div class="font-h2 text-h2 text-primary mb-lg px-md mt-sm">
+            Panel de Control
+            <div class="font-label-sm text-label-sm text-on-surface-variant mt-xs font-normal">Operador de Sistema</div>
+</div>
+<div class="flex-1 overflow-y-auto">
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-inverse-surface mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-inverse-surface mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+                Incidencias
+            </a>
+<a class="flex items-center gap-md bg-primary text-on-primary rounded-lg mx-sm px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+                Monitoreo IoT
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-inverse-surface mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Analítica
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-inverse-surface mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+                Autoridades
+            </a>
+</div>
+<div class="px-md mt-auto">
+<button class="w-full bg-primary text-on-primary py-sm rounded-full font-label-sm text-label-sm flex items-center justify-center gap-sm hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Nuevo Reporte
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="p-container-margin md:p-xl space-y-xl pb-32 md:pb-xl">
+<!-- Header Section -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<div>
+<h1 class="font-h1 text-h1 text-on-surface">Monitoreo IoT</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Supervisión en tiempo real de reservorios y sensores de la red.</p>
+</div>
+<!-- Quick Alert Summary -->
+<div class="bg-error-container text-on-error-container px-md py-sm rounded-lg flex items-center gap-sm shadow-sm border border-error/20">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-label-sm text-label-sm font-bold">1 Alerta Crítica</span>
+<span class="text-sm">Tanque Sector Sur (Nivel 15%)</span>
+</div>
+</section>
+<!-- Reservoir Cards Grid (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<!-- Tanque Principal (Optimal) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] p-md flex flex-col gap-md relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-h2 text-h2 text-on-surface text-[20px]">Tanque Principal</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ID: TQ-001 • Centro</span>
+</div>
+<div class="bg-tertiary-container/10 px-sm py-xs rounded-full flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-status-badge text-status-badge text-tertiary uppercase">Óptimo</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<!-- Circular Progress Placeholder -->
+<div class="relative w-24 h-24 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-tertiary" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="282.7" stroke-dashoffset="42.4" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-h2 text-h2 text-on-surface font-bold text-[22px]">85%</span>
+</div>
+</div>
+<div class="flex-1 space-y-sm">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Volumen actual:</span>
+<span class="font-medium text-on-surface">42,500 L</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Flujo entrada:</span>
+<span class="font-medium text-on-surface">12 L/s</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Última lectura:</span>
+<span class="font-medium text-on-surface">Hace 2 min</span>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-sm border-t border-outline-variant/20 flex gap-sm">
+<button class="flex-1 flex items-center justify-center gap-xs text-secondary font-label-sm text-label-sm hover:bg-secondary/5 py-xs rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">show_chart</span>
+                        Ver Detalles
+                    </button>
+</div>
+</div>
+<!-- Sector Norte (Warning) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] p-md flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-h2 text-h2 text-on-surface text-[20px]">Sector Norte</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ID: TQ-002 • Zona Industrial</span>
+</div>
+<div class="bg-secondary-container/20 px-sm py-xs rounded-full flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-status-badge text-status-badge text-secondary uppercase">Estable</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<!-- Circular Progress Placeholder -->
+<div class="relative w-24 h-24 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-secondary" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="282.7" stroke-dashoffset="127.2" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-h2 text-h2 text-on-surface font-bold text-[22px]">55%</span>
+</div>
+</div>
+<div class="flex-1 space-y-sm">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Volumen actual:</span>
+<span class="font-medium text-on-surface">11,000 L</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Flujo entrada:</span>
+<span class="font-medium text-on-surface">8 L/s</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Última lectura:</span>
+<span class="font-medium text-on-surface">Hace 5 min</span>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-sm border-t border-outline-variant/20 flex gap-sm">
+<button class="flex-1 flex items-center justify-center gap-xs text-secondary font-label-sm text-label-sm hover:bg-secondary/5 py-xs rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">show_chart</span>
+                        Ver Detalles
+                    </button>
+</div>
+</div>
+<!-- Sector Sur (Critical) -->
+<div class="bg-error-container/10 rounded-xl border border-error/30 shadow-[0_4px_20px_-10px_rgba(186,26,26,0.1)] p-md flex flex-col gap-md relative">
+<div class="absolute top-0 right-0 w-16 h-16 bg-error/10 rounded-bl-full -z-10"></div>
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-h2 text-h2 text-error text-[20px] font-bold">Sector Sur</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ID: TQ-003 • Barrio Residencial</span>
+</div>
+<div class="bg-error px-sm py-xs rounded-full flex items-center gap-xs animate-pulse">
+<span class="material-symbols-outlined text-on-error text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-status-badge text-status-badge text-on-error uppercase">Crítico</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<!-- Circular Progress Placeholder -->
+<div class="relative w-24 h-24 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-error/20" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-error" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="282.7" stroke-dashoffset="240.3" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-h2 text-h2 text-error font-bold text-[22px]">15%</span>
+</div>
+</div>
+<div class="flex-1 space-y-sm">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Volumen actual:</span>
+<span class="font-medium text-error">3,000 L</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Flujo entrada:</span>
+<span class="font-medium text-error">2 L/s (Bajo)</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Última lectura:</span>
+<span class="font-medium text-on-surface">Hace 1 min</span>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-sm border-t border-error/20 flex gap-sm">
+<button class="flex-1 flex items-center justify-center gap-xs bg-error text-on-error font-label-sm text-label-sm hover:bg-error/90 py-sm rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[18px]">build</span>
+                        Generar Orden
+                    </button>
+</div>
+</div>
+</section>
+<!-- Map & Trends Section (Bento Layout Continued) -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Map Container -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col h-[400px]">
+<div class="p-md border-b border-outline-variant/20 flex justify-between items-center bg-surface-bright">
+<h2 class="font-h2 text-h2 text-on-surface text-[18px] flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">map</span>
+                        Ubicación de Sensores
+                    </h2>
+<div class="flex gap-2">
+<span class="flex items-center gap-1 text-[12px] text-on-surface-variant"><span class="w-3 h-3 rounded-full bg-tertiary inline-block"></span> Óptimo</span>
+<span class="flex items-center gap-1 text-[12px] text-on-surface-variant"><span class="w-3 h-3 rounded-full bg-error inline-block"></span> Crítico</span>
+</div>
+</div>
+<div class="flex-1 bg-surface-variant relative">
+<!-- Placeholder Map Image -->
+<img alt="Mapa" class="w-full h-full object-cover opacity-80" data-alt="A highly detailed overhead map view of a modern urban layout integrated with smart infrastructure. The map features a minimalist, light-mode aesthetic with soft greys and subtle white streets. Vibrant digital markers in deep blue, vibrant teal, and sharp red indicate IoT sensor locations across the grid. The lighting is even and soft, emphasizing a high-tech, clean, and organized institutional command center display." data-location="Ciudad de México" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjtKCBbVhuzbJ73LqaXX2SfxYf0t8iIKe6L_C0ukmq6TH7q_JKdesbLqVU6nPPOAsL2zdc5uNA7lkB_fLhDkkO6rwtNGZaiz8-QBPZxfuTO7YhcItmVD4pDK4GuFshpPbQGqZ2T1E4FvG0JZ6PE5QMm8-3dKopVfynzYVoO7IHZw0uIgkfSk3TPHnQ1Anxg0-Tr5uW5BZRrZOcZQIc2wiqCYld8EBI7r3qGrTE-rbaWFVORN2vYnlW7xPlQJT8xMbZFWz1XaTcyAV8"/>
+<!-- Simulated Map Markers -->
+<div class="absolute top-[30%] left-[40%] w-4 h-4 bg-tertiary rounded-full border-2 border-white shadow-md animate-pulse"></div>
+<div class="absolute top-[60%] left-[20%] w-4 h-4 bg-secondary rounded-full border-2 border-white shadow-md"></div>
+<div class="absolute top-[45%] left-[70%] w-5 h-5 bg-error rounded-full border-2 border-white shadow-lg animate-bounce flex items-center justify-center">
+<div class="w-2 h-2 bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Global Trend Chart Placeholder -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm p-md flex flex-col">
+<div class="mb-md">
+<h2 class="font-h2 text-h2 text-on-surface text-[18px] flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">monitoring</span>
+                        Nivel Global (24h)
+                    </h2>
+<p class="text-sm text-on-surface-variant mt-xs">Promedio de la red</p>
+</div>
+<div class="flex-1 flex items-end relative py-md">
+<!-- Faux Line Chart using CSS gradients -->
+<div class="absolute inset-0 pt-md pb-lg px-xs flex items-end">
+<div class="w-full h-[80%] bg-gradient-to-t from-secondary-fixed/50 to-transparent border-t-2 border-secondary rounded-t relative overflow-hidden" style="clip-path: polygon(0 100%, 0 60%, 20% 50%, 40% 70%, 60% 40%, 80% 60%, 100% 30%, 100% 100%);">
+</div>
+</div>
+<!-- Y Axis Labels -->
+<div class="absolute left-0 top-0 bottom-lg flex flex-col justify-between text-[10px] text-outline">
+<span>100%</span>
+<span>50%</span>
+<span>0%</span>
+</div>
+<!-- X Axis Labels -->
+<div class="w-full border-t border-outline-variant/30 mt-auto pt-2 flex justify-between text-[10px] text-outline px-4">
+<span>00:00</span>
+<span>06:00</span>
+<span>12:00</span>
+<span>18:00</span>
+<span>Ahora</span>
+</div>
+</div>
+<div class="mt-md pt-sm border-t border-outline-variant/20">
+<div class="flex justify-between items-center">
+<span class="text-sm text-on-surface-variant">Tendencia:</span>
+<span class="flex items-center gap-xs text-error font-medium text-sm">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+                            -5.2%
+                        </span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-gutter pb-4 pt-2 md:hidden bg-surface-container-lowest dark:bg-surface-dim border-t border-outline-variant/30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-90 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm text-[12px]">Inicio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-90 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="campaign">campaign</span>
+<span class="font-label-sm text-label-sm text-[12px]">Reportar</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-xl px-lg py-xs active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="sensors" style="font-variation-settings: 'FILL' 1;">sensors</span>
+<span class="font-label-sm text-label-sm text-[12px] font-bold">Sensores</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-90 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm text-[12px]">Historial</span>
+</a>
+</nav>
+</body></html>

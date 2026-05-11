@@ -1,0 +1,39 @@
+:host { display: block; }
+
+.admin-module {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.module-head {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+}
+
+.module-kicker {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-brand-primary);
+  font-weight: 700;
+}
+
+.module-copy {
+  margin-top: 0.45rem;
+  color: var(--color-text-muted);
+}
+
+.indicator-card {
+  border: 1px solid var(--color-border);
+}
+
+.indicator-value {
+  margin-top: 0.2rem;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--color-brand-primary);
+}
+
+.executive-card {
+  border: 1px solid var(--color-border);
+}

@@ -1,0 +1,85 @@
+<div class="report-design">
+  <section class="report-hero">
+    <div class="app-shell report-hero__grid">
+      <div>
+        <p class="report-kicker">Atención comunitaria</p>
+        <h1>REPORTA UNA<br />INCIDENCIA DE<br />FORMA RÁPIDA</h1>
+        <p class="report-copy">
+          Completa el formulario, marca la ubicación exacta en Lima y adjunta evidencia para acelerar la atención.
+        </p>
+      </div>
+      <div class="report-help">
+        <p><strong>Qué incluir:</strong> tipo de problema, descripción clara, dirección, referencia y foto.</p>
+        <p><strong>Ubicación:</strong> selecciona un punto dentro de la Provincia de Lima.</p>
+      </div>
+    </div>
+  </section>
+
+  <main class="app-shell py-5 space-y-5">
+    <section class="card report-form">
+      <h2 class="form-title">Datos del reporte</h2>
+
+      <div class="form-grid">
+        <div>
+          <label class="field-label">Distrito (Lima)</label>
+          <select class="select mt-1" [(ngModel)]="distrito">
+            <option *ngFor="let d of distritos" [value]="d">{{ d }}</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label">Tipo</label>
+          <select class="select mt-1" [(ngModel)]="tipo">
+            <option>Fuga</option>
+            <option>Baja presión</option>
+            <option>Agua turbia</option>
+            <option>Corte inesperado</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label class="field-label">Descripción</label>
+          <textarea class="input mt-1" [(ngModel)]="detail" placeholder="Describe el problema..."></textarea>
+        </div>
+
+        <div class="full">
+          <label class="field-label">Dirección</label>
+          <input #direccionInput class="input mt-1" [(ngModel)]="direccion" placeholder="Ej. Av. Principal 123" />
+          <p class="field-help">Se autocompleta al seleccionar un punto en el mapa (puedes editarla manualmente).</p>
+          <p *ngIf="resolvingAddress" class="field-pending">Buscando dirección...</p>
+        </div>
+
+        <div class="full">
+          <label class="field-label">Referencia</label>
+          <input class="input mt-1" [(ngModel)]="referencia" placeholder="Ej. Frente al colegio / al costado de..." />
+        </div>
+
+        <div class="full">
+          <label class="field-label">Adjuntar imagen</label>
+          <input class="input mt-1" type="file" accept="image/*" (change)="onFileChange($event)" />
+          <p class="field-help" *ngIf="imageName">Imagen seleccionada: {{ imageName }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card report-map">
+      <div class="map-head">
+        <div>
+          <h3>Ubicación exacta en mapa</h3>
+          <p>Selecciona un punto en Lima para guardar latitud y longitud.</p>
+        </div>
+        <button type="button" class="btn-secondary" (click)="useCurrentLocation()">Usar mi ubicación actual</button>
+      </div>
+
+      <div id="report-map" class="map-wrap mt-2" aria-label="Mapa de Lima para seleccionar ubicación"></div>
+      <p *ngIf="mapMessage" class="map-error">{{ mapMessage }}</p>
+      <p class="map-coords">Latitud: <b>{{ lat.toFixed(6) }}</b> | Longitud: <b>{{ lng.toFixed(6) }}</b></p>
+    </section>
+
+    <section class="card report-actions">
+      <button class="btn-primary" (click)="submit()">Enviar reporte</button>
+      <a routerLink="/mis-reportes" class="btn-secondary">Ir a seguimiento</a>
+      <p *ngIf="message" class="report-message">{{ message }}</p>
+    </section>
+  </main>
+</div>

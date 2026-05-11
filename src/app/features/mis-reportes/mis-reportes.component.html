@@ -1,0 +1,70 @@
+<div class="tracking-design">
+  <section class="tracking-hero">
+    <div class="app-shell tracking-hero__grid">
+      <div>
+        <p class="tracking-kicker">Seguimiento ciudadano</p>
+        <h1>MIS<br />REPORTES</h1>
+        <p class="tracking-copy">Consulta el estado de tus incidencias y revisa el detalle de atención de cada caso.</p>
+      </div>
+      <div class="tracking-metrics">
+        <article class="metric-card"><span>Total</span><strong>{{ total }}</strong></article>
+        <article class="metric-card"><span>Pendientes</span><strong>{{ pendientes }}</strong></article>
+        <article class="metric-card"><span>En proceso</span><strong>{{ enProceso }}</strong></article>
+        <article class="metric-card"><span>Resueltos</span><strong>{{ resueltos }}</strong></article>
+      </div>
+    </div>
+  </section>
+
+  <main class="app-shell py-5 space-y-5">
+    <section class="card toolbar">
+      <div class="filter-block">
+        <label>Filtrar por estado</label>
+        <select class="select" [(ngModel)]="statusFilter">
+          <option>Todos</option>
+          <option>Pendiente</option>
+          <option>En proceso</option>
+          <option>Resuelto</option>
+        </select>
+      </div>
+      <button class="btn-secondary" (click)="refresh()">Actualizar</button>
+    </section>
+
+    <div class="grid lg:grid-cols-2 gap-4">
+      <section class="card table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>ID</th><th>Zona</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of filtered; trackBy: trackById">
+              <td>{{ r.id }}</td>
+              <td>{{ r.zone }}</td>
+              <td>{{ r.tipo }}</td>
+              <td><span class="status-pill">{{ r.status }}</span></td>
+              <td class="action-cell">
+                <button class="btn-secondary" (click)="select(r)">Ver</button>
+                <button class="btn-secondary" (click)="retry(r)">Reintentar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card detail-card">
+        <h2>Detalle del reporte</h2>
+        <ng-container *ngIf="selected; else empty">
+          <p><b>ID:</b> {{ selected.id }}</p>
+          <p><b>Fecha:</b> {{ selected.createdAt }}</p>
+          <p><b>Zona:</b> {{ selected.zone }}</p>
+          <p><b>Tipo:</b> {{ selected.tipo }}</p>
+          <p><b>Estado:</b> {{ selected.status }}</p>
+          <p><b>Detalle:</b> {{ selected.detail }}</p>
+        </ng-container>
+        <ng-template #empty>
+          <p class="empty-text">Selecciona un reporte para ver su detalle.</p>
+        </ng-template>
+        <p *ngIf="message" class="feedback">{{ message }}</p>
+      </section>
+    </div>
+  </main>
+</div>

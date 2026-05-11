@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reportar Incidencia - AQUACOMUNIDAD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e7e8e9",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f8f9fa",
+                    "secondary-fixed-dim": "#93ccff",
+                    "error-container": "#ffdad6",
+                    "surface": "#f8f9fa",
+                    "secondary-fixed": "#cce5ff",
+                    "primary-container": "#0056b3",
+                    "outline-variant": "#c2c6d4",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#2e3132",
+                    "tertiary-fixed-dim": "#44dfab",
+                    "tertiary-container": "#00664a",
+                    "on-tertiary-fixed": "#002116",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-surface-variant": "#424752",
+                    "surface-dim": "#d9dadb",
+                    "inverse-primary": "#acc7ff",
+                    "primary": "#003f87",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#bbd0ff",
+                    "on-secondary-fixed": "#001d31",
+                    "outline": "#727784",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#67fcc6",
+                    "surface-variant": "#e1e3e4",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#edeeef",
+                    "on-secondary-container": "#003a5c",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#001a40",
+                    "primary-fixed-dim": "#acc7ff",
+                    "on-tertiary-fixed-variant": "#00513a",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-tint": "#115cb9",
+                    "on-surface": "#191c1d",
+                    "on-tertiary-container": "#51e9b4",
+                    "error": "#ba1a1a",
+                    "secondary": "#006398",
+                    "primary-fixed": "#d7e2ff",
+                    "tertiary": "#004c36",
+                    "on-secondary-fixed-variant": "#004b73",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-primary-fixed-variant": "#004491",
+                    "on-background": "#191c1d",
+                    "secondary-container": "#00a9fd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "24px",
+                    "gutter": "16px",
+                    "sm": "0.5rem",
+                    "lg": "1.5rem",
+                    "md": "1rem",
+                    "xs": "0.25rem",
+                    "xl": "2rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "h2": ["Inter"],
+                    "h1": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "status-badge": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "status-badge": ["12px", {"lineHeight": "1", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col md:flex-row">
+<!-- TopNavBar (Mobile Anchor) -->
+<header class="bg-surface shadow-sm docked full-width top-0 flex justify-between items-center w-full px-container-margin py-sm max-w-full z-40 md:hidden sticky">
+<div class="font-h1 text-h1 text-primary">AQUACOMUNIDAD</div>
+<div class="flex gap-4">
+<button class="text-primary hover:bg-surface-container-low transition-colors active:scale-95 transition-transform p-2 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-primary hover:bg-surface-container-low transition-colors active:scale-95 transition-transform p-2 rounded-full">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar (Desktop Anchor) -->
+<nav class="bg-surface-container-low border-r border-outline-variant/20 h-screen w-64 fixed left-0 top-0 hidden md:flex flex-col py-lg space-y-xs z-50">
+<div class="font-h2 text-h2 text-primary mb-lg px-md">AQUACOMUNIDAD</div>
+<div class="px-md mb-lg">
+<div class="flex items-center gap-md">
+<img alt="Avatar del Operador" class="w-10 h-10 rounded-full bg-surface-container-highest object-cover" data-alt="A small circular profile picture of a male operator in a light, modern control room setting. Soft, diffuse lighting highlights a professional and trustworthy demeanor. The image fits seamlessly into a minimalist, light-mode UI design with subtle blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqnEad_9gOPd4z3Ezz2qRf7NtSGV7POD7m-zIofgZLYP7h_4NB0xrt4aNIAdb4_vx-aWi3E1i5GFuuRlYkRFGfNYlqsJdV-mY8d3aiuLPbQcvpngqO1JWqibDE5eEZkUiYswTm1hP1N5NU2XJNEVDZvcbXX8-HeyJcFxf-ZUW0x0G_01ZwAdmwai33_lxTQZg53bOsRY46Q-SaMH42a5Jjk5-Xpoz9Gf_GyMCkcPp0PO8ZyYjpVD0IP-buCRA_Il4l_P_YDriLLxgj"/>
+<div>
+<p class="font-label-sm text-label-sm font-bold text-on-surface">Panel de Control</p>
+<p class="text-xs text-on-surface-variant">Operador de Sistema</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto space-y-xs px-sm">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md bg-primary text-on-primary rounded-lg mx-sm px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-body-md text-body-md">Incidencias</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">sensors</span>
+<span class="font-body-md text-body-md">Monitoreo IoT</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Analítica</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+<span class="font-body-md text-body-md">Autoridades</span>
+</a>
+</div>
+<div class="p-md">
+<button class="w-full bg-primary-container text-on-primary-container font-label-sm text-label-sm py-md rounded-lg flex items-center justify-center gap-2 hover:bg-surface-tint hover:text-white transition-colors">
+<span class="material-symbols-outlined">add</span>
+                Nuevo Reporte
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full md:ml-64 pb-24 md:pb-8 pt-6 md:pt-12 px-container-margin max-w-3xl mx-auto">
+<div class="mb-lg">
+<h1 class="font-h1 text-h1 text-on-surface mb-2">Reportar Incidencia</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Ayúdanos a mantener la red de agua en óptimas condiciones. Describe el problema y adjunta evidencia.</p>
+</div>
+<form class="space-y-lg">
+<!-- Type Selector (Bento Style) -->
+<section class="bg-surface-container-lowest p-md md:p-lg rounded-xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] border border-outline-variant/20">
+<h2 class="font-h2 text-h2 text-on-surface mb-md">Tipo de Problema</h2>
+<div class="grid grid-cols-2 gap-sm">
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="tipo_incidencia" type="radio" value="fuga"/>
+<div class="flex flex-col items-center justify-center p-md rounded-lg border-2 border-surface-container-high bg-surface hover:bg-surface-container-low peer-checked:border-secondary peer-checked:bg-secondary-fixed transition-all">
+<span class="material-symbols-outlined text-secondary mb-2" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="font-label-sm text-label-sm text-on-surface text-center">Fuga en vía pública</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="tipo_incidencia" type="radio" value="corte"/>
+<div class="flex flex-col items-center justify-center p-md rounded-lg border-2 border-surface-container-high bg-surface hover:bg-surface-container-low peer-checked:border-secondary peer-checked:bg-secondary-fixed transition-all">
+<span class="material-symbols-outlined text-secondary mb-2" style="font-variation-settings: 'FILL' 1;">block</span>
+<span class="font-label-sm text-label-sm text-on-surface text-center">Corte de servicio</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="tipo_incidencia" type="radio" value="baja_presion"/>
+<div class="flex flex-col items-center justify-center p-md rounded-lg border-2 border-surface-container-high bg-surface hover:bg-surface-container-low peer-checked:border-secondary peer-checked:bg-secondary-fixed transition-all">
+<span class="material-symbols-outlined text-secondary mb-2" style="font-variation-settings: 'FILL' 1;">speed</span>
+<span class="font-label-sm text-label-sm text-on-surface text-center">Baja Presión</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="tipo_incidencia" type="radio" value="agua_turbia"/>
+<div class="flex flex-col items-center justify-center p-md rounded-lg border-2 border-surface-container-high bg-surface hover:bg-surface-container-low peer-checked:border-secondary peer-checked:bg-secondary-fixed transition-all">
+<span class="material-symbols-outlined text-secondary mb-2" style="font-variation-settings: 'FILL' 1;">waves</span>
+<span class="font-label-sm text-label-sm text-on-surface text-center">Agua Turbia</span>
+</div>
+</label>
+</div>
+</section>
+<!-- Description -->
+<section class="bg-surface-container-lowest p-md md:p-lg rounded-xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] border border-outline-variant/20">
+<label class="block font-h2 text-h2 text-on-surface mb-xs" for="descripcion">Descripción Detallada</label>
+<p class="font-body-md text-sm text-on-surface-variant mb-md">Proporciona cualquier detalle adicional que ayude a los técnicos.</p>
+<textarea class="w-full bg-surface-container-low border-none rounded-lg p-md font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:bg-surface-bright transition-colors resize-none placeholder-outline" id="descripcion" placeholder="Ej: La fuga comenzó hace 2 horas cerca de la esquina..." rows="4"></textarea>
+</section>
+<!-- Photo Upload -->
+<section class="bg-surface-container-lowest p-md md:p-lg rounded-xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] border border-outline-variant/20">
+<h2 class="font-h2 text-h2 text-on-surface mb-xs">Evidencia Fotográfica</h2>
+<p class="font-body-md text-sm text-on-surface-variant mb-md">Una imagen clara acelera el tiempo de respuesta.</p>
+<div class="mt-2 flex justify-center rounded-lg border border-dashed border-outline-variant/50 px-6 py-10 hover:bg-surface-container-low transition-colors cursor-pointer bg-surface">
+<div class="text-center">
+<span class="material-symbols-outlined text-4xl text-secondary mb-4" style="font-variation-settings: 'FILL' 0;">add_a_photo</span>
+<div class="mt-4 flex text-sm leading-6 text-on-surface-variant justify-center">
+<label class="relative cursor-pointer rounded-md font-label-sm text-primary hover:text-surface-tint focus-within:outline-none" for="file-upload">
+<span>Subir un archivo</span>
+<input class="sr-only" id="file-upload" name="file-upload" type="file"/>
+</label>
+<p class="pl-1">o arrastrar y soltar</p>
+</div>
+<p class="text-xs leading-5 text-on-surface-variant mt-2">PNG, JPG hasta 10MB</p>
+</div>
+</div>
+</section>
+<!-- Location Map -->
+<section class="bg-surface-container-lowest p-md md:p-lg rounded-xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] border border-outline-variant/20">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-h2 text-h2 text-on-surface">Ubicación</h2>
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-1 hover:text-surface-tint" type="button">
+<span class="material-symbols-outlined text-sm">my_location</span>
+                        Usar mi ubicación actual
+                    </button>
+</div>
+<div class="relative w-full h-48 md:h-64 rounded-lg overflow-hidden border border-outline-variant/20">
+<!-- Placeholder map background -->
+<div class="absolute inset-0 bg-surface-container-high bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&amp;fit=crop&amp;q=80&amp;w=800')] bg-cover bg-center opacity-60" data-alt="A clean, highly stylized minimalist digital map interface in light mode. The map shows street layouts in subtle grays and whites, with a soft blue tint indicating a selected area. The lighting is bright and even, conveying a modern, technological infrastructure tool without clutter." data-location="Ciudad Autónoma de Buenos Aires" style=""></div>
+<!-- Center Pin -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="relative">
+<span class="material-symbols-outlined text-error text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-1 bg-black/20 rounded-full blur-[2px]"></div>
+</div>
+</div>
+</div>
+<p class="font-body-md text-sm text-on-surface-variant mt-xs text-center">Mueve el mapa para ajustar la ubicación exacta.</p>
+</section>
+<!-- Submit Action -->
+<div class="pt-md pb-xl">
+<button class="w-full bg-primary text-on-primary font-label-sm text-label-sm py-4 rounded-xl flex items-center justify-center gap-2 shadow-sm hover:bg-surface-tint hover:-translate-y-0.5 transition-all duration-200" type="submit">
+<span class="material-symbols-outlined">send</span>
+                    Enviar Reporte
+                </button>
+</div>
+</form>
+</main>
+<!-- BottomNavBar (Mobile Anchor) -->
+<nav class="bg-surface-container-lowest border-t border-outline-variant/30 fixed bottom-0 w-full z-50 rounded-t-xl shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] fixed bottom-0 left-0 w-full flex justify-around items-center px-gutter pb-4 pt-2 md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-md py-xs hover:bg-surface-container-high active:scale-90 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm mt-1">Inicio</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-md py-xs hover:bg-surface-container-high active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="font-label-sm text-label-sm mt-1 font-bold">Reportar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-md py-xs hover:bg-surface-container-high active:scale-90 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-sm text-label-sm mt-1">Historial</span>
+</a>
+</nav>
+</body></html>

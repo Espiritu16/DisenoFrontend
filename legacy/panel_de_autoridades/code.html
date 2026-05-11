@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Panel de Autoridades - AQUACOMUNIDAD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e7e8e9",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8f9fa",
+                        "secondary-fixed-dim": "#93ccff",
+                        "error-container": "#ffdad6",
+                        "surface": "#f8f9fa",
+                        "secondary-fixed": "#cce5ff",
+                        "primary-container": "#0056b3",
+                        "outline-variant": "#c2c6d4",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "tertiary-fixed-dim": "#44dfab",
+                        "tertiary-container": "#00664a",
+                        "on-tertiary-fixed": "#002116",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-surface-variant": "#424752",
+                        "surface-dim": "#d9dadb",
+                        "inverse-primary": "#acc7ff",
+                        "primary": "#003f87",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#bbd0ff",
+                        "on-secondary-fixed": "#001d31",
+                        "outline": "#727784",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#67fcc6",
+                        "surface-variant": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#edeeef",
+                        "on-secondary-container": "#003a5c",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001a40",
+                        "primary-fixed-dim": "#acc7ff",
+                        "on-tertiary-fixed-variant": "#00513a",
+                        "surface-container-low": "#f3f4f5",
+                        "surface-tint": "#115cb9",
+                        "on-surface": "#191c1d",
+                        "on-tertiary-container": "#51e9b4",
+                        "error": "#ba1a1a",
+                        "secondary": "#006398",
+                        "primary-fixed": "#d7e2ff",
+                        "tertiary": "#004c36",
+                        "on-secondary-fixed-variant": "#004b73",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary-fixed-variant": "#004491",
+                        "on-background": "#191c1d",
+                        "secondary-container": "#00a9fd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "24px",
+                        "gutter": "16px",
+                        "sm": "0.5rem",
+                        "lg": "1.5rem",
+                        "md": "1rem",
+                        "xs": "0.25rem",
+                        "xl": "2rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "h2": ["Inter"],
+                        "h1": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "status-badge": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h2": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "h1": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "status-badge": ["12px", { "lineHeight": "1", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen flex overflow-hidden">
+<!-- SideNavBar (WEB) -->
+<nav class="hidden md:flex flex-col py-lg space-y-xs h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-dim border-r border-outline-variant/20 z-40">
+<div class="px-md mb-lg">
+<h1 class="font-h2 text-h2 text-primary">Panel de Control</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Operador de Sistema</p>
+</div>
+<div class="flex-1 overflow-y-auto space-y-1">
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-inverse-surface mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-inverse-surface mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+<span class="font-body-md text-body-md">Incidencias</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-inverse-surface mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="font-body-md text-body-md">Monitoreo IoT</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-highest dark:hover:bg-inverse-surface mx-sm px-md py-sm rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Analítica</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center gap-md bg-primary text-on-primary rounded-lg mx-sm px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="font-body-md text-body-md">Autoridades</span>
+</a>
+</div>
+<div class="px-sm mt-auto">
+<button class="w-full bg-primary-container text-on-tertiary font-body-md text-body-md py-sm rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-sm">add</span>
+                Nuevo Reporte
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 w-full h-full overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-container-margin py-sm max-w-full z-40 bg-surface dark:bg-surface-dim shadow-sm sticky top-0">
+<div class="flex items-center">
+<span class="font-h1 text-h1 text-primary dark:text-secondary-fixed-dim">AQUACOMUNIDAD</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-container-margin bg-background">
+<div class="max-w-7xl mx-auto space-y-lg pb-24 md:pb-0">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md border-b border-outline-variant/20 pb-md">
+<div>
+<h2 class="font-h1 text-h1 text-on-background">Resumen Ejecutivo</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Visión global del estado hídrico y desempeño de infraestructura.</p>
+</div>
+<div class="flex gap-sm">
+<button class="bg-surface-container-lowest border border-outline text-primary px-4 py-2 rounded-lg font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Exportar Informe
+                        </button>
+<button class="bg-primary-container text-on-tertiary px-4 py-2 rounded-lg font-label-sm text-label-sm hover:bg-primary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">calendar_month</span>
+                            Este Mes
+                        </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- KPI 1 -->
+<div class="md:col-span-3 bg-surface-container-lowest rounded-xl p-md border border-outline-variant/20 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface-variant">Índice de Suministro</span>
+<span class="material-symbols-outlined text-primary">water_drop</span>
+</div>
+<div class="mt-lg">
+<span class="font-h1 text-h1 text-on-background">94.2%</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-tertiary-container text-sm">trending_up</span>
+<span class="font-label-sm text-label-sm text-tertiary-container">+1.2% vs mes anterior</span>
+</div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="md:col-span-3 bg-surface-container-lowest rounded-xl p-md border border-outline-variant/20 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface-variant">Alertas Activas</span>
+<span class="material-symbols-outlined text-error">warning</span>
+</div>
+<div class="mt-lg">
+<span class="font-h1 text-h1 text-on-background">12</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-error text-sm">trending_up</span>
+<span class="font-label-sm text-label-sm text-error">+3 en últimas 24h</span>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="md:col-span-3 bg-surface-container-lowest rounded-xl p-md border border-outline-variant/20 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface-variant">Pérdida Estimada</span>
+<span class="material-symbols-outlined text-secondary">water_damage</span>
+</div>
+<div class="mt-lg">
+<span class="font-h1 text-h1 text-on-background">4.8%</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-tertiary-container text-sm">trending_down</span>
+<span class="font-label-sm text-label-sm text-tertiary-container">-0.5% vs mes anterior</span>
+</div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="md:col-span-3 bg-surface-container-lowest rounded-xl p-md border border-outline-variant/20 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface-variant">Eficiencia Energética</span>
+<span class="material-symbols-outlined text-tertiary">bolt</span>
+</div>
+<div class="mt-lg">
+<span class="font-h1 text-h1 text-on-background">A+</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Operación óptima</span>
+</div>
+</div>
+</div>
+<!-- Map Section -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant/20 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col h-96">
+<div class="p-md border-b border-outline-variant/20 flex justify-between items-center bg-surface-bright">
+<h3 class="font-h2 text-h2 text-on-background">Zonas Críticas de Infraestructura</h3>
+<div class="flex gap-2">
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant"><span class="w-3 h-3 rounded-full bg-error"></span> Falla Reportada</span>
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant"><span class="w-3 h-3 rounded-full bg-secondary-container"></span> Presión Baja</span>
+</div>
+</div>
+<div class="flex-1 relative bg-surface-dim">
+<img alt="Mapa de Zonas Críticas" class="w-full h-full object-cover opacity-80" data-alt="A highly detailed top-down view of a modern city map displayed on a digital interface. The map features a minimalist, light-mode aesthetic with soft grays and pristine whites representing streets and terrain. Vibrant, glowing red and bright blue markers indicate critical infrastructure points and water flow data, creating a high-tech, precise, and institutional mood." data-location="Ciudad de México" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLvCH88SvfPRStgUMVmAhiRgn03J0i80Oab7KYHWCQ_VcNoG21n1WJ4lFmuQASZApKK8qqLos1Q05UTfvNCvy0soboDDUXaIctG8m5nrXtxuYAl2kqDHsCCEHYncaSe3rCW09FlWeKb7msDk5u5ABuU6PtA-gFM5pcwnU3iieQ2PyxNqCamCVyrQwXXWwZKg_X4AT4stBxG4xWwxNVWxT8HJCIrZGOmBZ8RmdpL8rGrqaRIxce8A2FexInAy-LKkU3vBKTTEQ92ebT"/>
+<!-- Overlay Map Points (Fictional positioning for aesthetic) -->
+<div class="absolute top-[30%] left-[40%] w-4 h-4 bg-error rounded-full border-2 border-surface-container-lowest animate-pulse shadow-[0_0_10px_rgba(186,26,26,0.5)]"></div>
+<div class="absolute top-[60%] left-[70%] w-4 h-4 bg-secondary-container rounded-full border-2 border-surface-container-lowest shadow-[0_0_10px_rgba(0,169,253,0.5)]"></div>
+<div class="absolute top-[20%] left-[80%] w-4 h-4 bg-tertiary-container rounded-full border-2 border-surface-container-lowest shadow-[0_0_10px_rgba(0,102,74,0.5)]"></div>
+</div>
+</div>
+<!-- Performance Chart Section -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant/20 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] flex flex-col">
+<div class="p-md border-b border-outline-variant/20 bg-surface-bright">
+<h3 class="font-h2 text-h2 text-on-background">Tendencia de Sostenibilidad</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Consumo vs Recuperación (Megalitros)</p>
+</div>
+<div class="p-md flex-1 flex flex-col justify-end relative overflow-hidden">
+<!-- Abstract Chart Representation -->
+<div class="w-full h-48 flex items-end justify-between gap-2 px-2 pb-2">
+<div class="w-full bg-surface-variant rounded-t-sm h-[40%] relative"><div class="absolute bottom-0 w-full bg-secondary-container h-[80%] rounded-t-sm opacity-80"></div></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[50%] relative"><div class="absolute bottom-0 w-full bg-secondary-container h-[70%] rounded-t-sm opacity-80"></div></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[45%] relative"><div class="absolute bottom-0 w-full bg-secondary-container h-[85%] rounded-t-sm opacity-80"></div></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[60%] relative"><div class="absolute bottom-0 w-full bg-secondary-container h-[60%] rounded-t-sm opacity-80"></div></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[55%] relative"><div class="absolute bottom-0 w-full bg-secondary-container h-[75%] rounded-t-sm opacity-80"></div></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[70%] relative"><div class="absolute bottom-0 w-full bg-secondary-container h-[50%] rounded-t-sm opacity-80"></div></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[65%] relative"><div class="absolute bottom-0 w-full bg-secondary-container h-[80%] rounded-t-sm opacity-80"></div></div>
+</div>
+<div class="flex justify-between border-t border-outline-variant/30 pt-2 font-label-sm text-label-sm text-on-surface-variant">
+<span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+</div>
+</div>
+</div>
+<!-- Recent Incidents Table -->
+<div class="md:col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant/20 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="p-md border-b border-outline-variant/20 bg-surface-bright flex justify-between items-center">
+<h3 class="font-h2 text-h2 text-on-background">Reportes Recientes de Gestión</h3>
+<button class="text-primary font-label-sm text-label-sm hover:underline">Ver todos</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant bg-surface-container-low">
+<th class="p-md font-medium">ID Reporte</th>
+<th class="p-md font-medium">Zona / Ubicación</th>
+<th class="p-md font-medium">Tipo de Incidencia</th>
+<th class="p-md font-medium">Estado</th>
+<th class="p-md font-medium">Última Actualización</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-lowest transition-colors group">
+<td class="p-md font-body-md text-on-background">#INC-0842</td>
+<td class="p-md font-body-md text-on-background">Sector Norte, Calle 4</td>
+<td class="p-md font-body-md text-on-surface-variant">Fuga en red matriz</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-error-container text-on-error-container font-status-badge text-status-badge uppercase tracking-wider">
+                                                Crítico
+                                            </span>
+</td>
+<td class="p-md font-body-md text-on-surface-variant">Hace 2 horas</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-lowest transition-colors group">
+<td class="p-md font-body-md text-on-background">#INC-0841</td>
+<td class="p-md font-body-md text-on-background">Planta Tratamiento Sur</td>
+<td class="p-md font-body-md text-on-surface-variant">Baja presión (Sensor T-4)</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-[#fff3cd] text-[#856404] font-status-badge text-status-badge uppercase tracking-wider">
+                                                En Revisión
+                                            </span>
+</td>
+<td class="p-md font-body-md text-on-surface-variant">Hace 5 horas</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="p-md font-body-md text-on-background">#INC-0840</td>
+<td class="p-md font-body-md text-on-background">Residencial Los Pinos</td>
+<td class="p-md font-body-md text-on-surface-variant">Calidad de agua reportada</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-[#d4edda] text-[#155724] font-status-badge text-status-badge uppercase tracking-wider">
+                                                Resuelto
+                                            </span>
+</td>
+<td class="p-md font-body-md text-on-surface-variant">Ayer, 14:30</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (MOBILE) -->
+<!-- Content logic dictates that as an executive dashboard (top level destination), navigation shell is appropriate. -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-gutter pb-4 pt-2 md:hidden bg-surface-container-lowest dark:bg-surface-dim border-t border-outline-variant/30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Inicio</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1" data-icon="campaign">campaign</span>
+<span class="font-label-sm text-label-sm">Reportar</span>
+</button>
+<!-- Assuming Dashboard/Panel serves as "History" or main view in mobile context for this specific dashboard, but aligning with JSON semantic match: "Historial" -->
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-full px-md py-xs hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1" data-icon="history" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-sm text-label-sm">Historial</span>
+</button>
+</nav>
+</body></html>

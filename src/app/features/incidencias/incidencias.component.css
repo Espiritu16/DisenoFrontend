@@ -1,0 +1,40 @@
+:host { display: block; }
+
+.admin-module {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.module-head {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+}
+
+.module-kicker {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-brand-primary);
+  font-weight: 700;
+}
+
+.module-copy {
+  margin-top: 0.45rem;
+  color: var(--color-text-muted);
+}
+
+.table-title {
+  margin: 0 0 0.65rem;
+  font-size: 1.01rem;
+  color: var(--color-text-main);
+}
+
+.status-pill {
+  display: inline-block;
+  background: rgba(0,229,255,0.16);
+  color: var(--color-brand-primary);
+  border: 1px solid rgba(0,229,255,0.36);
+  border-radius: 999px;
+  padding: 0.2rem 0.52rem;
+  font-size: 0.74rem;
+}

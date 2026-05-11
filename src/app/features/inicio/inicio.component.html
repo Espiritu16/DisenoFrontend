@@ -1,0 +1,72 @@
+<div class="home-design">
+  <section class="hero-home">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">
+          <span class="material-symbols-outlined eyebrow-icon">water_drop</span>
+          Gestión comunitaria del agua
+        </span>
+        <h1>CUIDAMOS EL<br />SERVICIO DE<br />TU ZONA.</h1>
+        <p>
+          AQUACOMUNIDAD centraliza reportes vecinales, alertas de servicio y seguimiento de casos
+          para reducir tiempos de atención en Lima.
+        </p>
+        <div class="hero-actions">
+          <a class="btn-home btn-home--light" routerLink="/reportar">Reportar incidencia</a>
+          <a class="btn-home btn-home--ghost" routerLink="/estado-servicio">Ver estado</a>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <img
+          src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1400&q=80"
+          alt="Equipo revisando sistema de agua"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="ticker" aria-label="Beneficios AQUACOMUNIDAD">
+    <div class="ticker-track">
+      <div class="ticker-group">
+        <span class="ticker-item">REPORTE RÁPIDO</span>
+        <span class="ticker-item">SEGUIMIENTO TRANSPARENTE</span>
+        <span class="ticker-item">ALERTAS COMUNITARIAS</span>
+        <span class="ticker-item">COORDINACIÓN OPERATIVA</span>
+      </div>
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-item">REPORTE RÁPIDO</span>
+        <span class="ticker-item">SEGUIMIENTO TRANSPARENTE</span>
+        <span class="ticker-item">ALERTAS COMUNITARIAS</span>
+        <span class="ticker-item">COORDINACIÓN OPERATIVA</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured">
+    <div class="app-shell">
+      <div class="section-head centered">
+        <div class="section-title-line">
+          <span class="section-title-line__line"></span>
+          <h2>ACCESOS CLAVE</h2>
+          <span class="section-title-line__line"></span>
+        </div>
+      </div>
+
+      <div class="product-grid">
+        <article class="product-card" *ngFor="let item of destacados">
+          <span class="badge">{{ item.badge }}</span>
+          <img [src]="item.image" [alt]="item.title" loading="lazy" />
+          <div class="product-body">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.text }}</p>
+            <div class="product-actions">
+              <a class="btn-home btn-home--outline" [routerLink]="item.route">{{ item.cta }}</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>

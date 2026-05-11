@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AQUACOMUNIDAD - Seguimiento de Reportes</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e7e8e9",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f8f9fa",
+                    "secondary-fixed-dim": "#93ccff",
+                    "error-container": "#ffdad6",
+                    "surface": "#f8f9fa",
+                    "secondary-fixed": "#cce5ff",
+                    "primary-container": "#0056b3",
+                    "outline-variant": "#c2c6d4",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#2e3132",
+                    "tertiary-fixed-dim": "#44dfab",
+                    "tertiary-container": "#00664a",
+                    "on-tertiary-fixed": "#002116",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-surface-variant": "#424752",
+                    "surface-dim": "#d9dadb",
+                    "inverse-primary": "#acc7ff",
+                    "primary": "#003f87",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#bbd0ff",
+                    "on-secondary-fixed": "#001d31",
+                    "outline": "#727784",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#67fcc6",
+                    "surface-variant": "#e1e3e4",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#edeeef",
+                    "on-secondary-container": "#003a5c",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#001a40",
+                    "primary-fixed-dim": "#acc7ff",
+                    "on-tertiary-fixed-variant": "#00513a",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-tint": "#115cb9",
+                    "on-surface": "#191c1d",
+                    "on-tertiary-container": "#51e9b4",
+                    "error": "#ba1a1a",
+                    "secondary": "#006398",
+                    "primary-fixed": "#d7e2ff",
+                    "tertiary": "#004c36",
+                    "on-secondary-fixed-variant": "#004b73",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-primary-fixed-variant": "#004491",
+                    "on-background": "#191c1d",
+                    "secondary-container": "#00a9fd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "24px",
+                    "gutter": "16px",
+                    "sm": "0.5rem",
+                    "lg": "1.5rem",
+                    "md": "1rem",
+                    "xs": "0.25rem",
+                    "xl": "2rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "h2": ["Inter"],
+                    "h1": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "status-badge": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "status-badge": ["12px", {"lineHeight": "1", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-md">
+<!-- TopNavBar -->
+<nav class="bg-surface shadow-sm flex justify-between items-center w-full px-container-margin py-sm max-w-full z-40 sticky top-0">
+<div class="font-h1 text-h1 text-primary">AQUACOMUNIDAD</div>
+<div class="flex items-center gap-sm">
+<button class="p-xs text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="px-container-margin py-lg md:py-xl max-w-4xl mx-auto pb-24 md:pb-xl">
+<header class="mb-lg">
+<h1 class="font-h2 text-h2 text-primary mb-xs">Historial de Incidencias</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Seguimiento detallado de tus reportes activos y pasados.</p>
+</header>
+<!-- Reports Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Card: In Progress (Blue) -->
+<article class="bg-on-tertiary rounded-xl p-md border border-outline-variant/20 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col h-full">
+<div class="flex justify-between items-start mb-md border-b border-outline-variant/20 pb-sm">
+<div class="flex items-center gap-sm">
+<div class="bg-secondary-fixed p-sm rounded-lg text-secondary">
+<span class="material-symbols-outlined icon-fill">plumbing</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold">Fuga en vía pública</h3>
+</div>
+<!-- En Proceso Badge using Theme Colors (Blue/Celeste) -->
+<span class="bg-secondary-fixed text-on-secondary-fixed font-status-badge text-status-badge px-sm py-xs rounded-full uppercase tracking-wider">En Proceso</span>
+</div>
+<div class="flex flex-col gap-xs mb-md flex-grow">
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>15 de Octubre, 2023</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>Av. Las Flores 452, Sector Norte</span>
+</div>
+</div>
+<!-- Timeline -->
+<div class="bg-surface-bright rounded-lg p-sm border border-outline-variant/10">
+<div class="relative pl-lg border-l-2 border-secondary-fixed/50 space-y-md ml-sm">
+<div class="relative">
+<div class="absolute -left-[25px] top-1 h-3 w-3 rounded-full bg-secondary"></div>
+<p class="font-label-sm text-label-sm text-on-surface">Reporte Recibido</p>
+<p class="font-status-badge text-status-badge text-outline">15 Oct, 09:30 AM</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[27px] top-0 h-4 w-4 rounded-full bg-secondary-fixed border-2 border-secondary flex items-center justify-center">
+<div class="h-1.5 w-1.5 rounded-full bg-secondary"></div>
+</div>
+<p class="font-label-sm text-label-sm text-secondary font-semibold">Cuadrilla Asignada</p>
+<p class="font-status-badge text-status-badge text-secondary/80">Hoy, 08:15 AM</p>
+</div>
+<div class="relative opacity-40">
+<div class="absolute -left-[25px] top-1 h-3 w-3 rounded-full bg-outline-variant"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Resolución</p>
+</div>
+</div>
+</div>
+</article>
+<!-- Card: Pending (Approximated Yellow via Surface Variant & Icon) -->
+<article class="bg-on-tertiary rounded-xl p-md border border-outline-variant/20 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col h-full">
+<div class="flex justify-between items-start mb-md border-b border-outline-variant/20 pb-sm">
+<div class="flex items-center gap-sm">
+<div class="bg-surface-container-high p-sm rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined icon-fill">water_drop</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold">Baja presión de agua</h3>
+</div>
+<!-- Pendiente Badge using neutral theme colors as fallback for missing yellow -->
+<span class="bg-surface-variant text-on-surface-variant font-status-badge text-status-badge px-sm py-xs rounded-full uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                        Pendiente
+                    </span>
+</div>
+<div class="flex flex-col gap-xs mb-md flex-grow">
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>18 de Octubre, 2023</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>Calle Los Pinos 120, Block B</span>
+</div>
+</div>
+<!-- Timeline -->
+<div class="bg-surface-bright rounded-lg p-sm border border-outline-variant/10">
+<div class="relative pl-lg border-l-2 border-outline-variant/30 space-y-md ml-sm">
+<div class="relative">
+<div class="absolute -left-[27px] top-0 h-4 w-4 rounded-full bg-surface-container-high border-2 border-outline flex items-center justify-center">
+<div class="h-1.5 w-1.5 rounded-full bg-outline"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface font-semibold">Reporte Registrado</p>
+<p class="font-status-badge text-status-badge text-outline">Ayer, 14:20 PM</p>
+</div>
+<div class="relative opacity-40">
+<div class="absolute -left-[25px] top-1 h-3 w-3 rounded-full bg-outline-variant"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Revisión Técnica</p>
+</div>
+</div>
+</div>
+</article>
+<!-- Card: Resolved (Green) -->
+<article class="bg-on-tertiary rounded-xl p-md border border-outline-variant/20 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col h-full md:col-span-2">
+<div class="flex justify-between items-start mb-md border-b border-outline-variant/20 pb-sm">
+<div class="flex items-center gap-sm">
+<div class="bg-tertiary-fixed-dim/30 p-sm rounded-lg text-tertiary">
+<span class="material-symbols-outlined icon-fill">sensors</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold">Medidor averiado</h3>
+</div>
+<!-- Resuelto Badge using Theme Colors (Green) -->
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-status-badge text-status-badge px-sm py-xs rounded-full uppercase tracking-wider">Resuelto</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-center gap-xs md:gap-lg mb-md flex-grow">
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>05 de Octubre, 2023</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>Pasaje San Juan 88</span>
+</div>
+</div>
+<!-- Horizontal Timeline for Desktop, Vertical for Mobile -->
+<div class="bg-surface-bright rounded-lg p-sm border border-outline-variant/10">
+<!-- Mobile Vertical -->
+<div class="relative pl-lg border-l-2 border-tertiary-fixed ml-sm space-y-md md:hidden">
+<div class="relative">
+<div class="absolute -left-[25px] top-1 h-3 w-3 rounded-full bg-tertiary"></div>
+<p class="font-label-sm text-label-sm text-on-surface">Reporte</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[25px] top-1 h-3 w-3 rounded-full bg-tertiary"></div>
+<p class="font-label-sm text-label-sm text-on-surface">Asignación</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[25px] top-1 h-3 w-3 rounded-full bg-tertiary flex items-center justify-center"></div>
+<p class="font-label-sm text-label-sm text-tertiary font-semibold">Solucionado</p>
+<p class="font-status-badge text-status-badge text-tertiary/80">07 Oct, 11:00 AM</p>
+</div>
+</div>
+<!-- Desktop Horizontal (Approximation with Flex) -->
+<div class="hidden md:flex items-center justify-between px-md relative">
+<div class="absolute top-1/2 left-lg right-lg h-0.5 bg-tertiary-fixed -z-10 -translate-y-1/2"></div>
+<div class="flex flex-col items-center bg-surface-bright px-xs">
+<div class="h-4 w-4 rounded-full bg-tertiary mb-xs border-2 border-surface-bright"></div>
+<p class="font-label-sm text-label-sm text-on-surface">Reportado</p>
+</div>
+<div class="flex flex-col items-center bg-surface-bright px-xs">
+<div class="h-4 w-4 rounded-full bg-tertiary mb-xs border-2 border-surface-bright"></div>
+<p class="font-label-sm text-label-sm text-on-surface">Inspeccionado</p>
+</div>
+<div class="flex flex-col items-center bg-surface-bright px-xs">
+<div class="h-5 w-5 rounded-full bg-tertiary-fixed border-2 border-tertiary flex items-center justify-center mb-xs">
+<span class="material-symbols-outlined text-[12px] text-tertiary font-bold">check</span>
+</div>
+<p class="font-label-sm text-label-sm text-tertiary font-semibold">Solucionado</p>
+</div>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="bg-surface-container-lowest border-t border-outline-variant/30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] fixed bottom-0 left-0 w-full flex justify-around items-center px-gutter pb-4 pt-2 md:hidden z-50 rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-md py-xs hover:bg-surface-container-high transition-all active:scale-90 rounded-lg">
+<span class="material-symbols-outlined mb-xs">home</span>
+<span class="font-label-sm text-label-sm">Inicio</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-md py-xs hover:bg-surface-container-high transition-all active:scale-90 rounded-lg">
+<span class="material-symbols-outlined mb-xs">campaign</span>
+<span class="font-label-sm text-label-sm">Reportar</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-md py-xs transition-all active:scale-90">
+<span class="material-symbols-outlined mb-xs icon-fill">history</span>
+<span class="font-label-sm text-label-sm font-semibold">Historial</span>
+</button>
+</nav>
+</body></html>

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AlertaServicio, ReportePoblador } from '../../core/models/app-models';
-import { MockDataService } from '../../core/services/mock-data.service';
+import { AlertaServicio, ReportePoblador } from '../../../core/models/app-models';
+import { MockDataService } from '../../../core/services/mock-data.service';
 
 @Component({
   selector: 'app-estado-servicio',

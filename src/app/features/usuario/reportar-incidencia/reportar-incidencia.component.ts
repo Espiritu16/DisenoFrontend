@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild } fr
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import * as L from 'leaflet';
-import { MockDataService } from '../../core/services/mock-data.service';
+import { MockDataService } from '../../../core/services/mock-data.service';
 
 @Component({
   selector: 'app-reportar-incidencia',

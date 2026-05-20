@@ -22,21 +22,17 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
             <span class="material-symbols-outlined">space_dashboard</span>
             <span>Dashboard</span>
           </a>
-          <a routerLink="/administrador/incidencias" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
+          <a routerLink="/administrador/atencion-casos" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
             <span class="material-symbols-outlined">assignment</span>
-            <span>Incidencias</span>
+            <span>Atención de casos</span>
           </a>
-          <a routerLink="/administrador/monitoreo-iot" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
-            <span class="material-symbols-outlined">sensors</span>
-            <span>Monitoreo IoT</span>
+          <a routerLink="/administrador/reportes" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
+            <span class="material-symbols-outlined">forum</span>
+            <span>Reportes ciudadanos</span>
           </a>
-          <a routerLink="/administrador/historial-analitica" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
-            <span class="material-symbols-outlined">query_stats</span>
-            <span>Historial y Analítica</span>
-          </a>
-          <a routerLink="/administrador/autoridades" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
-            <span class="material-symbols-outlined">account_balance</span>
-            <span>Autoridades</span>
+          <a routerLink="/administrador/gestion-usuarios" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
+            <span class="material-symbols-outlined">group</span>
+            <span>Gestión de usuarios</span>
           </a>
         </nav>
 

@@ -27,7 +27,10 @@ import { AuthModalComponent } from '../../shared/auth-modal/auth-modal.component
             <a routerLink="/contacto" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Contacto</a>
           </nav>
 
-          <button class="btn-primary site-header__login" type="button" (click)="openAuth('login')">Iniciar sesión</button>
+          <div class="site-header__actions">
+            <a routerLink="/administrador/dashboard" class="btn-secondary site-header__admin">Administrador</a>
+            <button class="btn-primary site-header__login" type="button" (click)="openAuth('login')">Iniciar sesión</button>
+          </div>
         </div>
       </header>
 
@@ -134,8 +137,19 @@ import { AuthModalComponent } from '../../shared/auth-modal/auth-modal.component
       }
 
       .site-header__login {
-        margin-left: 0.55rem;
         white-space: nowrap;
+      }
+
+      .site-header__actions {
+        margin-left: 0.55rem;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      .site-header__admin {
+        white-space: nowrap;
+        text-decoration: none;
       }
 
       .site-header__menu-btn {
@@ -243,8 +257,13 @@ import { AuthModalComponent } from '../../shared/auth-modal/auth-modal.component
           display: none;
         }
 
-        .site-header__login {
+        .site-header__actions {
           margin-left: auto;
+          gap: 0.4rem;
+        }
+
+        .site-header__login,
+        .site-header__admin {
           min-height: 36px;
           padding: 0.45rem 0.68rem;
           font-size: 0.86rem;

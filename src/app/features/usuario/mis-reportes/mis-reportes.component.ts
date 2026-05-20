@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ReportePoblador } from '../../core/models/app-models';
-import { MockDataService } from '../../core/services/mock-data.service';
+import { ReportePoblador } from '../../../core/models/app-models';
+import { MockDataService } from '../../../core/services/mock-data.service';
 
 @Component({
   selector: 'app-mis-reportes',

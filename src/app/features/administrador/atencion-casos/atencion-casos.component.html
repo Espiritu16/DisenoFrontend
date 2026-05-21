@@ -1,0 +1,267 @@
+<div class="atencion-casos-viewport">
+
+  <main class="left-operations-column">
+    
+    <section class="ops-card">
+      <div class="ops-card-header">
+        <h2 class="ops-card-title">Bandeja de Casos</h2>
+        <div class="filters-inline-group">
+          <select class="select-inline"><option>Prioridad</option></select>
+          <select class="select-inline"><option>Distrito</option></select>
+          <select class="select-inline"><option>Técnico</option></select>
+          <select class="select-inline"><option>Fecha</option></select>
+          <select class="select-inline"><option>Estado</option></select>
+          <button type="button" class="btn-kanban-toggle">Vista Kanban</button>
+        </div>
+      </div>
+
+      <div class="cases-table-list">
+        
+        <div class="case-row row-active">
+          <div class="case-col-id">#001</div>
+          <div class="case-col-main">
+            <h3 class="case-row-title">Fuga de agua en Calle Falsa 123</h3>
+            <p class="case-row-meta">Reportado por: Juan Pérez | Técnico: Mario López</p>
+            <div class="case-row-tags">
+              <span class="pill-tag tag-alta">Alta Prioridad</span>
+              <span class="pill-tag tag-proceso">En Proceso</span>
+              <span class="pill-tag tag-sector">Sector: Centro</span>
+            </div>
+          </div>
+          <div class="case-col-progress">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-fill" style="width: 65%;"></div>
+            </div>
+          </div>
+          <div class="case-col-actions">
+            <button class="btn-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="btn-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+        </div>
+
+        <div class="case-row">
+          <div class="case-col-id">#002</div>
+          <div class="case-col-main">
+            <h3 class="case-row-title">Baja presión en Av. Siempre Viva 742</h3>
+            <p class="case-row-meta">Reportado por: María Gómez | Técnico: Juan Rivas</p>
+            <div class="case-row-tags">
+              <span class="pill-tag tag-media">Media Prioridad</span>
+              <span class="pill-tag tag-resuelto">Resuelto</span>
+              <span class="pill-tag tag-sector">Sector: San José</span>
+            </div>
+          </div>
+          <div class="case-col-progress">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div class="case-col-actions">
+            <button class="btn-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="btn-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+        </div>
+
+        <div class="case-row">
+          <div class="case-col-id">#003</div>
+          <div class="case-col-main">
+            <h3 class="case-row-title">Agua turbia en Barrio Nuevo 456</h3>
+            <p class="case-row-meta">Reportado por: Carlos Ruiz | Técnico: Sin Asignar</p>
+            <div class="case-row-tags">
+              <span class="pill-tag tag-baja">Baja Prioridad</span>
+              <span class="pill-tag tag-pendiente">Pendiente</span>
+              <span class="pill-tag tag-sector">Sector: Enlace</span>
+            </div>
+          </div>
+          <div class="case-col-progress">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-fill" style="width: 15%;"></div>
+            </div>
+          </div>
+          <div class="case-col-actions">
+            <button class="btn-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="btn-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="compact-pagination-bar">
+        <span class="pag-info">Mostrando 1 a 3 de 17 resultados</span>
+        <div class="pag-nav-buttons">
+          <button class="btn-nav-flat">Anterior</button>
+          <button class="btn-nav-numeric active-num">1</button>
+          <button class="btn-nav-numeric">2</button>
+          <button class="btn-nav-numeric">3</button>
+          <button class="btn-nav-flat">Siguiente</button>
+        </div>
+      </footer>
+    </section>
+
+    <section class="ops-card">
+      <h2 class="ops-card-title">Dashboard Analítico</h2>
+      <div class="mini-kpi-grid">
+        <div class="mini-kpi-card">
+          <span class="mini-kpi-label">Casos Totales</span>
+          <p class="mini-kpi-value">1,234</p>
+        </div>
+        <div class="mini-kpi-card">
+          <span class="mini-kpi-label">Casos Críticos</span>
+          <p class="mini-kpi-value text-alert-red">5</p>
+        </div>
+        <div class="mini-kpi-card">
+          <span class="mini-kpi-label">Tiempo Prom. Resolución</span>
+          <p class="mini-kpi-value">2.5h</p>
+        </div>
+        <div class="mini-kpi-card">
+          <span class="mini-kpi-label">Rendimiento Técnico</span>
+          <p class="mini-kpi-value">92%</p>
+        </div>
+      </div>
+      <div class="dashboard-inline-charts">
+        <div class="wireframe-chart-line"></div>
+        <div class="wireframe-chart-line"></div>
+      </div>
+    </section>
+
+    <section class="ops-card">
+      <h2 class="ops-card-title">Mapa Inteligente de Incidencias</h2>
+      <div class="map-viewport-large">
+        <div class="map-floating-popup">
+          <h4>Fuga de Agua</h4>
+          <p>Ubicación: Calle Falsa 123</p>
+          <p>Estado: En Proceso</p>
+        </div>
+        <div class="map-corner-pills">
+          <span class="pill-map">2 Técnicos</span>
+          <span class="pill-map">15 min Llegada Est.</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <aside class="right-management-sidebar">
+    <div class="sidebar-header">
+      <h2 class="sidebar-case-id">#001</h2>
+      <div class="sidebar-header-status-tags">
+        <span class="badge-pill-state bp-proceso">En Proceso</span>
+        <span class="badge-pill-state bp-urgente">Urgente</span>
+        <span class="badge-pill-state bp-atencion">Frecuente</span>
+      </div>
+    </div>
+
+    <div class="sidebar-wireframe-image">
+      <div class="cross-lines"></div>
+    </div>
+
+    <div class="sidebar-meta-section">
+      <div class="meta-row">
+        <span class="entry-label">Información del Ciudadano:</span>
+        <p class="entry-value">Juan Rivas (juan.rivas@email.com)</p>
+      </div>
+      <div class="meta-row">
+        <span class="entry-label">Ubicación:</span>
+        <p class="entry-value">Calle Falsa 123, Distrito Centro</p>
+      </div>
+      <div class="meta-row">
+        <span class="entry-label">Tipo de Problema:</span>
+        <p class="entry-value">Fuga de agua</p>
+      </div>
+      <div class="meta-row">
+        <span class="entry-label">Descripción:</span>
+        <p class="entry-value desc-italic">"Fuga importante en la tubería principal junto a la acera. El agua corre por la calle."</p>
+      </div>
+    </div>
+
+    <div class="sidebar-block-timeline">
+      <h4 class="block-sub-title">Timeline del Proceso</h4>
+      <ul class="process-timeline">
+        <li class="tl-node-done">
+          <span class="tl-date">2023-10-09 10:00</span>
+          <p class="tl-text">Reporte Recibido</p>
+        </li>
+        <li class="tl-node-done">
+          <span class="tl-date">2023-10-09 10:15</span>
+          <p class="tl-text">Técnico Asignado: Mario López (Cuadrilla Sur)</p>
+        </li>
+        <li class="tl-node-current">
+          <span class="tl-date">2023-10-09 11:00</span>
+          <p class="tl-text">En Sitio: Técnico evalúa daños e inicia reparación</p>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-comments-block">
+      <h4 class="block-sub-title">Comentarios Internos</h4>
+      <div class="internal-bubble">
+        <p>"Se solicitó corte temporal de válvula sectorial centro. Tiempo de reparación estimado: 1.5 horas."</p>
+      </div>
+    </div>
+
+    <div class="sidebar-attachments-block">
+      <h4 class="block-sub-title">Archivos Adjuntos</h4>
+      <div class="attachment-file-pill">foto_fuga.jpg</div>
+      <div class="attachment-file-pill">informe_valvula.pdf</div>
+    </div>
+
+    <section class="sidebar-management-form">
+      <h3 class="form-section-title">Gestión del Caso</h3>
+      
+      <div class="field-group">
+        <label>Asignar Técnico</label>
+        <select class="form-select-field">
+          <option>Mario López</option>
+          <option>Julio Carrión</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>Prioridad</label>
+        <select class="form-select-field">
+          <option>Alta</option>
+          <option>Media</option>
+          <option>Baja</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>Fecha Estimada de Resolución</label>
+        <input type="date" class="form-input-field" value="2023-10-09">
+      </div>
+
+      <div class="field-group">
+        <label>Barra de Avance</label>
+        <div class="interactive-slider-container">
+          <input type="range" min="0" max="100" value="65" class="custom-range-slider">
+          <span class="slider-percentage-indicator">65%</span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Checklist Técnico</label>
+        <div class="checklist-wrapper">
+          <label class="check-item"><input type="checkbox" checked> Inspección Inicial</label>
+          <label class="check-item"><input type="checkbox" checked> Corte de Válvula</label>
+          <label class="check-item"><input type="checkbox"> Reparación de Tubería</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Evidencias (Drag & Drop)</label>
+        <div class="drag-drop-zone-box">
+          <div class="upload-icon-mock"></div>
+          <p class="upload-text-main">Arrastre y suelte archivos aquí o haga click para subir</p>
+        </div>
+      </div>
+
+      <div class="management-actions-panel-buttons">
+        <button type="button" class="btn-side-action btn-blue-save">Guardar Cambios</button>
+        <button type="button" class="btn-side-action btn-red-escalate">Escalar Caso</button>
+        <button type="button" class="btn-side-action btn-green-resolve">Marcar Resuelto</button>
+        <button type="button" class="btn-side-action btn-grey-pdf">Generar Reporte PDF</button>
+      </div>
+    </section>
+
+  </aside>
+
+</div>

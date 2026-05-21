@@ -1,59 +1,145 @@
-# DisenoFrontendNg
+# AquaComunidad Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.10.
+Aplicación frontend del sistema **AquaComunidad**, orientada a la gestión integral de incidencias hídricas reportadas por la ciudadanía, su atención operativa y la administración de usuarios del panel interno.
 
-## Development server
+## 1. Objetivo del sistema
 
-To start a local development server, run:
+El sistema tiene como finalidad estandarizar y centralizar el ciclo de atención de incidencias relacionadas con el servicio de agua:
 
-```bash
-ng serve
+- Registrar reportes ciudadanos con información estructurada.
+- Gestionar el seguimiento técnico y operativo de cada caso.
+- Proveer visualización de indicadores para soporte de decisiones.
+- Administrar usuarios, roles y estados de acceso al sistema.
+
+## 2. Módulos principales
+
+La solución frontend se organiza en módulos funcionales según perfil y contexto de uso:
+
+- **Dashboard (Administrador):** vista de indicadores operativos, actividad reciente y resumen general.
+- **Reportes ciudadanos (Administrador):** consulta, filtrado y revisión detallada de incidencias reportadas.
+- **Atención de casos (Administrador):** gestión de estado, prioridad, asignación y trazabilidad de casos.
+- **Gestión de usuarios (Administrador):** administración de cuentas, roles y estado de usuarios.
+- **Flujo público/usuario:** inicio, registro de incidencias, consulta de reportes propios, estado del servicio y contacto.
+- **Autenticación:** acceso y control de sesión en el entorno administrativo.
+
+## 3. Estructura del proyecto
+
+### Estructura de paquetes (`src/app`)
+
+```text
+src/app/
+├── core/
+│   ├── models/                  # Tipos e interfaces del dominio
+│   └── services/                # Servicios transversales y lógica base
+├── features/
+│   ├── administrador/
+│   │   ├── atencion-casos/      # Gestión operativa de casos
+│   │   ├── dashboard/           # Resumen e indicadores del panel
+│   │   ├── gestion-usuarios/    # Administración de usuarios
+│   │   └── reportes-ciudadanos/ # Gestión y detalle de reportes
+│   ├── login/                   # Acceso al sistema
+│   ├── not-found/               # Manejo de ruta no encontrada (404)
+│   └── usuario/
+│       ├── contacto/            # Canal de contacto
+│       ├── estado-servicio/     # Estado general del servicio
+│       ├── inicio/              # Página de inicio pública
+│       ├── mis-reportes/        # Historial de reportes del ciudadano
+│       └── reportar-incidencia/ # Registro de nuevas incidencias
+├── layouts/
+│   ├── auth-layout/             # Layout para autenticación
+│   ├── dashboard-layout/        # Layout para panel administrativo
+│   └── public-layout/           # Layout para vistas públicas
+└── shared/
+    ├── auth-modal/              # Modal compartido de autenticación
+    └── components/              # Componentes reutilizables
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Archivos clave en la raíz
 
-## Code scaffolding
+- `angular.json`: configuración del workspace Angular.
+- `package.json`: scripts de ejecución, dependencias y metadatos del proyecto.
+- `tsconfig*.json`: configuración de compilación TypeScript.
+- `public/`: recursos estáticos públicos.
+- `src/`: código fuente principal de la aplicación.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 4. Stack tecnológico
+
+| Capa | Tecnología |
+|---|---|
+| Framework | Angular 21 |
+| Lenguaje | TypeScript 5.9 |
+| Interfaz | HTML + CSS (arquitectura por componentes) |
+| Enrutamiento | Angular Router |
+| Formularios | Angular Forms |
+| Programación reactiva | RxJS 7 |
+| Mapas | Leaflet |
+| Tooling | Angular CLI 21 |
+| Pruebas | Vitest + JSDOM |
+| Formato de código | Prettier |
+| Gestión de paquetes | npm |
+
+## 5. Dependencias principales
+
+### Runtime (`dependencies`)
+
+- `@angular/*`: núcleo del framework, renderizado, routing y formularios.
+- `rxjs`: composición reactiva y manejo de asincronía.
+- `leaflet`: visualización cartográfica de incidencias.
+- `@types/leaflet`: tipado TypeScript para Leaflet.
+- `tslib`: utilidades de runtime generadas por TypeScript.
+
+### Desarrollo (`devDependencies`)
+
+- `@angular/cli`, `@angular/build`, `@angular/compiler-cli`: compilación, build y utilidades de desarrollo.
+- `typescript`: compilación y validación estática de tipos.
+- `vitest`, `jsdom`: ejecución de pruebas unitarias en entorno simulado de navegador.
+- `prettier`: normalización de formato de código.
+
+## 6. Instalación y ejecución
+
+### Requisitos mínimos
+
+- **Node.js** 20 o superior
+- **npm** 10 o superior (el proyecto está configurado con `npm@11.6.0`)
+
+### Instalación de dependencias
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Ejecución en entorno de desarrollo
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+URL local por defecto: `http://localhost:4200/`
 
-To build the project run:
+### Compilación del proyecto
 
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Compilación en modo observación
 
 ```bash
-ng test
+npm run watch
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+### Ejecución de pruebas
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## 7. Comandos útiles
 
-## Additional Resources
+```bash
+# Generar un componente
+npx ng generate component nombre-componente
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+# Consultar ayuda de Angular CLI
+npx ng --help
+```

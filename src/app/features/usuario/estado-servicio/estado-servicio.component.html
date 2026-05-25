@@ -56,10 +56,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let r of reportes">
-              <td>{{ r.id }}</td>
-              <td>{{ r.zone }}</td>
+              <td>REP-{{ r.id }}</td>
+              <td>{{ r.zona }}</td>
               <td>{{ r.tipo }}</td>
-              <td><span class="status-pill">{{ r.status }}</span></td>
+              <td><span class="status-pill">{{ statusLabel(r.estado) }}</span></td>
+            </tr>
+            <tr *ngIf="!reportes.length">
+              <td colspan="4">{{ message || 'Sin reportes para mostrar.' }}</td>
             </tr>
           </tbody>
         </table>

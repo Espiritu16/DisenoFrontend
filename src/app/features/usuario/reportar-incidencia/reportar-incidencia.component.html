@@ -15,78 +15,143 @@
     </div>
   </section>
 
-  <main class="app-shell py-5 space-y-5">
-    <section class="card report-form">
-      <h2 class="form-title">Datos del reporte</h2>
+  <main class="report-main-container">
 
-      <div class="form-grid">
-        <div>
-          <label class="field-label">Distrito (Lima)</label>
-          <select class="select mt-1" [(ngModel)]="distrito">
-            <option *ngFor="let d of distritos" [value]="d">{{ d }}</option>
-          </select>
+    <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+    <div class="report-left-column">
+      <section class="card report-form">
+        <h2 class="form-title">Datos del reporte</h2>
+
+        <div class="form-grid">
+          <div>
+            <label class="field-label">Distrito (Lima)</label>
+            <select class="select mt-1" [(ngModel)]="distrito">
+              <option *ngFor="let d of distritos" [value]="d">{{ d }}</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="field-label">Tipo</label>
+            <select class="select mt-1" [(ngModel)]="tipo">
+              <option>Fuga</option>
+              <option>Baja presión</option>
+              <option>Agua turbia</option>
+              <option>Corte inesperado</option>
+            </select>
+          </div>
+
+          <div class="full">
+            <label class="field-label">Descripción</label>
+            <textarea class="input mt-1" [(ngModel)]="detail" placeholder="Describe el problema..."></textarea>
+          </div>
+
+          <div class="full">
+            <label class="field-label">Dirección</label>
+            <input
+              #direccionInput
+              class="input mt-1"
+              [(ngModel)]="direccion"
+              placeholder="Se completa automáticamente desde el mapa"
+              readonly
+              aria-readonly="true"
+            />
+            <p class="field-help">Se autocompleta al seleccionar un punto en el mapa o usar tu ubicación actual.</p>
+            <p *ngIf="resolvingAddress" class="field-pending">Buscando dirección...</p>
+          </div>
+
+          <div class="full">
+            <label class="field-label">Referencia</label>
+            <input class="input mt-1" [(ngModel)]="referencia" placeholder="Ej. Frente al colegio / al costado de..." />
+          </div>
+
+          <div class="full">
+            <label class="field-label">Adjuntar imágenes</label>
+            <div class="image-picker mt-1">
+              <input
+                #fileInput
+                class="image-picker__input"
+                type="file"
+                accept="image/*"
+                multiple
+                (change)="onFileChange($event)"
+              />
+              <button type="button" class="image-picker__button" (click)="openFilePicker()">
+                <span class="image-picker__icon" aria-hidden="true">+</span>
+                Elegir imágenes
+              </button>
+              <span class="image-picker__summary">
+                {{ selectedImages.length ? selectedImages.length + ' imagen(es) listas' : 'Puedes elegir una o varias a la vez' }}
+              </span>
+            </div>
+
+            <div class="image-preview-grid" *ngIf="selectedImages.length">
+              <article class="image-preview-card" *ngFor="let image of selectedImages">
+                <img [src]="image.previewUrl" [alt]="image.file.name" />
+                <div class="image-preview-card__meta">
+                  <span>{{ image.file.name }}</span>
+                  <small>{{ (image.file.size / 1024 / 1024).toFixed(2) }} MB</small>
+                </div>
+                <button
+                  type="button"
+                  class="image-preview-card__remove"
+                  title="Quitar imagen"
+                  aria-label="Quitar imagen"
+                  (click)="removeImage(image)"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4h8v2"></path>
+                    <path d="M19 6l-1 14H6L5 6"></path>
+                    <path d="M10 11v5"></path>
+                    <path d="M14 11v5"></path>
+                  </svg>
+                </button>
+              </article>
+            </div>
+
+            <p class="field-help">Puedes adjuntar varias imágenes de golpe o volver a elegir para agregarlas una por una. Máximo 10MB por imagen.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BOTONES DE ACCIÓN -->
+      <section class="card report-actions">
+        <button
+          class="btn-primary"
+          [class.btn-success]="submitState === 'success'"
+          type="button"
+          (click)="submit()"
+          [disabled]="submitting || !isLoggedIn"
+          [title]="!isLoggedIn ? 'Inicia sesión para enviar reportes' : 'Enviar reporte'"
+        >
+          {{
+            submitting
+              ? (submitState === 'saving' ? 'Guardando...' : 'Subiendo...')
+              : (submitState === 'success' ? 'Enviado' : 'Enviar reporte')
+          }}
+        </button>
+        <a routerLink="/mis-reportes" class="btn-secondary">Ir a seguimiento</a>
+        <p *ngIf="!isLoggedIn" class="report-message report-message--warning">Inicia sesión para habilitar el envío del reporte.</p>
+        <p *ngIf="message" class="report-message" [class.report-message--success]="submitState === 'success'">{{ message }}</p>
+      </section>
+    </div>
+
+    <!-- COLUMNA DERECHA: MAPA -->
+    <div class="report-right-column">
+      <section class="card report-map">
+        <div class="map-head">
+          <div>
+            <h3>Ubicación exacta en mapa</h3>
+            <p>Selecciona un punto en Lima para guardar latitud y longitud.</p>
+          </div>
+          <button type="button" class="btn-secondary" (click)="useCurrentLocation()">Usar mi ubicación actual</button>
         </div>
 
-        <div>
-          <label class="field-label">Tipo</label>
-          <select class="select mt-1" [(ngModel)]="tipo">
-            <option>Fuga</option>
-            <option>Baja presión</option>
-            <option>Agua turbia</option>
-            <option>Corte inesperado</option>
-          </select>
-        </div>
+        <div id="report-map" class="map-wrap mt-2" aria-label="Mapa de Lima para seleccionar ubicación"></div>
+        <p *ngIf="mapMessage" class="map-error">{{ mapMessage }}</p>
+        <p class="map-coords">Latitud: <b>{{ lat.toFixed(6) }}</b> | Longitud: <b>{{ lng.toFixed(6) }}</b></p>
+      </section>
+    </div>
 
-        <div class="full">
-          <label class="field-label">Descripción</label>
-          <textarea class="input mt-1" [(ngModel)]="detail" placeholder="Describe el problema..."></textarea>
-        </div>
-
-        <div class="full">
-          <label class="field-label">Dirección</label>
-          <input
-            #direccionInput
-            class="input mt-1"
-            [(ngModel)]="direccion"
-            placeholder="Se completa automáticamente desde el mapa"
-            readonly
-            aria-readonly="true"
-          />
-          <p class="field-help">Se autocompleta al seleccionar un punto en el mapa o usar tu ubicación actual.</p>
-          <p *ngIf="resolvingAddress" class="field-pending">Buscando dirección...</p>
-        </div>
-
-        <div class="full">
-          <label class="field-label">Referencia</label>
-          <input class="input mt-1" [(ngModel)]="referencia" placeholder="Ej. Frente al colegio / al costado de..." />
-        </div>
-
-        <div class="full">
-          <label class="field-label">Adjuntar imagen</label>
-          <input class="input mt-1" type="file" accept="image/*" (change)="onFileChange($event)" />
-          <p class="field-help" *ngIf="imageName">Imagen seleccionada: {{ imageName }}</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="card report-map">
-      <div class="map-head">
-        <div>
-          <h3>Ubicación exacta en mapa</h3>
-          <p>Selecciona un punto en Lima para guardar latitud y longitud.</p>
-        </div>
-        <button type="button" class="btn-secondary" (click)="useCurrentLocation()">Usar mi ubicación actual</button>
-      </div>
-
-      <div id="report-map" class="map-wrap mt-2" aria-label="Mapa de Lima para seleccionar ubicación"></div>
-      <p *ngIf="mapMessage" class="map-error">{{ mapMessage }}</p>
-      <p class="map-coords">Latitud: <b>{{ lat.toFixed(6) }}</b> | Longitud: <b>{{ lng.toFixed(6) }}</b></p>
-    </section>
-
-    <section class="card report-actions">
-      <button class="btn-primary" (click)="submit()">Enviar reporte</button>
-      <a routerLink="/mis-reportes" class="btn-secondary">Ir a seguimiento</a>
-      <p *ngIf="message" class="report-message">{{ message }}</p>
-    </section>
   </main>
 </div>

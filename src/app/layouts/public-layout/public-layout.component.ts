@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthModalComponent } from '../../shared/auth-modal/auth-modal.component';
+import { AuthService } from '../../core/api/auth.service';
 
 @Component({
   selector: 'app-public-layout',
@@ -21,15 +22,15 @@ import { AuthModalComponent } from '../../shared/auth-modal/auth-modal.component
 
           <nav class="site-header__nav" aria-label="Navegación principal">
             <a routerLink="/inicio" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Inicio</a>
-            <a routerLink="/estado-servicio" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Estado del servicio</a>
             <a routerLink="/reportar" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Reportar incidencia</a>
             <a routerLink="/mis-reportes" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Seguimiento</a>
             <a routerLink="/contacto" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Contacto</a>
           </nav>
 
           <div class="site-header__actions">
-            <a routerLink="/administrador/dashboard" class="btn-secondary site-header__admin">Administrador</a>
-            <button class="btn-primary site-header__login" type="button" (click)="openAuth('login')">Iniciar sesión</button>
+            <a *ngIf="auth.role === 'ADMIN' || auth.role === 'OPERADOR'" routerLink="/administrador/dashboard" class="btn-secondary site-header__admin">Administrador</a>
+            <button *ngIf="!auth.session()" class="btn-primary site-header__login" type="button" (click)="openAuth('login')">Iniciar sesión</button>
+            <button *ngIf="auth.session()" class="btn-primary site-header__login" type="button" (click)="auth.logout()">Cerrar sesión</button>
           </div>
         </div>
       </header>
@@ -44,7 +45,6 @@ import { AuthModalComponent } from '../../shared/auth-modal/auth-modal.component
           </div>
           <nav class="site-drawer__nav" aria-label="Navegación principal móvil">
             <a routerLink="/inicio" (click)="closeMobileMenu()">Inicio</a>
-            <a routerLink="/estado-servicio" (click)="closeMobileMenu()">Estado del servicio</a>
             <a routerLink="/reportar" (click)="closeMobileMenu()">Reportar incidencia</a>
             <a routerLink="/mis-reportes" (click)="closeMobileMenu()">Seguimiento</a>
             <a routerLink="/contacto" (click)="closeMobileMenu()">Contacto</a>
@@ -304,6 +304,8 @@ export class PublicLayoutComponent {
   authOpen = false;
   authView: 'login' | 'register' | 'recover' = 'login';
   isMobileMenuOpen = false;
+
+  constructor(public auth: AuthService) {}
 
   openAuth(view: 'login' | 'register' | 'recover'): void {
     this.authView = view;

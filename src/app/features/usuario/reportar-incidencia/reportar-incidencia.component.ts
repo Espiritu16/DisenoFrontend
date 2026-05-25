@@ -1,9 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import * as L from 'leaflet';
-import { MockDataService } from '../../../core/services/mock-data.service';
+import { firstValueFrom, timeout } from 'rxjs';
+import { AuthService } from '../../../core/api/auth.service';
+import { ReportesService } from '../../../core/api/reportes.service';
+import { UploadService } from '../../../core/api/upload.service';
+import { apiErrorMessage } from '../../../core/api/api-error';
+import { NotificationService } from '../../../shared/notifications/notification.service';
+
+interface SelectedImage {
+  id: string;
+  file: File;
+  previewUrl: string;
+}
+
+type SubmitState = 'idle' | 'uploading' | 'saving' | 'success' | 'error';
 
 @Component({
   selector: 'app-reportar-incidencia',
@@ -14,6 +27,7 @@ import { MockDataService } from '../../../core/services/mock-data.service';
 })
 export class ReportarIncidenciaComponent implements AfterViewInit, OnDestroy {
   @ViewChild('direccionInput') direccionInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
   distrito = 'Cercado de Lima';
   tipo = 'Fuga';
@@ -21,12 +35,16 @@ export class ReportarIncidenciaComponent implements AfterViewInit, OnDestroy {
   direccion = '';
   referencia = '';
   imageName = '';
+  imageNames: string[] = [];
+  selectedImages: SelectedImage[] = [];
 
   lat = -12.0464;
   lng = -77.0428;
   message = '';
   mapMessage = '';
   resolvingAddress = false;
+  submitting = false;
+  submitState: SubmitState = 'idle';
 
   distritos = [
     'Ancón', 'Ate', 'Barranco', 'Breña', 'Carabayllo', 'Chaclacayo', 'Chorrillos', 'Cieneguilla', 'Comas', 'Cercado de Lima',
@@ -44,14 +62,28 @@ export class ReportarIncidenciaComponent implements AfterViewInit, OnDestroy {
   private limaGeometry?: GeoJSON.Polygon | GeoJSON.MultiPolygon;
   private lastValid = { lat: this.lat, lng: this.lng };
   private reverseRequestId = 0;
+  private readonly uploadTimeoutMs = 30000;
+  private readonly reportTimeoutMs = 30000;
 
-  constructor(private mock: MockDataService, private zone: NgZone) {}
+  constructor(
+    private auth: AuthService,
+    private reportesService: ReportesService,
+    private uploadService: UploadService,
+    private notifications: NotificationService,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  get isLoggedIn(): boolean {
+    return Boolean(this.auth.token);
+  }
 
   ngAfterViewInit(): void {
     this.initMap();
   }
 
   ngOnDestroy(): void {
+    this.clearSelectedImages();
     if (this.map) {
       this.map.remove();
       this.map = undefined;
@@ -112,8 +144,41 @@ export class ReportarIncidenciaComponent implements AfterViewInit, OnDestroy {
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    this.imageName = file ? file.name : '';
+    const files = Array.from(input.files ?? []);
+    if (!files.length) return;
+
+    const validImages = files.filter((file) => {
+      if (!file.type.startsWith('image/')) {
+        this.message = 'Solo se permiten imágenes.';
+        return false;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        this.message = `La imagen ${file.name} supera 10MB.`;
+        return false;
+      }
+      return true;
+    });
+
+    this.selectedImages = [
+      ...this.selectedImages,
+      ...validImages.map((file) => ({
+        id: `${file.name}-${file.size}-${file.lastModified}-${crypto.randomUUID()}`,
+        file,
+        previewUrl: URL.createObjectURL(file)
+      }))
+    ];
+    this.syncImageNames();
+    input.value = '';
+  }
+
+  openFilePicker(): void {
+    this.fileInput?.nativeElement.click();
+  }
+
+  removeImage(image: SelectedImage): void {
+    URL.revokeObjectURL(image.previewUrl);
+    this.selectedImages = this.selectedImages.filter((item) => item.id !== image.id);
+    this.syncImageNames();
   }
 
   useCurrentLocation(): void {
@@ -125,20 +190,98 @@ export class ReportarIncidenciaComponent implements AfterViewInit, OnDestroy {
     );
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
+    if (this.submitting) {
+      return;
+    }
+    if (!this.isLoggedIn) {
+      this.message = 'Inicia sesión como ciudadano para enviar el reporte.';
+      return;
+    }
     if (!this.detail || !this.direccion) {
       this.message = 'Completa descripción y dirección.';
       return;
     }
-    if (!this.imageName) {
+    if (!this.selectedImages.length) {
       this.message = 'Adjunta una imagen del problema.';
       return;
     }
+    this.submitting = true;
+    this.updateSubmitUi('uploading', 'Subiendo evidencia...');
 
-    const payload = `${this.detail} | dir:${this.direccion} | ref:${this.referencia || '-'} | img:${this.imageName} | lat:${this.lat.toFixed(6)} lng:${this.lng.toFixed(6)}`;
-    const rep = this.mock.addReporte(this.distrito, this.tipo, payload);
-    this.message = `Reporte ${rep.id} registrado para ${this.distrito}. Ubicación guardada.`;
-    this.detail = '';
+    try {
+      console.log('📤 Iniciando envío de reporte');
+      console.log('Imágenes:', this.selectedImages.length);
+
+      const archivo = await firstValueFrom(
+        this.uploadService.subirReportes(this.selectedImages.map((image) => image.file)).pipe(
+          timeout(this.uploadTimeoutMs)
+        )
+      );
+
+      console.log('✅ Imágenes subidas:', archivo);
+
+      const fotoUrls = archivo.archivos?.map((item) => item.url) ?? [archivo.url];
+      if (!fotoUrls.length || !fotoUrls[0]) {
+        throw new Error('No se recibió la URL de las imágenes subidas. Backend respuesta: ' + JSON.stringify(archivo));
+      }
+
+      const descripcion = `${this.detail.trim()}${this.referencia.trim() ? ` | Referencia: ${this.referencia.trim()}` : ''}`;
+      this.updateSubmitUi('saving', 'Evidencia subida. Guardando reporte...');
+
+      const payload = {
+        tipo: this.tipo,
+        descripcion,
+        fotoUrl: fotoUrls[0],
+        fotoUrls,
+        lat: Number(this.lat.toFixed(7)),
+        lng: Number(this.lng.toFixed(7)),
+        direccion: this.direccion,
+        zona: this.distrito
+      };
+
+      console.log('📝 Enviando reporte con payload:', payload);
+
+      const reporte = await firstValueFrom(
+        this.reportesService.crear(payload).pipe(
+          timeout(this.reportTimeoutMs)
+        )
+      );
+
+      console.log('✅ Reporte creado exitosamente:', reporte);
+
+      this.updateSubmitUi('success', '');
+      this.notifications.showSuccess(
+        `Reporte REP-${reporte.id} enviado`,
+        `Zona: ${reporte.zona}. Puedes revisar el seguimiento cuando quieras.`
+      );
+      setTimeout(() => {
+        this.detail = '';
+        this.referencia = '';
+        this.clearSelectedImages();
+        this.updateSubmitUi('idle', '');
+      }, 2500);
+
+    } catch (error: unknown) {
+      const errorMsg = this.submitErrorMessage(error);
+      console.error('❌ Error en envío de reporte:', error);
+      console.error('Mensaje de error:', errorMsg);
+      this.updateSubmitUi('error', errorMsg);
+    } finally {
+      this.submitting = false;
+      if (this.submitState !== 'success' && this.submitState !== 'error') {
+        this.updateSubmitUi('idle', this.message);
+      }
+      this.cdr.detectChanges();
+    }
+  }
+
+  private updateSubmitUi(state: SubmitState, message?: string): void {
+    this.submitState = state;
+    if (typeof message === 'string') {
+      this.message = message;
+    }
+    this.cdr.detectChanges();
   }
 
   private async loadLimaBoundary(): Promise<void> {
@@ -235,6 +378,66 @@ export class ReportarIncidenciaComponent implements AfterViewInit, OnDestroy {
     this.direccion = value;
     const input = this.direccionInput?.nativeElement;
     if (input && input.value !== value) input.value = value;
+  }
+
+  private syncImageNames(): void {
+    this.imageNames = this.selectedImages.map((image) => image.file.name);
+    this.imageName = this.imageNames.join(', ');
+    if (this.imageNames.length) {
+      this.message = '';
+    }
+  }
+
+  private clearSelectedImages(): void {
+    this.selectedImages.forEach((image) => URL.revokeObjectURL(image.previewUrl));
+    this.selectedImages = [];
+    this.imageNames = [];
+    this.imageName = '';
+    if (this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+  }
+
+  private submitErrorMessage(error: unknown): string {
+    console.error('Error object:', error);
+
+    if (error instanceof Error && error.name === 'TimeoutError') {
+      if (this.submitState === 'uploading') {
+        return '⏱️ La subida de imágenes tardó demasiado (>30s). Revisa conexión o Cloudinary.';
+      }
+      if (this.submitState === 'saving') {
+        return '⏱️ El registro del reporte tardó demasiado (>30s). Revisa backend/API.';
+      }
+      return '⏱️ La solicitud tardó demasiado. Intenta nuevamente.';
+    }
+
+    if (error instanceof Error) {
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+        return '🔐 Sesión expirada o no válida. Inicia sesión nuevamente.';
+      }
+      if (error.message?.includes('403') || error.message?.includes('Forbidden')) {
+        return '🚫 No tienes permiso para enviar reportes. Contacta al administrador.';
+      }
+      if (error.message?.includes('404') || error.message?.includes('Not Found')) {
+        return '❌ El endpoint no existe. El backend puede no estar correctamente configurado.';
+      }
+      if (error.message?.includes('500') || error.message?.includes('Internal Server')) {
+        return '⚠️ Error en el servidor. Intenta más tarde o contacta soporte.';
+      }
+      if (error.message?.includes('No se recibió')) {
+        return `📸 ${error.message}`;
+      }
+      if (error.message) {
+        return `❌ ${error.message}`;
+      }
+    }
+
+    const apiMsg = apiErrorMessage(error);
+    if (apiMsg && apiMsg !== 'Error desconocido') {
+      return `❌ ${apiMsg}`;
+    }
+
+    return '❌ Error desconocido al enviar el reporte. Revisa la consola del navegador (F12) para más detalles.';
   }
 
   private async reverseWithNominatim(lat: number, lng: number): Promise<{ addressLine: string; district: string } | null> {

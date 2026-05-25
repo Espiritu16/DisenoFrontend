@@ -1,70 +1,199 @@
-<div class="tracking-design">
-  <section class="tracking-hero">
-    <div class="app-shell tracking-hero__grid">
-      <div>
-        <p class="tracking-kicker">Seguimiento ciudadano</p>
-        <h1>MIS<br />REPORTES</h1>
-        <p class="tracking-copy">Consulta el estado de tus incidencias y revisa el detalle de atención de cada caso.</p>
-      </div>
-      <div class="tracking-metrics">
-        <article class="metric-card"><span>Total</span><strong>{{ total }}</strong></article>
-        <article class="metric-card"><span>Pendientes</span><strong>{{ pendientes }}</strong></article>
-        <article class="metric-card"><span>En proceso</span><strong>{{ enProceso }}</strong></article>
-        <article class="metric-card"><span>Resueltos</span><strong>{{ resueltos }}</strong></article>
-      </div>
+<div class="mis-reportes-container">
+
+  <!-- HERO SECTION -->
+  <section class="reportes-hero">
+    <div class="hero-content">
+      <p class="hero-kicker">Seguimiento ciudadano</p>
+      <h1 class="hero-title">MIS REPORTES</h1>
+      <p class="hero-description">Consulta el estado de tus incidencias y revisa el detalle de atención de cada caso.</p>
     </div>
   </section>
 
-  <main class="app-shell py-5 space-y-5">
-    <section class="card toolbar">
-      <div class="filter-block">
-        <label>Filtrar por estado</label>
-        <select class="select" [(ngModel)]="statusFilter">
-          <option>Todos</option>
-          <option>Pendiente</option>
-          <option>En proceso</option>
-          <option>Resuelto</option>
+  <!-- METRICS CARDS -->
+  <div class="metrics-section">
+    <div class="metric-card">
+      <span class="metric-label">Total</span>
+      <p class="metric-value">{{ total }}</p>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Pendientes</span>
+      <p class="metric-value">{{ pendientes }}</p>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">En proceso</span>
+      <p class="metric-value">{{ enProceso }}</p>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Resueltos</span>
+      <p class="metric-value">{{ resueltos }}</p>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="reportes-main">
+
+    <!-- TOOLBAR -->
+    <section class="toolbar-section">
+      <div class="filter-group">
+        <label class="filter-label">Filtrar por estado</label>
+        <select class="filter-select" [(ngModel)]="statusFilter" (change)="onFilterChange()">
+          <option value="Todos">Todos</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="En proceso">En proceso</option>
+          <option value="Resuelto">Resuelto</option>
         </select>
       </div>
-      <button class="btn-secondary" (click)="refresh()">Actualizar</button>
+      <button class="btn-refresh" (click)="refresh()" [disabled]="loading">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+        </svg>
+        {{ loading ? 'Cargando...' : 'Actualizar' }}
+      </button>
     </section>
 
-    <div class="grid lg:grid-cols-2 gap-4">
-      <section class="card table-wrap">
-        <table class="table">
-          <thead>
-            <tr><th>ID</th><th>Zona</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let r of filtered; trackBy: trackById">
-              <td>{{ r.id }}</td>
-              <td>{{ r.zone }}</td>
-              <td>{{ r.tipo }}</td>
-              <td><span class="status-pill">{{ r.status }}</span></td>
-              <td class="action-cell">
-                <button class="btn-secondary" (click)="select(r)">Ver</button>
-                <button class="btn-secondary" (click)="retry(r)">Reintentar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- TWO COLUMN LAYOUT -->
+    <div class="reportes-grid">
+
+      <!-- LEFT: TABLA DE REPORTES -->
+      <section class="reportes-table-card">
+        <h2 class="section-title">Mis reportes</h2>
+
+        <!-- TABLE -->
+        <div class="table-wrapper" *ngIf="filtered.length > 0; else noReportes">
+          <table class="reportes-table">
+            <thead>
+              <tr class="table-header">
+                <th class="col-id">ID</th>
+                <th class="col-tipo">TIPO</th>
+                <th class="col-zona">ZONA</th>
+                <th class="col-estado">ESTADO</th>
+                <th class="col-accion">ACCIÓN</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let reporte of filtered; trackBy: trackById"
+                  class="table-row"
+                  [class.row-active]="selected?.id === reporte.id"
+                  (click)="select(reporte)">
+                <td class="col-id"><strong>REP-{{ reporte.id }}</strong></td>
+                <td class="col-tipo">{{ reporte.tipo }}</td>
+                <td class="col-zona">{{ reporte.zona }}</td>
+                <td class="col-estado">
+                  <span class="estado-badge" [ngClass]="'estado-' + (reporte.estado | lowercase)">
+                    {{ statusLabel(reporte.estado) }}
+                  </span>
+                </td>
+                <td class="col-accion">
+                  <button class="btn-ver" title="Ver detalle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noReportes>
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="13" x2="12" y2="17"></line>
+              <line x1="10" y1="15" x2="14" y2="15"></line>
+            </svg>
+            <p class="empty-message">No hay reportes que mostrar</p>
+          </div>
+        </ng-template>
       </section>
 
-      <section class="card detail-card">
-        <h2>Detalle del reporte</h2>
-        <ng-container *ngIf="selected; else empty">
-          <p><b>ID:</b> {{ selected.id }}</p>
-          <p><b>Fecha:</b> {{ selected.createdAt }}</p>
-          <p><b>Zona:</b> {{ selected.zone }}</p>
-          <p><b>Tipo:</b> {{ selected.tipo }}</p>
-          <p><b>Estado:</b> {{ selected.status }}</p>
-          <p><b>Detalle:</b> {{ selected.detail }}</p>
-        </ng-container>
-        <ng-template #empty>
-          <p class="empty-text">Selecciona un reporte para ver su detalle.</p>
-        </ng-template>
-        <p *ngIf="message" class="feedback">{{ message }}</p>
+      <!-- RIGHT: DETALLE DEL REPORTE -->
+      <section class="reportes-detail-card" *ngIf="selected; else selectPrompt">
+        <div class="detail-header">
+          <h2 class="detail-title">REP-{{ selected.id }}</h2>
+          <span class="detail-status" [ngClass]="'estado-' + (selected.estado | lowercase)">
+            {{ statusLabel(selected.estado) }}
+          </span>
+        </div>
+
+        <div class="detail-content">
+
+          <!-- INFO BÁSICA -->
+          <div class="info-section">
+            <h3 class="info-title">Información del reporte</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Fecha</span>
+                <p class="info-value">{{ formatDate(selected.fechaCreacion) }}</p>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Tipo</span>
+                <p class="info-value">{{ selected.tipo }}</p>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Zona</span>
+                <p class="info-value">{{ selected.zona }}</p>
+              </div>
+              <div class="info-item full">
+                <span class="info-label">Dirección</span>
+                <p class="info-value">{{ selected.direccion }}</p>
+              </div>
+              <div class="info-item full">
+                <span class="info-label">Descripción</span>
+                <p class="info-value">{{ selected.descripcion }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- EVIDENCIA -->
+          <div class="evidence-section" *ngIf="selected.fotoUrl">
+            <h3 class="info-title">Evidencia fotográfica</h3>
+            <a [href]="selected.fotoUrl" target="_blank" rel="noopener noreferrer" class="evidence-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Ver foto
+            </a>
+          </div>
+
+          <!-- TRAZABILIDAD -->
+          <div class="trazabilidad-section" *ngIf="trazabilidad">
+            <h3 class="info-title">Historial de cambios</h3>
+            <div class="timeline">
+              <div class="timeline-item" *ngFor="let evento of trazabilidad.historialReporte">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <p class="timeline-text">{{ evento.estadoAnterior || 'Nuevo' }} → {{ evento.estadoNuevo }}</p>
+                  <span class="timeline-date">{{ formatDate(evento.fechaCambio) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <p *ngIf="message" class="feedback-message">{{ message }}</p>
       </section>
+
+      <!-- EMPTY STATE -->
+      <ng-template #selectPrompt>
+        <section class="reportes-detail-card empty">
+          <div class="empty-prompt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="12 3 20.123 5.236 16.865 13.33 22.291 17.107 13.484 18.149 14.894 27"></polyline>
+              <polyline points="12 3 3.877 5.236 7.135 13.33 1.709 17.107 10.516 18.149 9.106 27"></polyline>
+            </svg>
+            <p class="prompt-text">Selecciona un reporte para ver su detalle</p>
+          </div>
+        </section>
+      </ng-template>
+
     </div>
+
   </main>
+
 </div>

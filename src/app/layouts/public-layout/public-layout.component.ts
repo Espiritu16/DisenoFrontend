@@ -118,9 +118,14 @@ import { AuthService } from '../../core/api/auth.service';
       }
 
       .site-header__inner {
+        width: 100%;
+        max-width: none;
         min-height: 68px;
-        display: flex;
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
         align-items: center;
+        margin: 0;
+        padding: 0.85rem clamp(1.25rem, 3.5vw, 4rem);
         gap: 0.85rem;
       }
 
@@ -138,11 +143,11 @@ import { AuthService } from '../../core/api/auth.service';
       }
 
       .site-header__nav {
-        margin-left: auto;
         display: flex;
         align-items: center;
         gap: 0.35rem;
         font-size: 0.875rem;
+        justify-self: center;
       }
 
       .site-header__login {
@@ -150,10 +155,10 @@ import { AuthService } from '../../core/api/auth.service';
       }
 
       .site-header__actions {
-        margin-left: 0.55rem;
         display: flex;
         align-items: center;
         gap: 0.45rem;
+        justify-self: end;
       }
 
       .site-header__admin {
@@ -252,8 +257,10 @@ import { AuthService } from '../../core/api/auth.service';
       @media (max-width: 960px) {
         .site-header__inner {
           min-height: 58px;
+          display: flex;
           flex-wrap: wrap;
           row-gap: 0.55rem;
+          padding: 0.7rem 0.9rem;
         }
 
         .site-header__menu-btn {

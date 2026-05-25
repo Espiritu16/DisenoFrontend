@@ -1,0 +1,24 @@
+<section class="notification-center" aria-live="polite" aria-atomic="true">
+  <article
+    *ngFor="let notification of notifications.notifications()"
+    class="notification-item"
+    [class.notification-item--success]="notification.kind === 'success'"
+    [class.notification-item--error]="notification.kind === 'error'"
+    [class.notification-item--warning]="notification.kind === 'warning'"
+    [class.notification-item--info]="notification.kind === 'info'"
+  >
+    <div class="notification-item__content">
+      <strong>{{ notification.title }}</strong>
+      <p *ngIf="notification.message">{{ notification.message }}</p>
+    </div>
+    <button
+      type="button"
+      class="notification-item__close"
+      (click)="close(notification.id)"
+      aria-label="Cerrar notificación"
+      title="Cerrar"
+    >
+      ×
+    </button>
+  </article>
+</section>

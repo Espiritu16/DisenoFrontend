@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/api/auth.service';
+import { apiErrorMessage } from '../../core/api/api-error';
 
 @Component({
   selector: 'app-auth-modal',
@@ -46,6 +49,9 @@ export class AuthModalComponent implements OnChanges {
   recoverConfirmPassword = '';
   showRecoverNewPassword = false;
   showRecoverConfirmPassword = false;
+  private recoveryToken = '';
+
+  constructor(private auth: AuthService, private router: Router) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['initialView']) {
@@ -86,17 +92,25 @@ export class AuthModalComponent implements OnChanges {
     }
 
     this.loginLoading = true;
-    setTimeout(() => {
-      this.loginLoading = false;
-      this.loginError = 'Ingreso simulado correcto.';
-    }, 450);
+    this.auth.login(this.normalizeEmail(this.loginEmail), this.loginPassword).subscribe({
+      next: (session) => {
+        this.loginLoading = false;
+        this.closed.emit();
+        const destino = session.rol === 'CIUDADANO' ? '/mis-reportes' : '/administrador/dashboard';
+        void this.router.navigateByUrl(destino);
+      },
+      error: (error: unknown) => {
+        this.loginLoading = false;
+        this.loginError = apiErrorMessage(error);
+      }
+    });
   }
 
   submitRegister(): void {
     this.registerError = '';
     this.registerSuccess = '';
 
-    const correo = this.buildRegisterEmail();
+    const correo = this.normalizeEmail(this.buildRegisterEmail());
     if (!this.registerData.nombre.trim() || !this.registerData.apellidos.trim() || !this.registerData.correoLocal.trim() || !this.registerData.password || !this.registerData.confirmPassword) {
       this.registerError = 'Completa todos los campos obligatorios.';
       return;
@@ -113,13 +127,23 @@ export class AuthModalComponent implements OnChanges {
     }
 
     this.registerLoading = true;
-    setTimeout(() => {
-      this.registerLoading = false;
-      this.registerSuccess = 'Cuenta creada (simulado). Ahora inicia sesión.';
-      this.modalView = 'login';
-      this.loginEmail = correo;
-      this.loginPassword = '';
-    }, 500);
+    const nombreCompleto = `${this.registerData.nombre.trim()} ${this.registerData.apellidos.trim()}`.trim();
+    this.auth.register(nombreCompleto, correo, this.registerData.password).subscribe({
+      next: () => {
+        this.registerLoading = false;
+        this.registerSuccess = 'Cuenta creada. Ahora inicia sesión.';
+        this.modalView = 'login';
+        this.loginEmail = correo;
+        this.loginPassword = '';
+      },
+      error: (error: unknown) => {
+        this.registerLoading = false;
+        const message = apiErrorMessage(error);
+        this.registerError = message === 'El correo ya esta registrado'
+          ? 'Ese correo ya está registrado. Inicia sesión o recupera tu contraseña.'
+          : message;
+      }
+    });
   }
 
   requestRecoveryCode(): void {
@@ -132,12 +156,18 @@ export class AuthModalComponent implements OnChanges {
     }
 
     this.recoverLoading = true;
-    setTimeout(() => {
-      this.recoverLoading = false;
-      this.recoverSuccess = 'Te enviamos un código al correo (simulado).';
-      this.recoverStep = 'code';
-      this.recoverCodeDigits = ['', '', '', '', '', ''];
-    }, 500);
+    this.auth.requestRecoveryCode(this.normalizeEmail(this.recoverEmail)).subscribe({
+      next: () => {
+        this.recoverLoading = false;
+        this.recoverSuccess = 'Te enviamos un código al correo.';
+        this.recoverStep = 'code';
+        this.recoverCodeDigits = ['', '', '', '', '', ''];
+      },
+      error: (error: unknown) => {
+        this.recoverLoading = false;
+        this.recoverError = apiErrorMessage(error);
+      }
+    });
   }
 
   onRecoveryCodeInput(index: number, event: Event): void {
@@ -197,7 +227,18 @@ export class AuthModalComponent implements OnChanges {
       return;
     }
 
-    this.recoverStep = 'reset';
+    this.recoverLoading = true;
+    this.auth.confirmRecoveryCode(this.normalizeEmail(this.recoverEmail), code).subscribe({
+      next: (token) => {
+        this.recoveryToken = token;
+        this.recoverLoading = false;
+        this.recoverStep = 'reset';
+      },
+      error: (error: unknown) => {
+        this.recoverLoading = false;
+        this.recoverError = apiErrorMessage(error);
+      }
+    });
   }
 
   confirmPasswordReset(): void {
@@ -220,12 +261,18 @@ export class AuthModalComponent implements OnChanges {
     }
 
     this.recoverLoading = true;
-    setTimeout(() => {
-      this.recoverLoading = false;
-      this.recoverStep = 'done';
-      this.recoverSuccess = 'Contraseña actualizada (simulado).';
-      this.loginPassword = '';
-    }, 500);
+    this.auth.resetPassword(this.normalizeEmail(this.recoverEmail), this.recoveryToken, this.recoverNewPassword, this.recoverConfirmPassword).subscribe({
+      next: () => {
+        this.recoverLoading = false;
+        this.recoverStep = 'done';
+        this.recoverSuccess = 'Contraseña actualizada.';
+        this.loginPassword = '';
+      },
+      error: (error: unknown) => {
+        this.recoverLoading = false;
+        this.recoverError = apiErrorMessage(error);
+      }
+    });
   }
 
   private clearTransientMessages(): void {
@@ -237,6 +284,10 @@ export class AuthModalComponent implements OnChanges {
   }
 
   private buildRegisterEmail(): string {
-    return `${this.registerData.correoLocal.trim().toLowerCase()}@${this.registerData.correoDominio}`;
+    return `${this.registerData.correoLocal.trim()}@${this.registerData.correoDominio}`;
+  }
+
+  private normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
   }
 }

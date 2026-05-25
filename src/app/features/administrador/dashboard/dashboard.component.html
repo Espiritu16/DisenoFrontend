@@ -1,170 +1,188 @@
-<div class="dashboard-viewport-grid">
+<div class="dashboard-container">
 
-  <main class="dashboard-main-content">
-    
-    <section class="kpi-metrics-row-grid">
-      <div class="kpi-panel-box box-blue">
-        <span class="kpi-box-title">Casos Activos</span>
-        <p class="kpi-box-value">125</p>
-        <span class="kpi-box-subtrend text-up">+5.1%/sem</span>
-      </div>
-      <div class="kpi-panel-box box-blue">
-        <span class="kpi-box-title">Reportes Nuevos</span>
-        <p class="kpi-box-value">45</p>
-        <span class="kpi-box-subtrend text-up">+12% esta semana</span>
-      </div>
-      <div class="kpi-panel-box box-blue">
-        <span class="kpi-box-title">Casos en Espera</span>
-        <p class="kpi-box-value">30</p>
-        <span class="kpi-box-subtrend text-down">-2% ayer</span>
-      </div>
-      <div class="kpi-panel-box box-red">
-        <span class="kpi-box-title">Casos Críticos</span>
-        <p class="kpi-box-value value-danger">12</p>
-        <span class="kpi-box-subtrend text-alert-red">+2 hoy</span>
-      </div>
-      <div class="kpi-panel-box box-blue">
-        <span class="kpi-box-title">Tiempo Prom. Resolución</span>
-        <p class="kpi-box-value">2.5h</p>
-        <span class="kpi-box-subtrend text-down">-0.3h</span>
-      </div>
-      <div class="kpi-panel-box box-blue">
-        <span class="kpi-box-title">Equipos Disponibles</span>
-        <p class="kpi-box-value">18</p>
-        <span class="kpi-box-subtrend text-neutral">Todos activos</span>
-      </div>
-    </section>
+  <!-- HEADER TITLE -->
+  <section class="dashboard-header">
+    <h1 class="dashboard-title">Resumen Operativo</h1>
+    <p class="dashboard-subtitle">Monitoreo en tiempo real del sistema de AQUACOMUNIDAD</p>
+  </section>
 
-    <section class="dashboard-chart-card block-massive">
-      <h3 class="chart-card-title">Actividad de Incidencias</h3>
-      <div class="wireframe-graphic-placeholder large-placeholder">
-        <div class="cross-diagonal-lines"></div>
-      </div>
-    </section>
+  <!-- KPI METRICS -->
+  <section class="kpi-metrics-grid">
 
-    <section class="dashboard-subcharts-2x2">
-      <div class="dashboard-chart-card">
-        <h3 class="chart-card-title">Heatmap de Distritos</h3>
-        <div class="wireframe-graphic-placeholder sm-placeholder">
-          <div class="cross-diagonal-lines"></div>
-        </div>
+    <!-- KPI 1: Casos Activos -->
+    <div class="kpi-card kpi-red">
+      <div class="kpi-icon-box icon-red">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+        </svg>
       </div>
-      <div class="dashboard-chart-card">
-        <h3 class="chart-card-title">Estados de Casos</h3>
-        <div class="wireframe-graphic-placeholder sm-placeholder">
-          <div class="cross-diagonal-lines"></div>
-        </div>
-      </div>
-      <div class="dashboard-chart-card">
-        <h3 class="chart-card-title">Tendencias de Incidencias</h3>
-        <div class="wireframe-graphic-placeholder sm-placeholder">
-          <div class="cross-diagonal-lines"></div>
-        </div>
-      </div>
-      <div class="dashboard-chart-card">
-        <h3 class="chart-card-title">Rendimiento Operativo</h3>
-        <div class="wireframe-graphic-placeholder sm-placeholder">
-          <div class="cross-diagonal-lines"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="dashboard-chart-card block-massive">
-      <h3 class="chart-card-title">Mapa Inteligente en Tiempo Real</h3>
-      <div class="dashboard-map-embed-mock">
-        <div class="map-street-line path-1"></div>
-        <div class="map-street-line path-2"></div>
-        <div class="map-green-zone-mock"></div>
-      </div>
-    </section>
-
-  </main>
-
-  <aside class="dashboard-side-analytics-bar">
-    
-    <div class="side-analytics-block">
-      <h4 class="side-block-heading">Distritos con Más Incidencias</h4>
-      <div class="ranking-progress-list">
-        <div class="ranking-item">
-          <div class="ranking-label-row"><span>Distrito Central</span><span class="ranking-count">23</span></div>
-          <div class="ranking-progress-bar"><div class="bar-fill" style="width: 85%;"></div></div>
-        </div>
-        <div class="ranking-item">
-          <div class="ranking-label-row"><span>Zona Industrial</span><span class="ranking-count">18</span></div>
-          <div class="ranking-progress-bar"><div class="bar-fill" style="width: 65%;"></div></div>
-        </div>
-        <div class="ranking-item">
-          <div class="ranking-label-row"><span>Barrio Residencial</span><span class="ranking-count">12</span></div>
-          <div class="ranking-progress-bar"><div class="bar-fill" style="width: 45%;"></div></div>
+      <div class="kpi-content">
+        <span class="kpi-label">Casos Activos</span>
+        <p class="kpi-value">142</p>
+        <div class="kpi-trend trend-down">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/>
+          </svg>
+          <span>-12%</span>
         </div>
       </div>
     </div>
 
-    <div class="side-analytics-block">
-      <h4 class="side-block-heading">Casos Prioritarios</h4>
-      <ul class="priority-bullet-list">
-        <li class="prio-red-node">Fuga Mayor - Calle 123</li>
-        <li class="prio-orange-node">Baja Presión - Sector A</li>
-        <li class="prio-orange-node">Reporte de Calidad - Zona B</li>
-      </ul>
-    </div>
-
-    <div class="side-analytics-block">
-      <h4 class="side-block-heading">Técnicos Activos</h4>
-      <div class="technicians-status-stack">
-        <div class="tech-row-status">
-          <div class="avatar-mock-initials">JR</div>
-          <div class="tech-text-meta"><span>Juan Rivas</span><p class="status-lbl">En ruta</p></div>
-        </div>
-        <div class="tech-row-status">
-          <div class="avatar-mock-initials">ML</div>
-          <div class="tech-text-meta"><span>Mario López</span><p class="status-lbl">En sitio</p></div>
-        </div>
-        <div class="tech-row-status">
-          <div class="avatar-mock-initials">CP</div>
-          <div class="tech-text-meta"><span>Carlos Páez</span><p class="status-lbl">Disponible</p></div>
-        </div>
+    <!-- KPI 2: Reportes Nuevos -->
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-icon-box icon-blue">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z"/>
+        </svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Reportes Nuevos</span>
+        <p class="kpi-value">38</p>
+        <div class="kpi-meta">Hoy</div>
       </div>
     </div>
 
-    <div class="side-analytics-block">
-      <h4 class="side-block-heading">Alertas del Sistema</h4>
-      <div class="system-logs-alerts">
-        <div class="log-alert-item marker-warn">Servidor de datos con alta carga</div>
-        <div class="log-alert-item marker-info">Actualización de sistema pendiente</div>
+    <!-- KPI 3: Casos en Espera -->
+    <div class="kpi-card kpi-gray">
+      <div class="kpi-icon-box icon-gray">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+        </svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Casos en Espera</span>
+        <p class="kpi-value">24</p>
+        <div class="kpi-meta">Actualizado</div>
       </div>
     </div>
 
-    <div class="side-analytics-block">
-      <h4 class="side-block-heading">Actividad Reciente</h4>
-      <div class="recent-activity-timeline-mini">
-        <div class="timeline-mini-step">
-          <span class="actor-name">Operador 1</span>
-          <p class="action-desc">Cambió caso #1041 a <span class="lbl-inline-process">En proceso</span></p>
-          <span class="time-stamp-label">Hace 5 minutos</span>
-        </div>
-        <div class="timeline-mini-step">
-          <span class="actor-name">Ciudadano X</span>
-          <p class="action-desc">Creó reporte de fuga <span class="lbl-inline-new">Nuevo</span></p>
-          <span class="time-stamp-label">Hace 12 minutos</span>
-        </div>
-        <div class="timeline-mini-step">
-          <span class="actor-name">Admin Name</span>
-          <p class="action-desc">Asignó técnico a caso #1039 <span class="lbl-inline-process">En proceso</span></p>
-          <span class="time-stamp-label">Hace 17 minutos</span>
-        </div>
+    <!-- KPI 4: Casos por Asignar -->
+    <div class="kpi-card kpi-danger">
+      <div class="kpi-icon-box icon-danger">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+        </svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Casos por Asignar</span>
+        <p class="kpi-value">56</p>
+        <div class="kpi-meta priority-tag">Prioridad</div>
       </div>
     </div>
 
-    <div class="side-analytics-block block-ai-predictive">
-      <h4 class="side-block-heading text-ai-gradient">IA y Analítica Avanzada</h4>
-      <div class="ai-metrics-flat-list">
-        <div class="ai-flat-row"><span>Predicción de Incidencias</span><span class="ai-badge-status green-light">Baja</span></div>
-        <div class="ai-flat-row"><span>Distritos con Riesgo Alto</span><span class="ai-badge-status red-light">2</span></div>
-        <div class="ai-flat-row"><span>Eficiencia Operativa</span><span class="ai-val-bold">93%</span></div>
-      </div>
-    </div>
+  </section>
 
-  </aside>
+  <!-- MAIN CONTENT GRID -->
+  <div class="dashboard-content-grid">
+
+    <!-- LEFT COLUMN: CHARTS -->
+    <main class="dashboard-main-area">
+
+      <!-- CHART 1: Actividad Reciente -->
+      <section class="dashboard-card chart-card">
+        <div class="card-header">
+          <h2 class="card-title">Actividad Reciente de Reportes</h2>
+          <a href="#" class="card-link">Ver reporte completo →</a>
+        </div>
+
+        <div class="chart-container">
+          <div class="bar-chart">
+            <div class="bar-wrapper">
+              <div class="bar" style="height: 45%;"></div>
+              <span class="bar-label">Lun</span>
+            </div>
+            <div class="bar-wrapper">
+              <div class="bar" style="height: 60%;"></div>
+              <span class="bar-label">Mar</span>
+            </div>
+            <div class="bar-wrapper">
+              <div class="bar" style="height: 75%;"></div>
+              <span class="bar-label">Mié</span>
+            </div>
+            <div class="bar-wrapper">
+              <div class="bar bar-highlight" style="height: 95%;"></div>
+              <span class="bar-label">Jue</span>
+            </div>
+            <div class="bar-wrapper">
+              <div class="bar" style="height: 50%;"></div>
+              <span class="bar-label">Vie</span>
+            </div>
+            <div class="bar-wrapper">
+              <div class="bar" style="height: 35%;"></div>
+              <span class="bar-label">Sáb</span>
+            </div>
+            <div class="bar-wrapper">
+              <div class="bar" style="height: 55%;"></div>
+              <span class="bar-label">Hoy</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT COLUMN: SIDEBAR -->
+    <aside class="dashboard-sidebar">
+
+      <!-- REPORTES POR DISTRITO -->
+      <section class="dashboard-card">
+        <h2 class="card-title">Reportes por Distrito</h2>
+
+        <div class="district-list">
+          <div class="district-item">
+            <div class="district-header">
+              <span class="district-name">San Borja</span>
+              <span class="district-count">124</span>
+            </div>
+            <div class="district-bar">
+              <div class="bar-progress" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="district-item">
+            <div class="district-header">
+              <span class="district-name">Miraflores</span>
+              <span class="district-count">98</span>
+            </div>
+            <div class="district-bar">
+              <div class="bar-progress" style="width: 79%;"></div>
+            </div>
+          </div>
+
+          <div class="district-item">
+            <div class="district-header">
+              <span class="district-name">Surco</span>
+              <span class="district-count">76</span>
+            </div>
+            <div class="district-bar">
+              <div class="bar-progress" style="width: 61%;"></div>
+            </div>
+          </div>
+
+          <div class="district-item">
+            <div class="district-header">
+              <span class="district-name">La Molina</span>
+              <span class="district-count">45</span>
+            </div>
+            <div class="district-bar">
+              <div class="bar-progress" style="width: 36%;"></div>
+            </div>
+          </div>
+
+          <div class="district-item">
+            <div class="district-header">
+              <span class="district-name">San Isidro</span>
+              <span class="district-count">32</span>
+            </div>
+            <div class="district-bar">
+              <div class="bar-progress" style="width: 26%;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+  </div>
 
 </div>

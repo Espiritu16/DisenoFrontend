@@ -21,15 +21,6 @@ export class InicioComponent {
         'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=900&q=80'
     },
     {
-      title: 'Monitorea el servicio',
-      text: 'Consulta alertas comunitarias, zonas afectadas y tiempos estimados de atención.',
-      cta: 'Ver estado',
-      route: '/estado-servicio',
-      badge: 'Información en vivo',
-      image:
-        'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=900&q=80'
-    },
-    {
       title: 'Sigue tus casos',
       text: 'Revisa el avance de tus reportes y mantén trazabilidad desde el registro hasta el cierre.',
       cta: 'Ir a seguimiento',

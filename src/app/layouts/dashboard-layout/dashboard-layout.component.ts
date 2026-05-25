@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../core/api/auth.service';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -41,7 +42,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
             <span class="material-symbols-outlined">home</span>
             <span>Ir a inicio</span>
           </a>
-          <a routerLink="/inicio" (click)="closeMenuOnMobile()">
+          <a routerLink="/inicio" (click)="auth.logout(); closeMenuOnMobile()">
             <span class="material-symbols-outlined">logout</span>
             <span>Cerrar sesión</span>
           </a>
@@ -53,7 +54,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       <div class="admin-main">
         <header class="admin-topbar">
           <button class="menu-btn" (click)="menuOpen = !menuOpen" aria-label="Abrir menú">☰</button>
-          <span>Administrador</span>
+          <span>{{ auth.session()?.correo || 'Administrador' }}</span>
         </header>
 
         <main class="admin-content">
@@ -108,6 +109,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 export class DashboardLayoutComponent {
   menuOpen = false;
+
+  constructor(public auth: AuthService) {}
 
   closeMenuOnMobile(): void {
     if (typeof window !== 'undefined' && window.matchMedia('(max-width: 960px)').matches) {

@@ -1,0 +1,129 @@
+<div class="gestion-usuarios-wrapper">
+
+  <!-- HEADER CON BÚSQUEDA Y NOTIFICACIONES -->
+  <header class="top-header-bar">
+    <div class="search-input-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input type="text" class="search-usuarios-input" placeholder="Buscar usuarios..." [(ngModel)]="searchTerm">
+    </div>
+    <div class="header-right-actions">
+      <button class="header-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+      </button>
+      <button class="header-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="1"></circle>
+          <circle cx="19" cy="12" r="1"></circle>
+          <circle cx="5" cy="12" r="1"></circle>
+        </svg>
+      </button>
+      <div class="user-avatar-circle">AD</div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="usuarios-main-content">
+
+    <!-- TÍTULO Y DESCRIPCIÓN -->
+    <section class="section-header">
+      <div class="header-title-group">
+        <h1 class="page-main-title">Gestión de usuarios</h1>
+        <p class="page-subtitle">Administra accesos y roles del sistema.</p>
+      </div>
+      <button class="btn-nuevo-usuario" type="button" (click)="onNuevoUsuario()">
+        <span class="plus-icon">+</span>
+        Nuevo usuario
+      </button>
+    </section>
+
+    <!-- FILTROS Y TABLA -->
+    <section class="usuarios-table-section">
+
+      <!-- FILTROS DE ROLES -->
+      <div class="filter-tabs-bar">
+        <button class="filter-tab-btn active">Todos los roles</button>
+        <button class="filter-tab-btn">Cualquier estado</button>
+      </div>
+
+      <!-- INFORMACIÓN DE PAGINACIÓN Y TABLA -->
+      <div class="table-container">
+
+        <!-- HEADER CON INFORMACIÓN -->
+        <div class="table-info-header">
+          <span class="pagination-info" *ngIf="!loading">Mostrando {{ usuariosFiltrados.length }} de {{ usuarios.length }} usuarios</span>
+          <span class="pagination-info" *ngIf="loading">Cargando usuarios...</span>
+        </div>
+
+        <p class="error-message" *ngIf="error">{{ error }}</p>
+
+        <!-- TABLA DE USUARIOS -->
+        <table class="usuarios-table">
+          <thead>
+            <tr class="table-header-row">
+              <th class="col-nombre">NOMBRE</th>
+              <th class="col-correo">CORREO</th>
+              <th class="col-rol">ROL</th>
+              <th class="col-estado">ESTADO</th>
+              <th class="col-fecha">FECHA DE ALTA</th>
+              <th class="col-acciones">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-data-row" *ngFor="let usuario of usuariosFiltrados">
+              <td class="col-nombre">
+                <div class="user-cell-content">
+                  <span class="user-avatar">{{ usuario.avatar }}</span>
+                  <span class="user-name">{{ usuario.nombre }}</span>
+                </div>
+              </td>
+              <td class="col-correo">{{ usuario.correo }}</td>
+              <td class="col-rol">
+                <span class="role-badge" [ngClass]="getRoleClass(usuario.rol)">{{ roleLabel(usuario.rol) }}</span>
+              </td>
+              <td class="col-estado">
+                <span class="status-indicator" [ngClass]="getStatusClass(usuario.estado)"></span>
+                <span class="status-text">{{ statusLabel(usuario.estado) }}</span>
+              </td>
+              <td class="col-fecha">-</td>
+              <td class="col-acciones">
+                <button class="action-btn" type="button" title="Ver detalles" (click)="onVerDetalles(usuario)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+                <button class="action-btn" type="button" title="Activar/Inactivar" (click)="onEditar(usuario)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr class="table-data-row" *ngIf="!loading && usuariosFiltrados.length === 0">
+              <td class="col-nombre" colspan="6">No hay usuarios para mostrar.</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <!-- PAGINACIÓN -->
+      <div class="pagination-footer">
+        <button class="pagination-btn pagination-arrow">← Anterior</button>
+        <button class="pagination-btn pagination-num active">1</button>
+        <button class="pagination-btn pagination-num">2</button>
+        <button class="pagination-btn pagination-num">3</button>
+        <button class="pagination-btn pagination-arrow">Siguiente →</button>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

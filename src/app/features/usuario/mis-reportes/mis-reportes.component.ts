@@ -1,37 +1,96 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ReportePoblador } from '../../../core/models/app-models';
-import { MockDataService } from '../../../core/services/mock-data.service';
+import { DetalleTrazabilidadReporte, ReporteResponse } from '../../../core/api/api-models';
+import { formatDateTime, reportStatusFromLabel, reportStatusLabel } from '../../../core/api/api-mappers';
+import { apiErrorMessage } from '../../../core/api/api-error';
+import { ReportesService } from '../../../core/api/reportes.service';
 
 @Component({
   selector: 'app-mis-reportes',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './mis-reportes.component.html',
-  styleUrl: './mis-reportes.component.css'
+  styleUrl: './mis-reportes.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MisReportesComponent {
+export class MisReportesComponent implements OnInit {
   statusFilter = 'Todos';
-  selected?: ReportePoblador;
+  selected?: ReporteResponse;
+  trazabilidad?: DetalleTrazabilidadReporte;
   message = '';
-  reportes: ReportePoblador[] = [];
+  loading = false;
+  reportes: ReporteResponse[] = [];
 
-  constructor(private mock: MockDataService) {
-    this.reportes = this.mock.getReportes();
+  constructor(private reportesService: ReportesService, private cdr: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    this.refresh();
   }
 
   get total(): number { return this.reportes.length; }
-  get pendientes(): number { return this.reportes.filter((r) => r.status === 'Pendiente').length; }
-  get enProceso(): number { return this.reportes.filter((r) => r.status === 'En proceso').length; }
-  get resueltos(): number { return this.reportes.filter((r) => r.status === 'Resuelto').length; }
+  get pendientes(): number { return this.reportes.filter((r) => r.estado === 'PENDIENTE').length; }
+  get enProceso(): number { return this.reportes.filter((r) => r.estado === 'EN_PROCESO').length; }
+  get resueltos(): number { return this.reportes.filter((r) => r.estado === 'RESUELTO').length; }
 
-  get filtered(): ReportePoblador[] {
-    return this.statusFilter === 'Todos' ? this.reportes : this.reportes.filter((r: ReportePoblador) => r.status === this.statusFilter);
+  get filtered(): ReporteResponse[] {
+    if (!this.reportes || this.reportes.length === 0) {
+      return [];
+    }
+
+    if (this.statusFilter === 'Todos') {
+      return this.reportes;
+    }
+
+    const estado = reportStatusFromLabel(this.statusFilter);
+    return estado ? this.reportes.filter((r) => r.estado === estado) : this.reportes;
   }
 
-  select(r: ReportePoblador): void { this.selected = r; }
-  retry(r: ReportePoblador): void { this.message = `Se reenvió ${r.id} (simulado).`; }
-  refresh(): void { this.reportes = this.mock.getReportes(); this.message = 'Listado actualizado.'; }
-  trackById(_: number, r: ReportePoblador): string { return r.id; }
+  onFilterChange(): void {
+    this.selected = undefined;
+    this.trazabilidad = undefined;
+    this.cdr.markForCheck();
+  }
+
+  select(r: ReporteResponse): void {
+    this.selected = r;
+    this.trazabilidad = undefined;
+    this.reportesService.trazabilidad(r.id).subscribe({
+      next: (data) => {
+        this.trazabilidad = data;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.trazabilidad = undefined;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  refresh(): void {
+    this.loading = true;
+    this.message = '';
+    this.reportesService.listarMisReportes().subscribe({
+      next: (reportes) => {
+        this.reportes = reportes;
+        this.statusFilter = 'Todos';
+        this.selected = undefined;
+        this.trazabilidad = undefined;
+        this.loading = false;
+        this.cdr.markForCheck();
+        if (reportes.length > 0) {
+          this.select(reportes[0]);
+        }
+      },
+      error: (error: unknown) => {
+        this.loading = false;
+        this.message = apiErrorMessage(error);
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  statusLabel = reportStatusLabel;
+  formatDate = formatDateTime;
+  trackById(_: number, r: ReporteResponse): number { return r.id; }
 }

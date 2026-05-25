@@ -17,10 +17,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/usuario/inicio/inicio.component').then((m) => m.InicioComponent)
       },
       {
-        path: 'estado-servicio',
-        loadComponent: () => import('./features/usuario/estado-servicio/estado-servicio.component').then((m) => m.EstadoServicioComponent)
-      },
-      {
         path: 'mis-reportes',
         loadComponent: () => import('./features/usuario/mis-reportes/mis-reportes.component').then((m) => m.MisReportesComponent)
       },

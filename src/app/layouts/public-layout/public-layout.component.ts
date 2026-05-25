@@ -31,7 +31,13 @@ import { AuthService } from '../../core/api/auth.service';
           <div class="site-header__actions">
             <a *ngIf="auth.role === 'ADMIN' || auth.role === 'OPERADOR'" routerLink="/administrador/dashboard" class="btn-secondary site-header__admin">Administrador</a>
             <button *ngIf="!auth.session()" class="btn-primary site-header__login" type="button" (click)="openAuth('login')">Iniciar sesión</button>
-            <button *ngIf="auth.session()" class="btn-primary site-header__login" type="button" (click)="auth.logout()">Cerrar sesión</button>
+            <ng-container *ngIf="auth.session()">
+              <div class="site-header__user" title="Usuario conectado">
+                <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                <span class="site-header__user-name">{{ userDisplayName }}</span>
+              </div>
+              <button class="btn-primary site-header__login" type="button" (click)="auth.logout()">Cerrar sesión</button>
+            </ng-container>
           </div>
         </div>
       </header>
@@ -161,6 +167,32 @@ import { AuthService } from '../../core/api/auth.service';
         justify-self: end;
       }
 
+      .site-header__user {
+        min-width: 0;
+        max-width: 240px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.5rem 0.7rem;
+        border: 1px solid color-mix(in oklab, var(--color-brand-primary) 18%, var(--color-border));
+        border-radius: 0.5rem;
+        color: var(--color-brand-primary);
+        background: color-mix(in oklab, var(--color-brand-primary) 5%, var(--color-on-brand));
+        font-weight: 700;
+        font-size: 0.86rem;
+      }
+
+      .site-header__user .material-symbols-outlined {
+        flex: 0 0 auto;
+        font-size: 1.15rem;
+      }
+
+      .site-header__user-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .site-header__admin {
         white-space: nowrap;
         text-decoration: none;
@@ -285,6 +317,12 @@ import { AuthService } from '../../core/api/auth.service';
           font-size: 0.86rem;
         }
 
+        .site-header__user {
+          max-width: min(220px, 42vw);
+          min-height: 36px;
+          padding: 0.45rem 0.62rem;
+        }
+
         .site-footer__grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 1.4rem;
@@ -299,6 +337,11 @@ import { AuthService } from '../../core/api/auth.service';
         .site-header__login {
           font-size: 0.78rem;
           padding: 0.42rem 0.6rem;
+        }
+
+        .site-header__user {
+          max-width: min(180px, 44vw);
+          font-size: 0.78rem;
         }
 
         .site-footer__grid {
@@ -322,6 +365,11 @@ export class PublicLayoutComponent {
   isMobileMenuOpen = false;
 
   constructor(public auth: AuthService) {}
+
+  get userDisplayName(): string {
+    const session = this.auth.session();
+    return session?.nombre?.trim() || session?.correo || 'Usuario';
+  }
 
   openAuth(view: 'login' | 'register' | 'recover'): void {
     this.authView = view;

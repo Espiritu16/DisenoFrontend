@@ -62,7 +62,7 @@
         </div>
 
         <!-- TABLE -->
-        <div class="table-wrapper" *ngIf="filtered.length > 0; else noReportes">
+        <div #reportList class="table-wrapper" *ngIf="filtered.length > 0; else noReportes">
           <table class="reportes-table">
             <thead>
               <tr class="table-header">

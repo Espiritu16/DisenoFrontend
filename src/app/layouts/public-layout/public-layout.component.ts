@@ -17,7 +17,8 @@ import { AuthService } from '../../core/api/auth.service';
           </button>
 
           <a routerLink="/inicio" class="site-header__brand text-primary font-extrabold tracking-tight text-xl" (click)="closeMobileMenu()">
-            AQUACOMUNIDAD
+            <span class="material-symbols-outlined site-header__brand-icon" aria-hidden="true">water_drop</span>
+            <span>AQUACOMUNIDAD</span>
           </a>
 
           <nav class="site-header__nav" aria-label="Navegación principal">
@@ -124,8 +125,16 @@ import { AuthService } from '../../core/api/auth.service';
       }
 
       .site-header__brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
         text-decoration: none;
         white-space: nowrap;
+      }
+
+      .site-header__brand-icon {
+        font-size: 1.55rem;
+        line-height: 1;
       }
 
       .site-header__nav {

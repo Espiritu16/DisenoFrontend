@@ -14,9 +14,21 @@ export class ReportesService {
     return this.http.post<ApiResponse<ReporteResponse>>(this.base, payload).pipe(map((res) => res.data));
   }
 
-  listarTodos(estado?: ApiReportStatus): Observable<ReporteResponse[]> {
+  listarTodos(filters?: {
+    usuarioId?: number;
+    estado?: ApiReportStatus;
+    tipo?: string;
+    zona?: string;
+    fechaDesde?: string;
+    fechaHasta?: string;
+  }): Observable<ReporteResponse[]> {
     let params = new HttpParams();
-    if (estado) params = params.set('estado', estado);
+    if (filters?.usuarioId != null) params = params.set('usuarioId', String(filters.usuarioId));
+    if (filters?.estado) params = params.set('estado', filters.estado);
+    if (filters?.tipo?.trim()) params = params.set('tipo', filters.tipo.trim());
+    if (filters?.zona?.trim()) params = params.set('zona', filters.zona.trim());
+    if (filters?.fechaDesde) params = params.set('fechaDesde', filters.fechaDesde);
+    if (filters?.fechaHasta) params = params.set('fechaHasta', filters.fechaHasta);
     return this.http.get<ApiResponse<ReporteResponse[]>>(this.base, { params }).pipe(map((res) => res.data));
   }
 

@@ -1,14 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ApiCasePriority, ApiReportStatus, ReporteResponse, UsuarioResponse } from '../../../core/api/api-models';
+import { reportStatusLabel, formatDateTime } from '../../../core/api/api-mappers';
+import { apiErrorMessage } from '../../../core/api/api-error';
+import { ReportesService } from '../../../core/api/reportes.service';
+import { CasosService } from '../../../core/api/casos.service';
+import { UsuariosService } from '../../../core/api/usuarios.service';
 
-interface Reporte {
-  id: string;
+interface ReporteVista {
+  id: number;
   fecha: string;
   ciudadano: string;
   zona: string;
   tipo: string;
-  estado: 'Pendiente' | 'En proceso' | 'Resuelto';
+  estado: ApiReportStatus;
+  estadoLabel: string;
   descripcion: string;
   ubicacion: string;
   reportadoPor: string;
@@ -23,79 +30,166 @@ interface Reporte {
   styleUrl: './reportes-ciudadanos.component.css'
 })
 export class ReportesCiudadanosComponent implements OnInit {
+  reportes: ReporteVista[] = [];
+  selectedReporte: ReporteVista | null = null;
+  operadores: UsuarioResponse[] = [];
 
-  reportes: Reporte[] = [];
-  selectedReporte: Reporte | null = null;
+  loading = false;
+  empty = false;
+  error = '';
+  success = '';
+  submitting = false;
+  mostrarDerivar = false;
 
-  statusFilter = 'Todos';
-  tipoFilter = 'Todos';
-  distritoFilter = 'Todos los distritos';
-  fechaFilter = '';
+  statusFilter: '' | ApiReportStatus = '';
+  tipoFilter = '';
+  zonaFilter = '';
+  fechaDesde = '';
+  fechaHasta = '';
+
+  responsableId: number | null = null;
+  prioridad: ApiCasePriority = 'MEDIA';
+
+  constructor(
+    private reportesService: ReportesService,
+    private casosService: CasosService,
+    private usuariosService: UsuariosService
+  ) {}
 
   ngOnInit() {
+    this.loadOperadores();
     this.loadReportes();
-    if (this.reportes.length > 0) {
-      this.selectedReporte = this.reportes[0];
-    }
   }
 
-  loadReportes() {
-    this.reportes = [
-      {
-        id: 'REP-1042',
-        fecha: '12/10/2023',
-        ciudadano: 'Juan Pérez',
-        zona: 'San Isidro',
-        tipo: 'Fuga en vía',
-        estado: 'Pendiente',
-        descripcion: '"Hay una rotura de tubería en la plata frente al parque. El agua está corriendo hacia la avenida principal desde hace 2 horas."',
-        ubicacion: 'Av. Javier Prado Este 1500, San Isidro',
-        reportadoPor: 'Juan Pérez (987654321)',
-        evidencia: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="120"%3E%3Crect fill="%23999" width="300" height="120"/%3E%3C/svg%3E'
+  loadOperadores() {
+    this.usuariosService.listar().subscribe({
+      next: (usuarios) => {
+        this.operadores = usuarios.filter((u) => u.rol === 'OPERADOR' && u.estado === 'ACTIVO');
       },
-      {
-        id: 'REP-1041',
-        fecha: '12/10/2023',
-        ciudadano: 'María Gómez',
-        zona: 'Miraflores',
-        tipo: 'Baja presión',
-        estado: 'En proceso',
-        descripcion: 'El agua llega con muy baja presión a mi domicilio. He revisado todas las llaves y el problema persiste desde ayer.',
-        ubicacion: 'Calle Principal 456, Miraflores',
-        reportadoPor: 'María Gómez (987654322)',
-      },
-      {
-        id: 'REP-1040',
-        fecha: '11/10/2023',
-        ciudadano: 'Carlos Ruiz',
-        zona: 'Surco',
-        tipo: 'Corte no programado',
-        estado: 'Resuelto',
-        descripcion: 'Se produjo un corte de agua sin aviso previo en toda la manzana. Ya se ha restablecido el servicio.',
-        ubicacion: 'Av. La Paz 789, Surco',
-        reportadoPor: 'Carlos Ruiz (987654323)',
+      error: () => {
+        this.operadores = [];
       }
-    ];
-  }
-
-  onSelectReporte(reporte: Reporte) {
-    this.selectedReporte = reporte;
-  }
-
-  onFiltrar() {
-    // Lógica de filtrado
-    console.log('Filtros aplicados:', {
-      estado: this.statusFilter,
-      tipo: this.tipoFilter,
-      distrito: this.distritoFilter,
-      fecha: this.fechaFilter
     });
   }
 
-  onDerivar() {
-    if (this.selectedReporte) {
-      console.log('Derivando reporte:', this.selectedReporte.id);
-      // Lógica para derivar a atención de casos
+  loadReportes() {
+    this.loading = true;
+    this.error = '';
+    this.success = '';
+    this.empty = false;
+
+    this.reportesService.listarTodos({
+      estado: this.statusFilter || undefined,
+      tipo: this.tipoFilter || undefined,
+      zona: this.zonaFilter || undefined,
+      fechaDesde: this.toIsoDateBoundary(this.fechaDesde, true) || undefined,
+      fechaHasta: this.toIsoDateBoundary(this.fechaHasta, false) || undefined
+    }).subscribe({
+      next: (data) => {
+        this.reportes = data.map((r) => this.toVista(r));
+        this.empty = this.reportes.length === 0;
+        if (!this.empty) {
+          const keep = this.selectedReporte
+            ? this.reportes.find((r) => r.id === this.selectedReporte!.id)
+            : null;
+          this.selectedReporte = keep ?? this.reportes[0];
+        } else {
+          this.selectedReporte = null;
+        }
+        this.loading = false;
+      },
+      error: (error: unknown) => {
+        this.loading = false;
+        this.error = apiErrorMessage(error);
+        this.reportes = [];
+        this.selectedReporte = null;
+        this.empty = false;
+      }
+    });
+  }
+
+  onSelectReporte(reporte: ReporteVista) {
+    this.selectedReporte = reporte;
+    this.mostrarDerivar = false;
+  }
+
+  onFiltrar() {
+    this.loadReportes();
+  }
+
+  onLimpiarFiltros() {
+    this.statusFilter = '';
+    this.tipoFilter = '';
+    this.zonaFilter = '';
+    this.fechaDesde = '';
+    this.fechaHasta = '';
+    this.loadReportes();
+  }
+
+  onMostrarDerivar() {
+    this.mostrarDerivar = true;
+    this.success = '';
+    this.error = '';
+    if (this.operadores.length > 0) {
+      this.responsableId = this.operadores[0].id;
     }
+  }
+
+  onCancelarDerivar() {
+    this.mostrarDerivar = false;
+  }
+
+  onDerivar() {
+    if (!this.selectedReporte) return;
+    if (!this.responsableId) {
+      this.error = 'Selecciona un operador responsable.';
+      return;
+    }
+    this.submitting = true;
+    this.error = '';
+    this.success = '';
+
+    this.casosService.crear(this.selectedReporte.id, this.responsableId, this.prioridad).subscribe({
+      next: (caso) => {
+        this.submitting = false;
+        this.success = `Reporte derivado correctamente al caso #${caso.id}.`;
+        const selectedId = this.selectedReporte?.id ?? null;
+        this.mostrarDerivar = false;
+        this.loadReportes();
+        if (selectedId != null) {
+          this.selectedReporte = this.reportes.find((r) => r.id === selectedId) ?? this.selectedReporte;
+        }
+      },
+      error: (error: unknown) => {
+        this.submitting = false;
+        this.error = apiErrorMessage(error);
+      }
+    });
+  }
+
+  statusClass(estado: ApiReportStatus): string {
+    return estado.toLowerCase().replace('_', '-');
+  }
+
+  private toVista(r: ReporteResponse): ReporteVista {
+    return {
+      id: r.id,
+      fecha: formatDateTime(r.fechaCreacion),
+      ciudadano: `Usuario #${r.usuarioId}`,
+      zona: r.zona,
+      tipo: r.tipo,
+      estado: r.estado,
+      estadoLabel: reportStatusLabel(r.estado),
+      descripcion: r.descripcion,
+      ubicacion: r.direccion,
+      reportadoPor: `Usuario #${r.usuarioId}`,
+      evidencia: r.fotoUrl || r.fotoUrls?.[0]
+    };
+  }
+
+  private toIsoDateBoundary(value: string, start: boolean): string | null {
+    if (!value) return null;
+    const suffix = start ? 'T00:00:00' : 'T23:59:59';
+    return `${value}${suffix}`;
   }
 }

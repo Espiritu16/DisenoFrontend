@@ -24,6 +24,14 @@ export function caseStatusLabel(status: ApiCaseStatus): string {
   return caseStatusLabels[status] ?? status;
 }
 
+export function reportStatusClass(status: ApiReportStatus): string {
+  return status.toLowerCase().replace('_', '-');
+}
+
+export function caseStatusClass(status: ApiCaseStatus): string {
+  return status.toLowerCase().replace('_', '-');
+}
+
 export function reportStatusFromLabel(label: string): ApiReportStatus | undefined {
   const found = Object.entries(reportStatusLabels).find(([, value]) => value === label);
   return found?.[0] as ApiReportStatus | undefined;

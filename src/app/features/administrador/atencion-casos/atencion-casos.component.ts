@@ -5,7 +5,7 @@ import { ApiCaseStatus, CasoResponse } from '../../../core/api/api-models';
 import { CasosService } from '../../../core/api/casos.service';
 import { UploadService } from '../../../core/api/upload.service';
 import { apiErrorMessage } from '../../../core/api/api-error';
-import { caseStatusLabel } from '../../../core/api/api-mappers';
+import { caseStatusClass, caseStatusLabel } from '../../../core/api/api-mappers';
 
 @Component({
   selector: 'app-atencion-casos',
@@ -52,6 +52,10 @@ export class AtencionCasosComponent implements OnInit {
 
   onGuardarCambios() {
     if (!this.selectedCaso) return;
+    if (this.estado === 'RESUELTO' && !this.evidenciaFiles.length && !this.selectedCaso.evidenciaCierre) {
+      this.message = 'Debes adjuntar evidencia para cerrar como Resuelto.';
+      return;
+    }
     const guardar = (urls: string[]) => {
       this.casosService.actualizarEstado(this.selectedCaso!.id, this.estado, this.observaciones, urls[0], urls).subscribe({
         next: (caso) => {
@@ -78,4 +82,9 @@ export class AtencionCasosComponent implements OnInit {
   }
 
   statusLabel = caseStatusLabel;
+  statusClass = caseStatusClass;
+
+  priorityClass(prioridad: string): string {
+    return prioridad.toLowerCase();
+  }
 }

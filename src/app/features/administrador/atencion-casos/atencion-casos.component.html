@@ -30,8 +30,8 @@
             <tr class="caso-row" *ngFor="let caso of casos" [class.row-active]="selectedCaso?.id === caso.id" (click)="onSelectCaso(caso)">
               <td class="col-id"><strong>#{{ caso.id }}</strong></td>
               <td class="col-zona">REP-{{ caso.reporteId }}</td>
-              <td class="col-estado"><span class="estado-badge estado-proceso">{{ statusLabel(caso.estado) }}</span></td>
-              <td class="col-prioridad"><span class="prioridad-badge prioridad-media">{{ caso.prioridad }}</span></td>
+              <td class="col-estado"><span class="estado-badge" [ngClass]="'estado-' + statusClass(caso.estado)">{{ statusLabel(caso.estado) }}</span></td>
+              <td class="col-prioridad"><span class="prioridad-badge" [ngClass]="'prioridad-' + priorityClass(caso.prioridad)">{{ caso.prioridad }}</span></td>
               <td class="col-fecha">{{ caso.fechaAsignacion | date:'short' }}</td>
             </tr>
           </tbody>
@@ -43,7 +43,7 @@
     <aside class="casos-detail-section" *ngIf="selectedCaso">
       <div class="detail-header">
         <h2 class="case-id">#{{ selectedCaso.id }}</h2>
-        <span class="case-status-badge">{{ statusLabel(selectedCaso.estado) }}</span>
+        <span class="case-status-badge" [ngClass]="'estado-' + statusClass(selectedCaso.estado)">{{ statusLabel(selectedCaso.estado) }}</span>
       </div>
 
       <div class="case-info-block">

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiCasePriority, ApiReportStatus, ReporteResponse, UsuarioResponse } from '../../../core/api/api-models';
-import { reportStatusLabel, formatDateTime } from '../../../core/api/api-mappers';
+import { reportStatusLabel, formatDateTime, reportStatusClass } from '../../../core/api/api-mappers';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import { ReportesService } from '../../../core/api/reportes.service';
 import { CasosService } from '../../../core/api/casos.service';
@@ -168,7 +168,7 @@ export class ReportesCiudadanosComponent implements OnInit {
   }
 
   statusClass(estado: ApiReportStatus): string {
-    return estado.toLowerCase().replace('_', '-');
+    return reportStatusClass(estado);
   }
 
   private toVista(r: ReporteResponse): ReporteVista {

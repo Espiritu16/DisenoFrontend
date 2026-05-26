@@ -246,6 +246,17 @@
   color: var(--color-estado-resuelto);
 }
 
+.estado-en-proceso {
+  background-color: var(--color-estado-proceso-bg);
+  color: var(--color-estado-proceso);
+}
+
+.estado-rechazado,
+.estado-escalado {
+  background-color: #ececec;
+  color: #444;
+}
+
 /* PRIORIDAD BADGES */
 .prioridad-badge {
   display: inline-block;
@@ -263,6 +274,13 @@
 
 .prioridad-baja {
   color: var(--color-prioridad-baja);
+}
+
+.case-status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 /* PAGINATION */

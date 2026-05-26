@@ -6,6 +6,13 @@
     <p class="dashboard-subtitle">Monitoreo en tiempo real del sistema de AQUACOMUNIDAD</p>
   </section>
 
+  <div class="feedback error" *ngIf="error">
+    {{ error }}
+    <button class="btn-retry" (click)="cargarKpis()">Reintentar</button>
+  </div>
+
+  <div class="loading-box" *ngIf="loading">Cargando KPIs del backend...</div>
+
   <!-- KPI METRICS -->
   <section class="kpi-metrics-grid">
 
@@ -18,7 +25,7 @@
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Casos Activos</span>
-        <p class="kpi-value">142</p>
+        <p class="kpi-value">{{ kpis.casosActivos }}</p>
         <div class="kpi-trend trend-down">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/>
@@ -37,8 +44,8 @@
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Reportes Nuevos</span>
-        <p class="kpi-value">38</p>
-        <div class="kpi-meta">Hoy</div>
+        <p class="kpi-value">{{ kpis.reportesNuevos }}</p>
+        <div class="kpi-meta">Pendientes</div>
       </div>
     </div>
 
@@ -51,8 +58,8 @@
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Casos en Espera</span>
-        <p class="kpi-value">24</p>
-        <div class="kpi-meta">Actualizado</div>
+        <p class="kpi-value">{{ kpis.casosEnEspera }}</p>
+        <div class="kpi-meta">Reportes en proceso</div>
       </div>
     </div>
 
@@ -65,7 +72,7 @@
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Casos por Asignar</span>
-        <p class="kpi-value">56</p>
+        <p class="kpi-value">{{ kpis.casosPorAsignar }}</p>
         <div class="kpi-meta priority-tag">Prioridad</div>
       </div>
     </div>
@@ -82,7 +89,7 @@
       <section class="dashboard-card chart-card">
         <div class="card-header">
           <h2 class="card-title">Actividad Reciente de Reportes</h2>
-          <a href="#" class="card-link">Ver reporte completo →</a>
+          <span class="pending-source">Pendiente de fuente backend</span>
         </div>
 
         <div class="chart-container">
@@ -126,7 +133,10 @@
 
       <!-- REPORTES POR DISTRITO -->
       <section class="dashboard-card">
-        <h2 class="card-title">Reportes por Distrito</h2>
+        <div class="card-header">
+          <h2 class="card-title">Reportes por Distrito</h2>
+          <span class="pending-source">Pendiente de fuente backend</span>
+        </div>
 
         <div class="district-list">
           <div class="district-item">

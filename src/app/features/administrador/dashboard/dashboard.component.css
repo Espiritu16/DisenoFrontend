@@ -49,6 +49,40 @@
   margin: 0;
 }
 
+.feedback {
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.feedback.error {
+  background: #fdeaea;
+  color: #962f2f;
+  border: 1px solid #f5c9c9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn-retry {
+  background: #fff;
+  border: 1px solid #e4b8b8;
+  color: #962f2f;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.loading-box {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
 /* KPI METRICS GRID */
 .kpi-metrics-grid {
   display: grid;
@@ -201,6 +235,14 @@
   font-weight: 700;
   color: var(--color-text-main);
   margin: 0;
+}
+
+.pending-source {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  border: 1px dashed var(--color-border);
+  border-radius: 4px;
+  padding: 3px 6px;
 }
 
 .card-link {

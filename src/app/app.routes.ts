@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
+import { adminCanActivateChildGuard, adminCanMatchGuard } from './core/guards/admin-access.guard';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,8 @@ export const routes: Routes = [
   {
     path: 'administrador',
     component: DashboardLayoutComponent,
+    canMatch: [adminCanMatchGuard],
+    canActivateChild: [adminCanActivateChildGuard],
     children: [
       { path: 'dashboard', loadComponent: () => import('./features/administrador/dashboard/dashboard.component').then((m) => m.DashboardComponent) },
       { path: 'atencion-casos', loadComponent: () => import('./features/administrador/atencion-casos/atencion-casos.component').then((m) => m.AtencionCasosComponent) },

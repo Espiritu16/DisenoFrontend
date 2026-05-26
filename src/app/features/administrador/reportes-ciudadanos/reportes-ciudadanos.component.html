@@ -1,67 +1,60 @@
 <div class="reportes-ciudadanos-container">
-
-  <!-- CONTENIDO PRINCIPAL -->
   <main class="reportes-main-content">
-
-    <!-- HEADER TÍTULO -->
     <section class="reportes-header-section">
       <h1 class="reportes-title">Reportes ciudadanos</h1>
       <p class="reportes-subtitle">Visualiza y gestiona los reportes de incidencias registrados en el sistema.</p>
     </section>
 
-    <!-- FILTROS -->
     <section class="filters-section">
       <div class="filter-group">
         <label class="filter-label">Estado</label>
         <select class="filter-select" [(ngModel)]="statusFilter">
-          <option>Todos</option>
-          <option>Pendiente</option>
-          <option>En proceso</option>
-          <option>Resuelto</option>
+          <option value="">Todos</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="EN_PROCESO">En proceso</option>
+          <option value="RESUELTO">Resuelto</option>
+          <option value="DUPLICADO">Duplicado</option>
+          <option value="RECHAZADO">Rechazado</option>
+          <option value="ESCALADO">Escalado</option>
         </select>
       </div>
 
       <div class="filter-group">
         <label class="filter-label">Tipo</label>
-        <select class="filter-select" [(ngModel)]="tipoFilter">
-          <option>Todos</option>
-          <option>Fuga de agua</option>
-          <option>Baja presión</option>
-          <option>Corte de servicio</option>
-          <option>Agua turbia</option>
-        </select>
+        <input class="filter-input-date" [(ngModel)]="tipoFilter" placeholder="Ej. Fuga" />
       </div>
 
       <div class="filter-group">
-        <label class="filter-label">Distrito</label>
-        <select class="filter-select" [(ngModel)]="distritoFilter">
-          <option>Todos los distritos</option>
-          <option>San Isidro</option>
-          <option>Miraflores</option>
-          <option>Surco</option>
-        </select>
+        <label class="filter-label">Zona</label>
+        <input class="filter-input-date" [(ngModel)]="zonaFilter" placeholder="Ej. San Isidro" />
       </div>
 
       <div class="filter-group">
-        <label class="filter-label">Rango de fechas</label>
-        <input type="date" class="filter-input-date" [(ngModel)]="fechaFilter">
+        <label class="filter-label">Fecha desde</label>
+        <input type="date" class="filter-input-date" [(ngModel)]="fechaDesde">
       </div>
 
-      <button class="btn-filtrar" (click)="onFiltrar()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2.586a1 1 0 0 1-.293.707l-6.414 6.414a1 1 0 0 0-.293.707V17l-4 4v-6.586a1 1 0 0 0-.293-.707L3.293 7.293A1 1 0 0 1 3 6.586V4z"></path>
-        </svg>
-        Filtrar
-      </button>
+      <div class="filter-group">
+        <label class="filter-label">Fecha hasta</label>
+        <input type="date" class="filter-input-date" [(ngModel)]="fechaHasta">
+      </div>
+
+      <button class="btn-filtrar" (click)="onFiltrar()">Filtrar</button>
+      <button class="btn-limpiar" (click)="onLimpiarFiltros()">Limpiar</button>
     </section>
 
-    <!-- CONTENEDOR DE DOS COLUMNAS -->
-    <div class="reportes-content-grid">
+    <div class="feedback success" *ngIf="success">{{ success }}</div>
+    <div class="feedback error" *ngIf="error">{{ error }}</div>
 
-      <!-- COLUMNA IZQUIERDA - TABLA DE REPORTES -->
+    <div class="loading-box" *ngIf="loading">Cargando reportes...</div>
+
+    <div class="empty-box" *ngIf="!loading && empty">
+      No hay reportes con los filtros seleccionados.
+      <button class="btn-reintentar" (click)="onFiltrar()">Reintentar</button>
+    </div>
+
+    <div class="reportes-content-grid" *ngIf="!loading && !empty && reportes.length > 0">
       <section class="reportes-table-column">
-
-        <!-- TABLA -->
         <div class="table-wrapper">
           <table class="reportes-table">
             <thead>
@@ -76,123 +69,93 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let reporte of reportes; let first = first"
+              <tr *ngFor="let reporte of reportes"
                   class="table-row"
                   [ngClass]="{ 'row-active': selectedReporte?.id === reporte.id }"
                   (click)="onSelectReporte(reporte)">
-                <td class="col-id"><span class="id-badge">{{ reporte.id }}</span></td>
+                <td class="col-id"><span class="id-badge">REP-{{ reporte.id }}</span></td>
                 <td class="col-fecha">{{ reporte.fecha }}</td>
                 <td class="col-ciudadano">{{ reporte.ciudadano }}</td>
                 <td class="col-zona">{{ reporte.zona }}</td>
                 <td class="col-tipo">{{ reporte.tipo }}</td>
                 <td class="col-estado">
-                  <span class="status-badge" [ngClass]="'status-' + (reporte.estado | lowercase)">
-                    {{ reporte.estado }}
+                  <span class="status-badge" [ngClass]="'status-' + statusClass(reporte.estado)">
+                    {{ reporte.estadoLabel }}
                   </span>
                 </td>
                 <td class="col-accion">
-                  <button class="btn-action-eye" title="Ver detalles">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  </button>
+                  <button class="btn-action-eye" title="Ver detalles">👁</button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <!-- PAGINACIÓN -->
-        <div class="pagination-section">
-          <span class="pag-info">Mostrando 1-3 de 156 reportes</span>
-          <div class="pag-nav">
-            <button class="pag-btn pag-arrow">←</button>
-            <button class="pag-btn pag-arrow">→</button>
-          </div>
-        </div>
-
       </section>
 
-      <!-- COLUMNA DERECHA - DETALLE DE REPORTE -->
-      <aside class="reportes-detail-column">
-
-        <!-- HEADER DEL DETALLE -->
+      <aside class="reportes-detail-column" *ngIf="selectedReporte as detalle">
         <div class="detail-header">
           <div class="detail-title-group">
             <h2 class="detail-title">Detalle de Reporte</h2>
-            <span class="detail-status-badge" [ngClass]="'status-' + (selectedReporte?.estado || 'pendiente' | lowercase)">
-              {{ selectedReporte?.estado || 'Pendiente' }}
+            <span class="detail-status-badge" [ngClass]="'status-' + statusClass(detalle.estado)">
+              {{ detalle.estadoLabel }}
             </span>
           </div>
         </div>
 
-        <!-- INFORMACIÓN DEL REPORTE -->
         <div class="detail-content">
-
-          <!-- ID Y TIPO -->
           <div class="detail-info-block">
-            <h3 class="detail-block-title">{{ selectedReporte?.id }} - {{ selectedReporte?.tipo }}</h3>
+            <h3 class="detail-block-title">REP-{{ detalle.id }} - {{ detalle.tipo }}</h3>
           </div>
-
-          <!-- DESCRIPCIÓN -->
           <div class="detail-info-block">
-            <p class="detail-description">{{ selectedReporte?.descripcion }}</p>
+            <p class="detail-description">{{ detalle.descripcion }}</p>
           </div>
-
-          <!-- META INFO -->
           <div class="detail-meta-grid">
             <div class="meta-item">
               <span class="meta-label">Ubicación</span>
-              <p class="meta-value">{{ selectedReporte?.ubicacion }}</p>
+              <p class="meta-value">{{ detalle.ubicacion }}</p>
             </div>
             <div class="meta-item">
               <span class="meta-label">Reportado por</span>
-              <p class="meta-value">{{ selectedReporte?.reportadoPor }}</p>
+              <p class="meta-value">{{ detalle.reportadoPor }}</p>
             </div>
           </div>
 
-          <!-- EVIDENCIA FOTOGRÁFICA -->
           <div class="detail-info-block">
             <h4 class="detail-sub-title">Evidencia fotográfica</h4>
             <div class="evidence-image-placeholder">
-              <img [src]="selectedReporte?.evidencia" alt="Evidencia" class="evidence-img" *ngIf="selectedReporte?.evidencia">
-              <div class="no-evidence" *ngIf="!selectedReporte?.evidencia">
-                <p>No hay evidencia disponible</p>
-              </div>
+              <img [src]="detalle.evidencia" alt="Evidencia" class="evidence-img" *ngIf="detalle.evidencia">
+              <div class="no-evidence" *ngIf="!detalle.evidencia"><p>No hay evidencia disponible</p></div>
             </div>
           </div>
 
-          <!-- BOTÓN DERIVAR -->
-          <button class="btn-derivar" (click)="onDerivar()" *ngIf="selectedReporte">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 12h18M12 3l9 9-9 9"></path>
-            </svg>
-            Derivar a Atención de casos
-          </button>
+          <button class="btn-derivar" (click)="onMostrarDerivar()">Derivar a Atención de casos</button>
 
-          <!-- UBICACIÓN DEL INCIDENTE (MAPA) -->
-          <div class="detail-info-block">
-            <h4 class="detail-sub-title">Ubicación del incidente</h4>
-            <div class="map-placeholder">
-              <div class="map-container">
-                <div class="map-marker marker-main">{{ selectedReporte?.id }}</div>
-                <div class="map-marker marker-secondary"></div>
-                <div class="map-marker marker-secondary marker-third"></div>
-              </div>
-              <div class="map-controls">
-                <button class="map-btn">+</button>
-                <button class="map-btn">−</button>
-              </div>
+          <div class="derivar-panel" *ngIf="mostrarDerivar">
+            <h4 class="detail-sub-title">Derivar reporte</h4>
+            <div class="filter-group">
+              <label class="filter-label">Operador responsable</label>
+              <select class="filter-select" [(ngModel)]="responsableId">
+                <option [ngValue]="null">Seleccionar operador</option>
+                <option *ngFor="let op of operadores" [ngValue]="op.id">{{ op.nombre }} ({{ op.correo }})</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">Prioridad</label>
+              <select class="filter-select" [(ngModel)]="prioridad">
+                <option value="BAJA">Baja</option>
+                <option value="MEDIA">Media</option>
+                <option value="ALTA">Alta</option>
+              </select>
+            </div>
+            <div class="panel-actions">
+              <button class="btn-filtrar" [disabled]="submitting" (click)="onDerivar()">
+                {{ submitting ? 'Derivando...' : 'Confirmar derivación' }}
+              </button>
+              <button class="btn-limpiar" [disabled]="submitting" (click)="onCancelarDerivar()">Cancelar</button>
             </div>
           </div>
-
         </div>
-
       </aside>
-
     </div>
-
   </main>
-
 </div>

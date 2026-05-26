@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DetalleTrazabilidadReporte, ReporteResponse } from '../../../core/api/api-models';
 import { formatDateTime, reportStatusFromLabel, reportStatusLabel } from '../../../core/api/api-mappers';
@@ -15,6 +15,8 @@ import { ReportesService } from '../../../core/api/reportes.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MisReportesComponent implements OnInit {
+  @ViewChild('reportList') private reportList?: ElementRef<HTMLElement>;
+
   statusFilter = 'Todos';
   selected?: ReporteResponse;
   trazabilidad?: DetalleTrazabilidadReporte;
@@ -49,6 +51,7 @@ export class MisReportesComponent implements OnInit {
   onFilterChange(): void {
     this.selected = undefined;
     this.trazabilidad = undefined;
+    this.resetReportListScroll();
     this.cdr.markForCheck();
   }
 
@@ -78,6 +81,7 @@ export class MisReportesComponent implements OnInit {
         this.trazabilidad = undefined;
         this.loading = false;
         this.cdr.markForCheck();
+        this.resetReportListScroll();
         if (reportes.length > 0) {
           this.select(reportes[0]);
         }
@@ -93,4 +97,10 @@ export class MisReportesComponent implements OnInit {
   statusLabel = reportStatusLabel;
   formatDate = formatDateTime;
   trackById(_: number, r: ReporteResponse): number { return r.id; }
+
+  private resetReportListScroll(): void {
+    queueMicrotask(() => {
+      this.reportList?.nativeElement.scrollTo({ top: 0, left: 0 });
+    });
+  }
 }

@@ -16,6 +16,7 @@ export interface AuthSessionResponse {
   token: string;
   refreshToken: string;
   userId: number;
+  nombre?: string;
   correo: string;
   rol: ApiRole;
 }

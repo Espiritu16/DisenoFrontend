@@ -2,64 +2,67 @@
 
   <!-- HERO SECTION -->
   <section class="reportes-hero">
-    <div class="hero-content">
-      <p class="hero-kicker">Seguimiento ciudadano</p>
-      <h1 class="hero-title">MIS REPORTES</h1>
-      <p class="hero-description">Consulta el estado de tus incidencias y revisa el detalle de atención de cada caso.</p>
+    <div class="app-shell reportes-hero__grid">
+      <div>
+        <p class="hero-kicker">Seguimiento ciudadano</p>
+        <h1 class="hero-title">REVISA TUS<br />REPORTES</h1>
+        <p class="hero-description">Consulta el estado de tus incidencias y revisa el detalle de atención de cada caso.</p>
+      </div>
+      <div class="hero-help">
+        <p><strong>Estado:</strong> filtra reportes pendientes, en proceso o resueltos.</p>
+        <p><strong>Detalle:</strong> selecciona un reporte para ver dirección, evidencia e historial.</p>
+      </div>
     </div>
   </section>
 
-  <!-- METRICS CARDS -->
-  <div class="metrics-section">
-    <div class="metric-card">
-      <span class="metric-label">Total</span>
-      <p class="metric-value">{{ total }}</p>
-    </div>
-    <div class="metric-card">
-      <span class="metric-label">Pendientes</span>
-      <p class="metric-value">{{ pendientes }}</p>
-    </div>
-    <div class="metric-card">
-      <span class="metric-label">En proceso</span>
-      <p class="metric-value">{{ enProceso }}</p>
-    </div>
-    <div class="metric-card">
-      <span class="metric-label">Resueltos</span>
-      <p class="metric-value">{{ resueltos }}</p>
-    </div>
-  </div>
-
   <!-- MAIN CONTENT -->
   <main class="reportes-main">
-
-    <!-- TOOLBAR -->
-    <section class="toolbar-section">
-      <div class="filter-group">
-        <label class="filter-label">Filtrar por estado</label>
-        <select class="filter-select" [(ngModel)]="statusFilter" (change)="onFilterChange()">
-          <option value="Todos">Todos</option>
-          <option value="Pendiente">Pendiente</option>
-          <option value="En proceso">En proceso</option>
-          <option value="Resuelto">Resuelto</option>
-        </select>
-      </div>
-      <button class="btn-refresh" (click)="refresh()" [disabled]="loading">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
-        </svg>
-        {{ loading ? 'Cargando...' : 'Actualizar' }}
-      </button>
-    </section>
-
-    <!-- TWO COLUMN LAYOUT -->
     <div class="reportes-grid">
+      <!-- LEFT: KPIS -->
+      <aside class="reportes-kpis" aria-label="Resumen de reportes">
+        <div class="metric-card">
+          <span class="metric-label">Total</span>
+          <p class="metric-value">{{ total }}</p>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Pendientes</span>
+          <p class="metric-value">{{ pendientes }}</p>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">En proceso</span>
+          <p class="metric-value">{{ enProceso }}</p>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Resueltos</span>
+          <p class="metric-value">{{ resueltos }}</p>
+        </div>
+      </aside>
 
-      <!-- LEFT: TABLA DE REPORTES -->
+      <!-- CENTER: TABLA DE REPORTES -->
       <section class="reportes-table-card">
-        <h2 class="section-title">Mis reportes</h2>
+        <div class="table-card-head">
+          <h2 class="section-title">Mis reportes</h2>
+          <div class="toolbar-section">
+            <div class="filter-group">
+              <label class="filter-label">Filtrar por estado</label>
+              <select class="filter-select" [(ngModel)]="statusFilter" (change)="onFilterChange()">
+                <option value="Todos">Todos</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En proceso">En proceso</option>
+                <option value="Resuelto">Resuelto</option>
+              </select>
+            </div>
+            <button class="btn-refresh" (click)="refresh()" [disabled]="loading">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+              </svg>
+              {{ loading ? 'Cargando...' : 'Actualizar' }}
+            </button>
+          </div>
+        </div>
 
         <!-- TABLE -->
-        <div class="table-wrapper" *ngIf="filtered.length > 0; else noReportes">
+        <div #reportList class="table-wrapper" *ngIf="filtered.length > 0; else noReportes">
           <table class="reportes-table">
             <thead>
               <tr class="table-header">

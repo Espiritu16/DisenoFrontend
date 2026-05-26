@@ -17,7 +17,8 @@ import { AuthService } from '../../core/api/auth.service';
           </button>
 
           <a routerLink="/inicio" class="site-header__brand text-primary font-extrabold tracking-tight text-xl" (click)="closeMobileMenu()">
-            AQUACOMUNIDAD
+            <span class="material-symbols-outlined site-header__brand-icon" aria-hidden="true">water_drop</span>
+            <span>AQUACOMUNIDAD</span>
           </a>
 
           <nav class="site-header__nav" aria-label="Navegación principal">
@@ -30,7 +31,13 @@ import { AuthService } from '../../core/api/auth.service';
           <div class="site-header__actions">
             <a *ngIf="auth.role === 'ADMIN' || auth.role === 'OPERADOR'" routerLink="/administrador/dashboard" class="btn-secondary site-header__admin">Administrador</a>
             <button *ngIf="!auth.session()" class="btn-primary site-header__login" type="button" (click)="openAuth('login')">Iniciar sesión</button>
-            <button *ngIf="auth.session()" class="btn-primary site-header__login" type="button" (click)="auth.logout()">Cerrar sesión</button>
+            <ng-container *ngIf="auth.session()">
+              <div class="site-header__user" title="Usuario conectado">
+                <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                <span class="site-header__user-name">{{ userDisplayName }}</span>
+              </div>
+              <button class="btn-primary site-header__login" type="button" (click)="auth.logout()">Cerrar sesión</button>
+            </ng-container>
           </div>
         </div>
       </header>
@@ -117,23 +124,36 @@ import { AuthService } from '../../core/api/auth.service';
       }
 
       .site-header__inner {
+        width: 100%;
+        max-width: none;
         min-height: 68px;
-        display: flex;
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
         align-items: center;
+        margin: 0;
+        padding: 0.85rem clamp(1.25rem, 3.5vw, 4rem);
         gap: 0.85rem;
       }
 
       .site-header__brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
         text-decoration: none;
         white-space: nowrap;
       }
 
+      .site-header__brand-icon {
+        font-size: 1.55rem;
+        line-height: 1;
+      }
+
       .site-header__nav {
-        margin-left: auto;
         display: flex;
         align-items: center;
         gap: 0.35rem;
         font-size: 0.875rem;
+        justify-self: center;
       }
 
       .site-header__login {
@@ -141,10 +161,36 @@ import { AuthService } from '../../core/api/auth.service';
       }
 
       .site-header__actions {
-        margin-left: 0.55rem;
         display: flex;
         align-items: center;
         gap: 0.45rem;
+        justify-self: end;
+      }
+
+      .site-header__user {
+        min-width: 0;
+        max-width: 240px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.5rem 0.7rem;
+        border: 1px solid color-mix(in oklab, var(--color-brand-primary) 18%, var(--color-border));
+        border-radius: 0.5rem;
+        color: var(--color-brand-primary);
+        background: color-mix(in oklab, var(--color-brand-primary) 5%, var(--color-on-brand));
+        font-weight: 700;
+        font-size: 0.86rem;
+      }
+
+      .site-header__user .material-symbols-outlined {
+        flex: 0 0 auto;
+        font-size: 1.15rem;
+      }
+
+      .site-header__user-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .site-header__admin {
@@ -243,8 +289,10 @@ import { AuthService } from '../../core/api/auth.service';
       @media (max-width: 960px) {
         .site-header__inner {
           min-height: 58px;
+          display: flex;
           flex-wrap: wrap;
           row-gap: 0.55rem;
+          padding: 0.7rem 0.9rem;
         }
 
         .site-header__menu-btn {
@@ -269,6 +317,12 @@ import { AuthService } from '../../core/api/auth.service';
           font-size: 0.86rem;
         }
 
+        .site-header__user {
+          max-width: min(220px, 42vw);
+          min-height: 36px;
+          padding: 0.45rem 0.62rem;
+        }
+
         .site-footer__grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 1.4rem;
@@ -283,6 +337,11 @@ import { AuthService } from '../../core/api/auth.service';
         .site-header__login {
           font-size: 0.78rem;
           padding: 0.42rem 0.6rem;
+        }
+
+        .site-header__user {
+          max-width: min(180px, 44vw);
+          font-size: 0.78rem;
         }
 
         .site-footer__grid {
@@ -306,6 +365,11 @@ export class PublicLayoutComponent {
   isMobileMenuOpen = false;
 
   constructor(public auth: AuthService) {}
+
+  get userDisplayName(): string {
+    const session = this.auth.session();
+    return session?.nombre?.trim() || session?.correo || 'Usuario';
+  }
 
   openAuth(view: 'login' | 'register' | 'recover'): void {
     this.authView = view;

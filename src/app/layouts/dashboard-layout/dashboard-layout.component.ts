@@ -53,7 +53,9 @@ import { AuthService } from '../../core/api/auth.service';
 
       <div class="admin-main">
         <header class="admin-topbar">
-          <button class="menu-btn" (click)="menuOpen = !menuOpen" aria-label="Abrir menú">☰</button>
+          <button class="menu-btn" (click)="menuOpen = !menuOpen" aria-label="Abrir menú">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
           <span>{{ auth.session()?.correo || 'Administrador' }}</span>
         </header>
 
@@ -82,7 +84,9 @@ import { AuthService } from '../../core/api/auth.service';
       .sidebar-footer a:hover { background: rgba(255,255,255,.08); }
       .admin-main { min-width: 0; }
       .admin-topbar { height: 56px; display: flex; align-items: center; gap: .8rem; padding: 0 1rem; border-bottom: 1px solid var(--color-border); background: var(--color-on-brand); color: var(--color-brand-primary); font-weight: 700; }
-      .menu-btn { display: none; border: 0; background: rgba(0,229,255,.16); color: var(--color-brand-primary); border-radius: .5rem; padding: .35rem .55rem; }
+      .menu-btn { display: none; min-height: 42px; border: 1px solid var(--color-border); background: #ffffff; color: var(--color-brand-primary); border-radius: .25rem; padding: .35rem .65rem; }
+      .menu-btn:hover { border-color: #0060ac; color: #0060ac; background: #f8fbff; }
+      .menu-btn .material-symbols-outlined { font-size: 20px; }
       .admin-content { padding: 1rem 1.2rem; }
       .admin-content .app-shell { width: 100%; max-width: none; margin: 0; padding-left: 0; padding-right: 0; }
       .admin-backdrop { display: none; }

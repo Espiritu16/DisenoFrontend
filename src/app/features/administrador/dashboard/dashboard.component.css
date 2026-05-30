@@ -67,11 +67,20 @@
 
 .btn-retry {
   background: #fff;
-  border: 1px solid #e4b8b8;
-  color: #962f2f;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  color: var(--color-brand-primary);
+  border-radius: 4px;
+  min-height: 42px;
+  padding: 8px 12px;
+  font-weight: 700;
   cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.btn-retry:hover {
+  border-color: #0060ac;
+  color: #0060ac;
+  background: #f8fbff;
 }
 
 .loading-box {
@@ -121,8 +130,8 @@
 }
 
 .icon-blue {
-  background-color: var(--color-blue-bg);
-  color: var(--color-blue);
+  background-color: var(--color-icon-body-soft);
+  color: var(--color-icon-body);
 }
 
 .icon-gray {

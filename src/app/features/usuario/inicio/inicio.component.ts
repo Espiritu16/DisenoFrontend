@@ -10,24 +10,54 @@ import { RouterLink } from '@angular/router';
   styleUrl: './inicio.component.css'
 })
 export class InicioComponent {
-  readonly destacados = [
+  readonly metrics = [
+    { value: '1,204', label: 'Reportes registrados' },
+    { value: '98%', label: 'Casos atendidos' },
+    { value: '15', label: 'Distritos monitoreados' },
+    { value: '42', label: 'Seguimientos activos' }
+  ];
+
+  readonly benefits = [
     {
-      title: 'Reporta en segundos',
-      text: 'Registra fugas, baja presión o agua turbia con ubicación exacta y evidencia fotográfica.',
-      cta: 'Reportar ahora',
-      route: '/reportar',
-      badge: 'Flujo rápido',
-      image:
-        'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=900&q=80'
+      icon: 'flash_on',
+      title: 'Reporte rápido',
+      text: 'Registra incidencias en pocos pasos de forma clara y estructurada.'
     },
     {
-      title: 'Sigue tus casos',
-      text: 'Revisa el avance de tus reportes y mantén trazabilidad desde el registro hasta el cierre.',
-      cta: 'Ir a seguimiento',
-      route: '/mis-reportes',
-      badge: 'Trazabilidad',
-      image:
-        'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80'
+      icon: 'visibility',
+      title: 'Seguimiento transparente',
+      text: 'Consulta el avance de tus casos y mantén trazabilidad total.'
+    },
+    {
+      icon: 'notifications_active',
+      title: 'Alertas comunitarias',
+      text: 'Mantente informado sobre avisos importantes en tu zona.'
+    },
+    {
+      icon: 'group_work',
+      title: 'Coordinación operativa',
+      text: 'Facilita la atención de incidencias mediante reportes estandarizados.'
+    }
+  ];
+
+  readonly process = [
+    {
+      icon: 'location_on',
+      kicker: 'Paso 1',
+      title: 'Reporta',
+      text: 'Crea un caso detallando la ubicación y el problema.'
+    },
+    {
+      icon: 'engineering',
+      kicker: 'Paso 2',
+      title: 'Se revisa',
+      text: 'El equipo operativo evalúa y programa la atención.'
+    },
+    {
+      icon: 'check_circle',
+      kicker: 'Paso 3',
+      title: 'Resolución',
+      text: 'Consulta actualizaciones hasta la resolución del caso.'
     }
   ];
 }

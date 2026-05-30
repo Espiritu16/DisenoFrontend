@@ -1,157 +1,220 @@
-<div class="report-design">
-  <section class="report-hero">
-    <div class="app-shell report-hero__grid">
-      <div>
-        <p class="report-kicker">Atención comunitaria</p>
-        <h1>REPORTA UNA<br />INCIDENCIA DE<br />FORMA RÁPIDA</h1>
-        <p class="report-copy">
-          Completa el formulario, marca la ubicación exacta en Lima y adjunta evidencia para acelerar la atención.
-        </p>
-      </div>
-      <div class="report-help">
-        <p><strong>Qué incluir:</strong> tipo de problema, descripción clara, dirección, referencia y foto.</p>
-        <p><strong>Ubicación:</strong> selecciona un punto dentro de la Provincia de Lima.</p>
-      </div>
-    </div>
-  </section>
-
-  <main class="report-main-container">
-
-    <!-- COLUMNA IZQUIERDA: FORMULARIO -->
-    <div class="report-left-column">
-      <section class="card report-form">
-        <h2 class="form-title">Datos del reporte</h2>
-
-        <div class="form-grid">
-          <div>
-            <label class="field-label">Distrito (Lima)</label>
-            <select class="select mt-1" [(ngModel)]="distrito">
-              <option *ngFor="let d of distritos" [value]="d">{{ d }}</option>
-            </select>
+<div class="report-page">
+  <main class="report-shell">
+    <section class="report-workspace">
+      <div class="report-entry-column">
+        <section class="report-heading">
+          <div class="report-heading__copy">
+            <span class="report-chip">
+              <span class="material-symbols-outlined" aria-hidden="true">campaign</span>
+              Reporte ciudadano
+            </span>
+            <h1>Reporta una incidencia</h1>
+            <p>Completa los datos y ubica el problema en el mapa para acelerar la atención.</p>
           </div>
+        </section>
 
-          <div>
-            <label class="field-label">Tipo</label>
-            <select class="select mt-1" [(ngModel)]="tipo">
-              <option>Fuga</option>
-              <option>Baja presión</option>
-              <option>Agua turbia</option>
-              <option>Corte inesperado</option>
-            </select>
-          </div>
-
-          <div class="full">
-            <label class="field-label">Descripción</label>
-            <textarea class="input mt-1" [(ngModel)]="detail" placeholder="Describe el problema..."></textarea>
-          </div>
-
-          <div class="full">
-            <label class="field-label">Dirección</label>
-            <input
-              #direccionInput
-              class="input mt-1"
-              [(ngModel)]="direccion"
-              placeholder="Se completa automáticamente desde el mapa"
-              readonly
-              aria-readonly="true"
-            />
-            <p class="field-help">Se autocompleta al seleccionar un punto en el mapa o usar tu ubicación actual.</p>
-            <p *ngIf="resolvingAddress" class="field-pending">Buscando dirección...</p>
-          </div>
-
-          <div class="full">
-            <label class="field-label">Referencia</label>
-            <input class="input mt-1" [(ngModel)]="referencia" placeholder="Ej. Frente al colegio / al costado de..." />
-          </div>
-
-          <div class="full">
-            <label class="field-label">Adjuntar imágenes</label>
-            <div class="image-picker mt-1">
-              <input
-                #fileInput
-                class="image-picker__input"
-                type="file"
-                accept="image/*"
-                multiple
-                (change)="onFileChange($event)"
-              />
-              <button type="button" class="image-picker__button" (click)="openFilePicker()">
-                <span class="image-picker__icon" aria-hidden="true">+</span>
-                Elegir imágenes
-              </button>
-              <span class="image-picker__summary">
-                {{ selectedImages.length ? selectedImages.length + ' imagen(es) listas' : 'Puedes elegir una o varias a la vez' }}
-              </span>
+        <section class="report-form-card">
+          <div class="report-form-grid">
+            <div class="field-block field-block--district">
+              <label for="district">Distrito</label>
+              <div class="field-control field-control--select">
+                <span class="material-symbols-outlined" aria-hidden="true">location_city</span>
+                <select id="district" [(ngModel)]="distrito">
+                  <option *ngFor="let d of distritos" [value]="d">{{ d }}</option>
+                </select>
+                <span class="material-symbols-outlined field-control__chevron" aria-hidden="true">expand_more</span>
+              </div>
             </div>
 
-            <div class="image-preview-grid" *ngIf="selectedImages.length">
-              <article class="image-preview-card" *ngFor="let image of selectedImages">
-                <img [src]="image.previewUrl" [alt]="image.file.name" />
-                <div class="image-preview-card__meta">
-                  <span>{{ image.file.name }}</span>
-                  <small>{{ (image.file.size / 1024 / 1024).toFixed(2) }} MB</small>
-                </div>
-                <button
-                  type="button"
-                  class="image-preview-card__remove"
-                  title="Quitar imagen"
-                  aria-label="Quitar imagen"
-                  (click)="removeImage(image)"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 6h18"></path>
-                    <path d="M8 6V4h8v2"></path>
-                    <path d="M19 6l-1 14H6L5 6"></path>
-                    <path d="M10 11v5"></path>
-                    <path d="M14 11v5"></path>
-                  </svg>
+            <div class="field-block field-block--type">
+              <label>Tipo de incidencia</label>
+              <div class="incident-type-grid" role="group" aria-label="Tipo de incidencia">
+                <button type="button" class="incident-type" [class.active]="tipo === 'Fuga'" (click)="tipo = 'Fuga'">
+                  <span class="material-symbols-outlined" aria-hidden="true">water_drop</span>
+                  Fuga
                 </button>
-              </article>
+                <button type="button" class="incident-type" [class.active]="tipo === 'Baja presión'" (click)="tipo = 'Baja presión'">
+                  <span class="material-symbols-outlined" aria-hidden="true">speed</span>
+                  Baja presión
+                </button>
+                <button type="button" class="incident-type" [class.active]="tipo === 'Agua turbia'" (click)="tipo = 'Agua turbia'">
+                  <span class="material-symbols-outlined" aria-hidden="true">invert_colors_off</span>
+                  Agua turbia
+                </button>
+                <button type="button" class="incident-type" [class.active]="tipo === 'Corte inesperado'" (click)="tipo = 'Corte inesperado'">
+                  <span class="material-symbols-outlined" aria-hidden="true">water_damage</span>
+                  Corte
+                </button>
+              </div>
             </div>
 
-            <p class="field-help">Puedes adjuntar varias imágenes de golpe o volver a elegir para agregarlas una por una. Máximo 10MB por imagen.</p>
+            <div class="field-block field-block--half">
+              <label for="direccion">
+                <span class="material-symbols-outlined" aria-hidden="true">my_location</span>
+                Dirección detectada
+              </label>
+              <input
+                id="direccion"
+                #direccionInput
+                class="report-input report-input--readonly"
+                [(ngModel)]="direccion"
+                placeholder="Se completa desde el mapa"
+                readonly
+                aria-readonly="true"
+              />
+              <p *ngIf="resolvingAddress" class="field-state">Buscando dirección...</p>
+            </div>
+
+            <div class="field-block field-block--half">
+              <label for="referencia">Referencia</label>
+              <input
+                id="referencia"
+                class="report-input"
+                [(ngModel)]="referencia"
+                placeholder="Ej: Frente al parque central"
+              />
+            </div>
+
+            <div class="field-block field-block--description">
+              <label for="descripcion">
+                Descripción
+                <span>{{ detail.length }}/500</span>
+              </label>
+              <textarea
+                id="descripcion"
+                class="report-textarea"
+                [(ngModel)]="detail"
+                maxlength="500"
+                placeholder="Detalla el problema observado..."
+              ></textarea>
+            </div>
+
+            <div class="field-block field-block--evidence">
+              <label>Evidencia</label>
+              <div class="evidence-dropzone" role="button" tabindex="0" (click)="openFilePicker()" (keydown.enter)="openFilePicker()" (keydown.space)="openFilePicker()">
+                <input
+                  #fileInput
+                  class="evidence-dropzone__input"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  (change)="onFileChange($event)"
+                />
+                <span class="evidence-dropzone__icon material-symbols-outlined" aria-hidden="true">add_a_photo</span>
+                <div>
+                  <strong>{{ selectedImages.length ? selectedImages.length + ' imagen(es)' : 'Añadir fotos' }}</strong>
+                  <small>JPG, PNG, WEBP o GIF</small>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
 
-      <!-- BOTONES DE ACCIÓN -->
-      <section class="card report-actions">
-        <button
-          class="btn-primary"
-          [class.btn-success]="submitState === 'success'"
-          type="button"
-          (click)="submit()"
-          [disabled]="submitting || !isLoggedIn"
-          [title]="!isLoggedIn ? 'Inicia sesión para enviar reportes' : 'Enviar reporte'"
-        >
-          {{
-            submitting
-              ? (submitState === 'saving' ? 'Guardando...' : 'Subiendo...')
-              : (submitState === 'success' ? 'Enviado' : 'Enviar reporte')
-          }}
-        </button>
-        <a routerLink="/mis-reportes" class="btn-secondary">Ir a seguimiento</a>
-        <p *ngIf="!isLoggedIn" class="report-message report-message--warning">Inicia sesión para habilitar el envío del reporte.</p>
-        <p *ngIf="message" class="report-message" [class.report-message--success]="submitState === 'success'">{{ message }}</p>
-      </section>
-    </div>
+          <div class="image-preview-grid" *ngIf="selectedImages.length">
+            <article class="image-preview-card" *ngFor="let image of selectedImages">
+              <img [src]="image.previewUrl" [alt]="image.file.name" />
+              <div class="image-preview-card__meta">
+                <span>{{ image.file.name }}</span>
+                <small>{{ (image.file.size / 1024 / 1024).toFixed(2) }} MB</small>
+              </div>
+              <button
+                type="button"
+                class="image-preview-card__remove"
+                title="Quitar imagen"
+                aria-label="Quitar imagen"
+                (click)="removeImage(image)"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+              </button>
+            </article>
+          </div>
+        </section>
 
-    <!-- COLUMNA DERECHA: MAPA -->
-    <div class="report-right-column">
-      <section class="card report-map">
-        <div class="map-head">
+        <section class="report-summary-card">
+          <div class="report-summary">
+            <div class="report-summary__head">
+              <strong>Resumen</strong>
+              <span><span class="material-symbols-outlined" aria-hidden="true">location_city</span>{{ distrito }}</span>
+              <span><span class="material-symbols-outlined" aria-hidden="true">water_drop</span>{{ tipo }}</span>
+            </div>
+            <div class="report-summary__address" [title]="direccion || 'Ubicación pendiente'">
+              <span class="material-symbols-outlined" aria-hidden="true">map</span>
+              <span>{{ direccion || 'Ubicación pendiente' }}</span>
+            </div>
+          </div>
+
+          <div class="report-summary-actions">
+            <a routerLink="/mis-reportes" class="report-secondary-action">Seguimiento</a>
+            <button
+              class="report-primary-action"
+              [class.btn-success]="submitState === 'success'"
+              type="button"
+              (click)="submit()"
+              [disabled]="submitting || !isLoggedIn"
+              [title]="!isLoggedIn ? 'Inicia sesión para enviar reportes' : 'Enviar reporte'"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">{{ submitState === 'success' ? 'check_circle' : 'send' }}</span>
+              {{
+                submitting
+                  ? (submitState === 'saving' ? 'Guardando...' : 'Subiendo...')
+                  : (submitState === 'success' ? 'Enviado' : 'Enviar')
+              }}
+            </button>
+          </div>
+        </section>
+
+        <div class="report-login-prompt" *ngIf="!isLoggedIn">
+          <span class="material-symbols-outlined" aria-hidden="true">info</span>
           <div>
-            <h3>Ubicación exacta en mapa</h3>
-            <p>Selecciona un punto en Lima para guardar latitud y longitud.</p>
+            <h4>Inicia sesión para enviar</h4>
+            <p>Podrás recibir notificaciones y hacer seguimiento del reporte.</p>
           </div>
-          <button type="button" class="btn-secondary" (click)="useCurrentLocation()">Usar mi ubicación actual</button>
         </div>
 
-        <div id="report-map" class="map-wrap mt-2" aria-label="Mapa de Lima para seleccionar ubicación"></div>
-        <p *ngIf="mapMessage" class="map-error">{{ mapMessage }}</p>
-        <p class="map-coords">Latitud: <b>{{ lat.toFixed(6) }}</b> | Longitud: <b>{{ lng.toFixed(6) }}</b></p>
-      </section>
-    </div>
+        <p *ngIf="message" class="report-message" [class.report-message--success]="submitState === 'success'">{{ message }}</p>
+      </div>
 
+      <aside class="report-map-column">
+        <div class="report-map-intro">
+          <span class="material-symbols-outlined" aria-hidden="true">lightbulb</span>
+          <p>Asegúrate de colocar el marcador lo más preciso posible.</p>
+        </div>
+
+        <section class="report-map-panel" aria-label="Ubicación exacta de la incidencia">
+          <div class="report-map-toolbar">
+            <div class="report-map-toolbar__group">
+              <div>
+                <span class="report-meta-label">Ubicación actual</span>
+                <strong class="report-live-status">
+                  <i aria-hidden="true"></i>
+                  GPS activo
+                </strong>
+              </div>
+              <div class="report-toolbar-divider"></div>
+              <div class="report-district-status">
+                <span class="report-meta-label">Distrito seleccionado</span>
+                <strong>{{ distrito }}</strong>
+              </div>
+            </div>
+
+            <span class="report-map-time">Actualizado por mapa</span>
+          </div>
+
+          <div id="report-map" class="report-map-canvas" aria-label="Mapa de Lima para seleccionar ubicación"></div>
+
+          <div class="report-map-actions">
+            <button type="button" class="report-location-button" (click)="useCurrentLocation()">
+              <span class="material-symbols-outlined" aria-hidden="true">my_location</span>
+              Usar mi ubicación
+            </button>
+          </div>
+
+          <div class="report-coordinates">
+            {{ lat.toFixed(6) }}, {{ lng.toFixed(6) }}
+          </div>
+        </section>
+
+        <p *ngIf="mapMessage" class="report-map-message">{{ mapMessage }}</p>
+      </aside>
+    </section>
   </main>
 </div>

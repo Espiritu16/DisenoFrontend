@@ -1,72 +1,173 @@
-<div class="home-design">
-  <section class="hero-home">
-    <div class="hero-grid">
+<main class="home-design">
+  <section class="hero-section grid-pattern">
+    <div class="blob-shape blob-shape--secondary"></div>
+    <div class="blob-shape blob-shape--primary"></div>
+
+    <div class="home-container hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow">
-          <span class="material-symbols-outlined eyebrow-icon">water_drop</span>
-          Gestión comunitaria del agua
-        </span>
-        <h1>CUIDAMOS EL<br />SERVICIO DE<br />TU ZONA.</h1>
+        <div class="hero-eyebrow">
+          <span class="material-symbols-outlined" aria-hidden="true">water_drop</span>
+          <span>Gestión comunitaria del agua</span>
+        </div>
+
+        <h1>Cuidamos el servicio de agua de tu comunidad</h1>
         <p>
-          AQUACOMUNIDAD centraliza reportes vecinales, alertas de servicio y seguimiento de casos
-          para reducir tiempos de atención en Lima.
+          Reporta incidencias, recibe alertas y consulta el avance de tus casos desde una plataforma
+          clara y transparente.
         </p>
+
         <div class="hero-actions">
-          <a class="btn-home btn-home--light" routerLink="/reportar">Reportar incidencia</a>
-          <a class="btn-home btn-home--ghost" routerLink="/mis-reportes">Ver seguimiento</a>
+          <a class="home-button home-button--primary" routerLink="/reportar">
+            Reportar incidencia
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+          </a>
+          <a class="home-button home-button--secondary" routerLink="/mis-reportes">
+            Ver seguimiento
+          </a>
         </div>
       </div>
 
-      <div class="hero-media">
-        <img
-          src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1400&q=80"
-          alt="Equipo revisando sistema de agua"
-          loading="lazy"
-        />
-      </div>
-    </div>
-  </section>
+      <aside class="monitor-frame" aria-label="Panel visual de monitoreo hídrico">
+        <div class="monitor-panel">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFY-0418y3JXPMgN4K9aW6ibc7KPLPZWq_IaBuXDOyBuMsi9ZmN_AHejOfcz0f-KMmzZ5nNDv0ga_yA4JIhsaW4oqgOwZwkirYFD3KZC73sf7tUxt3YtcCEuY0TuCYnH0PVrAOGcGKigjXhj2BXoXeLHvNY9TllmqQGy524vSlUsCMwzAU60WtT9ZgTh1CZYXZlnx8eEv1n3we7UVef_wMOdmQTnzsFwH6hbZSFswzawMKO3avA4O6cOkyb43JtLnepocDqxoiStA"
+            alt="Monitoreo técnico de agua"
+          />
+          <div class="monitor-overlay"></div>
 
-  <section class="ticker" aria-label="Beneficios AQUACOMUNIDAD">
-    <div class="ticker-track">
-      <div class="ticker-group">
-        <span class="ticker-item">REPORTE RÁPIDO</span>
-        <span class="ticker-item">SEGUIMIENTO TRANSPARENTE</span>
-        <span class="ticker-item">ALERTAS COMUNITARIAS</span>
-        <span class="ticker-item">COORDINACIÓN OPERATIVA</span>
-      </div>
-      <div class="ticker-group" aria-hidden="true">
-        <span class="ticker-item">REPORTE RÁPIDO</span>
-        <span class="ticker-item">SEGUIMIENTO TRANSPARENTE</span>
-        <span class="ticker-item">ALERTAS COMUNITARIAS</span>
-        <span class="ticker-item">COORDINACIÓN OPERATIVA</span>
-      </div>
-    </div>
-  </section>
+          <div class="monitor-content">
+            <div class="monitor-top">
+              <div class="live-pill">
+                <span class="live-dot" aria-hidden="true"></span>
+                <span>Sistema en vivo</span>
+              </div>
+              <div class="quality-pill">
+                <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+                <span>Calidad: Óptima</span>
+              </div>
+            </div>
 
-  <section class="featured">
-    <div class="app-shell">
-      <div class="section-head centered">
-        <div class="section-title-line">
-          <span class="section-title-line__line"></span>
-          <h2>ACCESOS CLAVE</h2>
-          <span class="section-title-line__line"></span>
-        </div>
-      </div>
+            <div class="monitor-bottom">
+              <div class="sensor-grid">
+                <article class="sensor-card">
+                  <span class="sensor-icon material-symbols-outlined" aria-hidden="true">speed</span>
+                  <div>
+                    <p>Presión</p>
+                    <strong>4.2 bar</strong>
+                  </div>
+                  <span class="sensor-status" aria-hidden="true"></span>
+                </article>
+                <article class="sensor-card">
+                  <span class="sensor-icon material-symbols-outlined" aria-hidden="true">waves</span>
+                  <div>
+                    <p>Caudal</p>
+                    <strong>120 L/s</strong>
+                  </div>
+                </article>
+              </div>
 
-      <div class="product-grid">
-        <article class="product-card" *ngFor="let item of destacados">
-          <span class="badge">{{ item.badge }}</span>
-          <img [src]="item.image" [alt]="item.title" loading="lazy" />
-          <div class="product-body">
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.text }}</p>
-            <div class="product-actions">
-              <a class="btn-home btn-home--outline" [routerLink]="item.route">{{ item.cta }}</a>
+              <div class="alert-stack">
+                <article class="monitor-alert monitor-alert--critical">
+                  <span class="material-symbols-outlined" aria-hidden="true">warning</span>
+                  <div>
+                    <strong>Fuga reportada</strong>
+                    <p>Av. Principal #123</p>
+                  </div>
+                  <time>14:20</time>
+                </article>
+                <article class="monitor-alert monitor-alert--warning">
+                  <span class="material-symbols-outlined" aria-hidden="true">waves</span>
+                  <div>
+                    <strong>Baja presión</strong>
+                    <p>Sector Sur</p>
+                  </div>
+                  <time>14:05</time>
+                </article>
+              </div>
             </div>
           </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="metrics-section" aria-label="Indicadores comunitarios">
+    <div class="home-container metrics-grid">
+      <article *ngFor="let metric of metrics">
+        <strong>{{ metric.value }}</strong>
+        <span>{{ metric.label }}</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="benefits-section">
+    <div class="home-container">
+      <div class="section-heading">
+        <h2>Plataforma ciudadana integral</h2>
+        <p>Herramientas diseñadas para agilizar la comunicación entre la comunidad y los servicios de gestión del agua.</p>
+      </div>
+
+      <div class="benefits-grid">
+        <article class="benefit-card" *ngFor="let benefit of benefits">
+          <span class="benefit-icon material-symbols-outlined" aria-hidden="true">{{ benefit.icon }}</span>
+          <h3>{{ benefit.title }}</h3>
+          <p>{{ benefit.text }}</p>
         </article>
       </div>
     </div>
   </section>
-</div>
+
+  <section class="access-section">
+    <div class="home-container access-grid">
+      <article class="access-card access-card--report">
+        <div class="access-title">
+          <span class="material-symbols-outlined" aria-hidden="true">campaign</span>
+          <h2>Reporta en segundos</h2>
+        </div>
+        <p>Registra fugas, baja presión o agua turbia indicando la ubicación del problema para una atención más rápida.</p>
+        <a class="home-button home-button--primary" routerLink="/reportar">
+          Reportar ahora
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        </a>
+      </article>
+
+      <article class="access-card access-card--track">
+        <div class="access-title">
+          <span class="material-symbols-outlined" aria-hidden="true">query_stats</span>
+          <h2>Sigue tus casos</h2>
+        </div>
+        <p>Consulta el estado, historial y avance de tus reportes ciudadanos en una interfaz organizada y accesible.</p>
+
+        <div class="mini-timeline" aria-hidden="true">
+          <span></span>
+          <i></i>
+          <span></span>
+          <i></i>
+          <span></span>
+        </div>
+
+        <a class="home-button home-button--outline" routerLink="/mis-reportes">
+          Ir a seguimiento
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <section class="process-section">
+    <div class="home-container process-container">
+      <div class="section-heading">
+        <h2>Proceso de atención</h2>
+      </div>
+
+      <div class="process-grid">
+        <article class="process-step" *ngFor="let step of process; let last = last" [class.process-step--last]="last">
+          <span class="process-icon material-symbols-outlined" aria-hidden="true">{{ step.icon }}</span>
+          <span class="process-pill">{{ step.kicker }}</span>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.text }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>

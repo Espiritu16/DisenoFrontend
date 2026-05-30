@@ -1,36 +1,41 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthModalComponent } from '../../shared/auth-modal/auth-modal.component';
 import { AuthService } from '../../core/api/auth.service';
 
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterOutlet, AuthModalComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, AuthModalComponent],
   template: `
-    <div class="site-wrap min-h-screen flex flex-col bg-background text-on-background">
-      <header class="site-header sticky top-0 z-40 bg-on-primary border-b border-outline-variant/40">
-        <div class="app-shell site-header__inner">
+    <div class="site-wrap min-h-screen flex flex-col bg-background text-on-background font-body-md text-body-md">
+      <header class="site-header">
+        <div class="site-header__inner">
           <button class="site-header__menu-btn" type="button" aria-label="Abrir menú" (click)="toggleMobileMenu()">
             <span class="material-symbols-outlined">menu</span>
           </button>
 
-          <a routerLink="/inicio" class="site-header__brand text-primary font-extrabold tracking-tight text-xl" (click)="closeMobileMenu()">
-            <span class="material-symbols-outlined site-header__brand-icon" aria-hidden="true">water_drop</span>
-            <span>AQUACOMUNIDAD</span>
+          <a routerLink="/inicio" class="site-header__brand" (click)="closeMobileMenu()">
+            <span class="site-header__brand-mark" aria-hidden="true">
+              <span class="material-symbols-outlined">water_drop</span>
+            </span>
+            <span class="site-header__brand-text">AQUACOMUNIDAD</span>
           </a>
 
           <nav class="site-header__nav" aria-label="Navegación principal">
-            <a routerLink="/inicio" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Inicio</a>
-            <a routerLink="/reportar" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Reportar incidencia</a>
-            <a routerLink="/mis-reportes" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Seguimiento</a>
-            <a routerLink="/contacto" class="px-3 py-2 rounded-md hover:bg-surface-container-low">Contacto</a>
+            <a routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+            <a routerLink="/reportar" routerLinkActive="active">Reportar</a>
+            <a *ngIf="auth.session(); else headerReportsLogin" routerLink="/mis-reportes" routerLinkActive="active">Mis reportes</a>
+            <ng-template #headerReportsLogin>
+              <button class="site-header__nav-link" type="button" (click)="openAuth('login')">Mis reportes</button>
+            </ng-template>
+            <a routerLink="/contacto" routerLinkActive="active">Contacto</a>
           </nav>
 
           <div class="site-header__actions">
             <a *ngIf="auth.role === 'ADMIN' || auth.role === 'OPERADOR'" routerLink="/administrador/dashboard" class="btn-secondary site-header__admin">Administrador</a>
-            <button *ngIf="!auth.session()" class="btn-primary site-header__login" type="button" (click)="openAuth('login')">Iniciar sesión</button>
+            <button *ngIf="!auth.session()" class="btn-primary site-header__login" type="button" (click)="openAuth('login')">Acceso</button>
             <ng-container *ngIf="auth.session()">
               <div class="site-header__user" title="Usuario conectado">
                 <span class="material-symbols-outlined" aria-hidden="true">person</span>
@@ -51,13 +56,31 @@ import { AuthService } from '../../core/api/auth.service';
             </button>
           </div>
           <nav class="site-drawer__nav" aria-label="Navegación principal móvil">
-            <a routerLink="/inicio" (click)="closeMobileMenu()">Inicio</a>
-            <a routerLink="/reportar" (click)="closeMobileMenu()">Reportar incidencia</a>
-            <a routerLink="/mis-reportes" (click)="closeMobileMenu()">Seguimiento</a>
-            <a routerLink="/contacto" (click)="closeMobileMenu()">Contacto</a>
+            <a routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobileMenu()">
+              <span class="material-symbols-outlined" aria-hidden="true">home</span>
+              Inicio
+            </a>
+            <a routerLink="/reportar" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="material-symbols-outlined" aria-hidden="true">campaign</span>
+              Reportar
+            </a>
+            <a *ngIf="auth.session(); else drawerReportsLogin" routerLink="/mis-reportes" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="material-symbols-outlined" aria-hidden="true">query_stats</span>
+              Mis reportes
+            </a>
+            <ng-template #drawerReportsLogin>
+              <button class="site-drawer__nav-link" type="button" (click)="openAuth('login'); closeMobileMenu()">
+                <span class="material-symbols-outlined" aria-hidden="true">query_stats</span>
+                Mis reportes
+              </button>
+            </ng-template>
+            <a routerLink="/contacto" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="material-symbols-outlined" aria-hidden="true">support_agent</span>
+              Contacto
+            </a>
           </nav>
           <button class="btn-primary site-drawer__login" type="button" (click)="openAuth('login'); closeMobileMenu()">
-            Iniciar sesión
+            Acceso
           </button>
         </aside>
       </div>
@@ -66,45 +89,42 @@ import { AuthService } from '../../core/api/auth.service';
         <router-outlet></router-outlet>
       </main>
 
-      <footer class="site-footer bg-primary text-on-primary border-t border-primary/80">
-        <div class="app-shell site-footer__grid text-sm">
-          <section>
-            <h3 class="text-on-primary font-semibold mb-3">AQUACOMUNIDAD</h3>
-            <p class="leading-relaxed text-on-primary/85">Plataforma comunitaria para reporte, monitoreo y seguimiento del servicio de agua.</p>
+      <footer class="site-footer">
+        <div class="site-footer__inner">
+          <div class="site-footer__grid">
+          <section class="site-footer__brand-col">
+            <h3>AQUACOMUNIDAD</h3>
+            <p>Plataforma GovTech para la gestión comunitaria e institucional de los servicios de agua.</p>
           </section>
 
           <section>
-            <h3 class="text-on-primary font-semibold mb-3">Atención</h3>
-            <ul class="space-y-1 text-on-primary/85">
-              <li>Lun - Sáb: 8:00 a 18:00</li>
-              <li>Domingos: Emergencias</li>
-              <li>Tiempo promedio: 4.9h</li>
+            <h3>Enlaces rápidos</h3>
+            <ul>
+              <li><a routerLink="/inicio">Inicio</a></li>
+              <li><a routerLink="/reportar">Reportar incidencia</a></li>
+              <li><a routerLink="/mis-reportes">Mis reportes</a></li>
             </ul>
           </section>
 
           <section>
-            <h3 class="text-on-primary font-semibold mb-3">Contacto</h3>
-            <ul class="space-y-1 text-on-primary/85">
-              <li>+51 999 000 111</li>
-              <li>+51 944 555 221</li>
-              <li class="break-all">soporte@aquacomunidad.pe</li>
+            <h3>Información</h3>
+            <ul>
+              <li><a routerLink="/contacto">Contacto</a></li>
+              <li><span>Transparencia operativa</span></li>
+              <li><span>Atención ciudadana</span></li>
             </ul>
           </section>
 
           <section>
-            <h3 class="text-on-primary font-semibold mb-3">Enlaces</h3>
-            <ul class="space-y-1 text-on-primary/85">
-              <li><a routerLink="/reportar" class="hover:text-secondary">Reportar incidencia</a></li>
-              <li><a routerLink="/mis-reportes" class="hover:text-secondary">Seguimiento</a></li>
-              <li><button type="button" class="hover:text-secondary text-left" (click)="openAuth('login')">Acceso operadores</button></li>
-            </ul>
+            <h3>Compromiso institucional</h3>
+            <p>Trabajamos con autoridades y ciudadanos para asegurar un servicio eficiente, transparente y confiable.</p>
           </section>
-        </div>
+          </div>
 
-        <div class="border-t border-on-primary/20">
-          <div class="app-shell site-footer__legal text-xs text-on-primary/70">
+          <div class="site-footer__legal">
             <span>© 2026 AQUACOMUNIDAD. Todos los derechos reservados.</span>
-            <span>Versión piloto comunitaria</span>
+            <span><span class="material-symbols-outlined" aria-hidden="true">security</span> Sistema seguro</span>
+            <span><span class="material-symbols-outlined" aria-hidden="true">public</span> Portal ciudadano</span>
           </div>
         </div>
       </footer>
@@ -120,44 +140,109 @@ import { AuthService } from '../../core/api/auth.service';
       }
 
       .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
         overflow: visible;
+        background: rgba(248, 249, 250, 0.95);
+        border-bottom: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
+        box-shadow: 0 1px 10px rgba(0, 30, 64, 0.06);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
       }
 
       .site-header__inner {
         width: 100%;
-        max-width: none;
-        min-height: 68px;
+        max-width: 1440px;
+        min-height: 64px;
         display: grid;
         grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
         align-items: center;
-        margin: 0;
-        padding: 0.85rem clamp(1.25rem, 3.5vw, 4rem);
-        gap: 0.85rem;
+        margin: 0 auto;
+        padding: 0 16px;
+        gap: 1rem;
       }
 
       .site-header__brand {
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.65rem;
         text-decoration: none;
         white-space: nowrap;
+        color: var(--color-brand-primary);
       }
 
-      .site-header__brand-icon {
-        font-size: 1.55rem;
+      .site-header__brand-mark {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.85rem;
+        display: grid;
+        place-items: center;
+        color: var(--color-on-brand);
+        background: linear-gradient(135deg, var(--color-brand-primary), #0060ac);
+        box-shadow: 0 10px 24px rgba(0, 51, 102, 0.18);
+      }
+
+      .site-header__brand-mark .material-symbols-outlined {
+        font-size: 1.3rem;
+        font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+      }
+
+      .site-header__brand-text {
+        font-family: 'Hanken Grotesk', Inter, sans-serif;
+        font-size: 1.24rem;
         line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.01em;
       }
 
       .site-header__nav {
         display: flex;
         align-items: center;
-        gap: 0.35rem;
-        font-size: 0.875rem;
+        gap: 2rem;
+        height: 100%;
+        font-size: 0.88rem;
         justify-self: center;
+      }
+
+      .site-header__nav a {
+        height: 64px;
+        display: inline-flex;
+        align-items: center;
+        border-bottom: 2px solid transparent;
+        color: var(--color-text-muted);
+        font-weight: 650;
+        text-decoration: none;
+        transition: color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .site-header__nav-link {
+        height: 64px;
+        display: inline-flex;
+        align-items: center;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        padding: 0;
+        color: var(--color-text-muted);
+        background: transparent;
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+        transition: color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .site-header__nav a:hover,
+      .site-header__nav a.active,
+      .site-header__nav-link:hover {
+        color: #0060ac;
+        border-bottom-color: #0060ac;
       }
 
       .site-header__login {
         white-space: nowrap;
+        min-height: 2.625rem;
+        border-radius: 0.25rem;
+        padding-inline: 1.05rem;
       }
 
       .site-header__actions {
@@ -215,7 +300,9 @@ import { AuthService } from '../../core/api/auth.service';
       .site-drawer-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(15, 23, 42, 0.35);
+        background: rgba(15, 23, 42, 0.42);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
         z-index: 55;
       }
 
@@ -224,8 +311,8 @@ import { AuthService } from '../../core/api/auth.service';
         height: 100%;
         background: var(--color-on-brand);
         border-right: 1px solid var(--color-border);
-        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.2);
-        padding: 0.9rem 0.8rem;
+        box-shadow: 0 24px 64px rgba(0, 30, 64, 0.2);
+        padding: 1rem 0.9rem;
         display: flex;
         flex-direction: column;
         gap: 0.9rem;
@@ -252,33 +339,134 @@ import { AuthService } from '../../core/api/auth.service';
 
       .site-drawer__nav a {
         border: 1px solid var(--color-border);
-        border-radius: 0.6rem;
-        padding: 0.66rem 0.72rem;
+        border-radius: 0.85rem;
+        padding: 0.78rem 0.82rem;
         color: var(--color-text-main);
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        background: var(--color-on-brand);
+      }
+
+      .site-drawer__nav-link {
+        width: 100%;
+        border: 1px solid var(--color-border);
+        border-radius: 0.85rem;
+        padding: 0.78rem 0.82rem;
+        color: var(--color-text-main);
+        background: var(--color-on-brand);
+        font: inherit;
+        font-weight: 700;
+        text-align: left;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        cursor: pointer;
+      }
+
+      .site-drawer__nav a.active {
+        border-color: color-mix(in oklab, #0060ac 35%, var(--color-border));
+        color: #0060ac;
+        background: color-mix(in oklab, #d4e3ff 72%, white);
+      }
+
+      .site-drawer__nav-link:hover {
+        border-color: color-mix(in oklab, #0060ac 35%, var(--color-border));
+        color: #0060ac;
+        background: color-mix(in oklab, #d4e3ff 72%, white);
       }
 
       .site-drawer__login {
         margin-top: auto;
       }
 
+      .site-footer {
+        margin-top: auto;
+        color: #d1e4fb;
+        background: #233547;
+        border-top: 1px solid rgba(195, 198, 209, 0.28);
+      }
+
+      .site-footer__inner {
+        width: min(1440px, calc(100% - 2rem));
+        margin: 0 auto;
+        padding: 4rem 0 1.5rem;
+      }
+
       .site-footer__grid {
-        padding-top: 2.4rem;
-        padding-bottom: 2.4rem;
         display: grid;
-        gap: 2rem;
+        gap: 3rem;
         grid-template-columns: repeat(4, minmax(0, 1fr));
+        padding-bottom: 3rem;
+        border-bottom: 1px solid rgba(195, 198, 209, 0.28);
+      }
+
+      .site-footer h3 {
+        margin: 0 0 1rem;
+        color: #ffffff;
+        font-size: 0.9rem;
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .site-footer__brand-col h3 {
+        font-family: 'Hanken Grotesk', Inter, sans-serif;
+        font-size: 1.45rem;
+        letter-spacing: -0.01em;
+      }
+
+      .site-footer p,
+      .site-footer li,
+      .site-footer a,
+      .site-footer span {
+        color: rgba(209, 228, 251, 0.82);
+      }
+
+      .site-footer p {
+        margin: 0;
+        max-width: 30rem;
+        line-height: 1.65;
+      }
+
+      .site-footer ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .site-footer a {
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .site-footer a:hover {
+        color: var(--color-brand-accent);
       }
 
       .site-footer__legal {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+        padding-top: 1.5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.55rem;
+        gap: 1rem;
         flex-wrap: wrap;
+        font-size: 0.78rem;
+      }
+
+      .site-footer__legal span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .site-footer__legal .material-symbols-outlined {
+        font-size: 1rem;
       }
 
       @keyframes drawer-in {
@@ -292,7 +480,7 @@ import { AuthService } from '../../core/api/auth.service';
           display: flex;
           flex-wrap: wrap;
           row-gap: 0.55rem;
-          padding: 0.7rem 0.9rem;
+          padding: 0.65rem 0.9rem;
         }
 
         .site-header__menu-btn {
@@ -325,12 +513,22 @@ import { AuthService } from '../../core/api/auth.service';
 
         .site-footer__grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 1.4rem;
+          gap: 2rem;
         }
       }
 
       @media (max-width: 640px) {
         .site-header__brand {
+          gap: 0.5rem;
+        }
+
+        .site-header__brand-mark {
+          width: 2rem;
+          height: 2rem;
+          border-radius: 0.7rem;
+        }
+
+        .site-header__brand-text {
           font-size: 1rem;
         }
 
@@ -346,8 +544,7 @@ import { AuthService } from '../../core/api/auth.service';
 
         .site-footer__grid {
           grid-template-columns: 1fr;
-          text-align: center;
-          gap: 1rem;
+          gap: 1.5rem;
         }
 
         .site-footer__legal {

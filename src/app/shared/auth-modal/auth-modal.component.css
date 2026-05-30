@@ -185,9 +185,9 @@
 .auth-submit {
   width: 100%;
   min-height: 52px;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 1.04rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .auth-switch {
@@ -215,7 +215,7 @@
 .auth-select {
   height: 44px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: 4px;
   background: var(--color-on-brand);
   padding: 0 0.55rem;
   font: inherit;

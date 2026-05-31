@@ -6,11 +6,12 @@ import { ApiReportStatus, ReporteResponse } from '../../../core/api/api-models';
 import { ReportesService } from '../../../core/api/reportes.service';
 import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
 import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
+import { AquaMobileNavComponent } from '../../../shared/public/aqua-mobile-nav/aqua-mobile-nav.component';
 
 @Component({
   selector: 'app-mis-reportes',
   standalone: true,
-  imports: [CommonModule, FormsModule, AquaHeaderComponent, AquaFooterComponent],
+  imports: [CommonModule, FormsModule, AquaHeaderComponent, AquaFooterComponent, AquaMobileNavComponent],
   templateUrl: './mis-reportes.component.html',
   styleUrl: './mis-reportes.component.css'
 })

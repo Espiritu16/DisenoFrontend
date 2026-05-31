@@ -121,21 +121,52 @@
     width: min(100% - 32px, 1352px);
     margin-top: 72px;
     padding-top: 38px;
+    text-align: center;
   }
 
   .aqua-footer__inner {
     grid-template-columns: 1fr;
-    gap: 34px;
+    gap: 30px;
+    justify-items: center;
   }
 
   .aqua-footer__brand {
     max-width: none;
+    display: grid;
+    justify-items: center;
+  }
+
+  .aqua-brand {
+    justify-content: center;
+  }
+
+  .aqua-footer__brand p {
+    max-width: 330px;
+    margin-top: 16px;
+  }
+
+  .aqua-footer__group {
+    width: min(100%, 320px);
+    justify-items: center;
+    gap: 12px;
   }
 
   .aqua-footer__bottom {
     min-height: 112px;
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
     justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .aqua-footer {
+    width: min(100% - 40px, 1352px);
+  }
+
+  .aqua-footer__brand p,
+  .aqua-footer__bottom {
+    font-size: 14px;
   }
 }

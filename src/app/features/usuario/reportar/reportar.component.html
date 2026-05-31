@@ -25,17 +25,24 @@
     <section #reportWorkspace class="report-workspace" aria-label="Formulario y mapa de reporte">
       <article class="report-panel report-panel--form" aria-label="Formulario de incidencia">
         <form *ngIf="reportStep === 'form'" class="report-form">
-          <div class="report-field">
+          <div
+            class="report-field"
+            [class.report-field--valid]="fieldIsValid('district')"
+            [class.report-field--error]="fieldHasError('district')"
+          >
             <label for="report-district">Distrito</label>
             <div class="report-select" (click)="$event.stopPropagation()">
               <button
+                #districtTrigger
                 id="report-district"
                 type="button"
                 class="report-select__trigger"
                 aria-haspopup="listbox"
                 [attr.aria-expanded]="districtDropdownOpen"
                 aria-controls="report-district-list"
+                [attr.aria-invalid]="fieldHasError('district')"
                 (click)="toggleDistrictDropdown($event)"
+                (focus)="ensureControlVisible($event)"
               >
                 <span [class.report-select__placeholder]="!distrito">
                   {{ distrito || 'Selecciona distrito' }}
@@ -87,7 +94,33 @@
             </div>
           </fieldset>
 
-          <div class="report-field">
+          <div
+            class="report-location-picker"
+            [class.report-field--valid]="fieldIsValid('location')"
+            [class.report-field--error]="fieldHasError('location')"
+            aria-label="Ubicación en mapa"
+          >
+            <button
+              #mapOpenButton
+              type="button"
+              class="report-map-open"
+              [attr.aria-invalid]="fieldHasError('location')"
+              (click)="openMapSelector()"
+              (focus)="ensureControlVisible($event)"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s6-5.2 6-11a6 6 0 0 0-12 0c0 5.8 6 11 6 11Z" />
+                <path d="M12 12.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" />
+              </svg>
+              <span>Seleccionar ubicación en mapa</span>
+            </button>
+          </div>
+
+          <div
+            class="report-field"
+            [class.report-field--valid]="fieldIsValid('location')"
+            [class.report-field--error]="fieldHasError('location')"
+          >
             <label for="report-address">Dirección detectada</label>
             <input
               #direccionInput
@@ -98,6 +131,7 @@
               placeholder="Se completará cuando selecciones el punto en el mapa"
               readonly
               aria-readonly="true"
+              [attr.aria-invalid]="fieldHasError('location')"
             />
           </div>
 
@@ -109,28 +143,42 @@
               type="text"
               [(ngModel)]="referencia"
               placeholder="Ej: frente al parque central"
+              (focus)="ensureControlVisible($event)"
             />
           </div>
 
-          <div class="report-field">
+          <div
+            class="report-field"
+            [class.report-field--valid]="fieldIsValid('description')"
+            [class.report-field--error]="fieldHasError('description')"
+          >
             <label for="report-description">
               Descripción
               <span>{{ descripcion.length }}/500</span>
             </label>
             <textarea
+              #descriptionInput
               id="report-description"
               name="description"
               [(ngModel)]="descripcion"
               maxlength="500"
               rows="5"
               placeholder="Describe lo que está ocurriendo..."
+              [attr.aria-invalid]="fieldHasError('description')"
+              (focus)="ensureControlVisible($event)"
+              (ngModelChange)="onDescriptionInput()"
             ></textarea>
           </div>
 
-          <div class="report-field">
+          <div
+            #evidenceArea
+            class="report-field"
+            [class.report-field--valid]="fieldIsValid('evidence')"
+            [class.report-field--error]="fieldHasError('evidence')"
+          >
             <label for="report-evidence">Evidencia</label>
             <div class="report-evidence-row">
-              <label class="report-upload" for="report-evidence">
+              <label class="report-upload" for="report-evidence" tabindex="0" [attr.aria-invalid]="fieldHasError('evidence')">
                 <input id="report-evidence" type="file" accept="image/*" multiple (change)="onEvidenceChange($event)" />
                 <span class="report-upload__icon" aria-hidden="true">
                   <svg viewBox="0 0 32 32">
@@ -144,15 +192,23 @@
               </label>
 
               <div class="report-evidence-list" aria-label="Imágenes seleccionadas">
-                <button
+                <div
                   *ngFor="let image of evidenceImages"
-                  type="button"
                   class="report-evidence-card"
-                  (click)="openEvidencePreview(image)"
                 >
-                  <img [src]="image.previewUrl" [alt]="image.name" />
-                  <span>{{ image.name }}</span>
-                </button>
+                  <button
+                    type="button"
+                    class="report-evidence-remove"
+                    [attr.aria-label]="'Quitar ' + image.name"
+                    (click)="removeEvidenceImage(image.id, $event)"
+                  >
+                    ×
+                  </button>
+                  <button type="button" class="report-evidence-preview" (click)="openEvidencePreview(image)">
+                    <img [src]="image.previewUrl" [alt]="image.name" />
+                    <span>{{ image.name }}</span>
+                  </button>
+                </div>
 
                 <div *ngIf="!evidenceImages.length" class="report-evidence-empty">
                   Las fotos aparecerán aquí.
@@ -164,7 +220,7 @@
                 <button type="button" class="report-back" disabled>Retroceder</button>
               </div>
             </div>
-            <p *ngIf="submitMessage" class="report-feedback">{{ submitMessage }}</p>
+            <p *ngIf="submitMessage" class="report-feedback" [class.report-feedback--error]="validationTarget">{{ submitMessage }}</p>
           </div>
         </form>
 
@@ -200,21 +256,25 @@
               <dt>Evidencia</dt>
               <dd>{{ evidenceImages.length ? evidenceImages.length + ' foto(s) adjunta(s)' : 'Sin fotos adjuntas' }}</dd>
             </div>
-            <div>
-              <dt>Coordenadas</dt>
-              <dd>{{ lat.toFixed(6) }}, {{ lng.toFixed(6) }}</dd>
-            </div>
           </dl>
 
           <div *ngIf="evidenceImages.length" class="report-review__photos" aria-label="Fotos adjuntas al reporte">
-            <button
+            <div
               *ngFor="let image of evidenceImages"
-              type="button"
               class="report-review__photo"
-              (click)="openEvidencePreview(image)"
             >
-              <img [src]="image.previewUrl" [alt]="image.name" />
-            </button>
+              <button
+                type="button"
+                class="report-review__photo-remove"
+                [attr.aria-label]="'Quitar ' + image.name"
+                (click)="removeEvidenceImage(image.id, $event)"
+              >
+                ×
+              </button>
+              <button type="button" class="report-review__photo-preview" (click)="openEvidencePreview(image)">
+                <img [src]="image.previewUrl" [alt]="image.name" />
+              </button>
+            </div>
           </div>
 
           <div class="report-review__actions">
@@ -250,6 +310,7 @@
       <article
         #mapPanel
         class="report-panel report-panel--map"
+        [class.report-panel--map-open]="mapSheetOpen"
         aria-label="Mapa de ubicación"
       >
         <div class="report-map-toolbar">
@@ -265,6 +326,8 @@
             <span>Distrito seleccionado</span>
             <strong>{{ distrito || 'Pendiente' }}</strong>
           </div>
+
+          <button type="button" class="report-map-close" aria-label="Cerrar mapa" (click)="closeMapSelector()">×</button>
         </div>
 
         <div id="report-map" class="report-map-canvas" aria-label="Mapa de Lima para seleccionar ubicación"></div>
@@ -272,6 +335,7 @@
         <div class="report-map-footer">
           <span>{{ lat.toFixed(6) }}, {{ lng.toFixed(6) }}</span>
           <button type="button" (click)="useCurrentLocation()">Usar mi ubicación</button>
+          <button type="button" class="report-map-confirm" (click)="confirmMapLocation()">Confirmar ubicación</button>
         </div>
 
         <p *ngIf="mapMessage" class="report-map-message">{{ mapMessage }}</p>
@@ -280,7 +344,7 @@
   </main>
 
   <app-aqua-footer reportHref="/reportar"></app-aqua-footer>
-  <div class="report-bottom-bar" aria-hidden="true"></div>
+  <app-aqua-mobile-nav activeHref="/reportar"></app-aqua-mobile-nav>
 
   <div *ngIf="previewImage" class="report-modal" role="dialog" aria-modal="true" aria-label="Vista previa de evidencia" (click)="closeEvidencePreview()">
     <div class="report-modal__content" (click)="$event.stopPropagation()">

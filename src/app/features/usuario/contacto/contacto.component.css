@@ -287,6 +287,10 @@
 }
 
 @media (max-width: 900px) {
+  .contact-page {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+
   .contact-main {
     width: min(100% - 48px, 1352px);
     padding-top: 64px;

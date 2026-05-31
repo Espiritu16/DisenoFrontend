@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
 import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
+import { AquaMobileNavComponent } from '../../../shared/public/aqua-mobile-nav/aqua-mobile-nav.component';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, RouterLink, AquaHeaderComponent, AquaFooterComponent],
+  imports: [CommonModule, RouterLink, AquaHeaderComponent, AquaFooterComponent, AquaMobileNavComponent],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css'
 })

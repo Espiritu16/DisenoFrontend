@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/api/auth.service';
@@ -12,7 +12,7 @@ import { apiErrorMessage } from '../../core/api/api-error';
   templateUrl: './auth-modal.component.html',
   styleUrl: './auth-modal.component.css'
 })
-export class AuthModalComponent implements OnChanges {
+export class AuthModalComponent implements OnChanges, OnInit, OnDestroy {
   @Input() initialView: 'login' | 'register' | 'recover' = 'login';
   @Output() closed = new EventEmitter<void>();
 
@@ -50,6 +50,14 @@ export class AuthModalComponent implements OnChanges {
 
   constructor(private auth: AuthService, private router: Router, private cdr: ChangeDetectorRef) {}
 
+  ngOnInit(): void {
+    document.body.classList.add('aqua-auth-open');
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('aqua-auth-open');
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['initialView']) {
       this.modalView = this.initialView;
@@ -59,6 +67,7 @@ export class AuthModalComponent implements OnChanges {
   }
 
   closeModal(): void {
+    document.body.classList.remove('aqua-auth-open');
     this.closed.emit();
   }
 

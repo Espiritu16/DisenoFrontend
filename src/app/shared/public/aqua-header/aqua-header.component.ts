@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { AuthService, StoredSession } from '../../../core/api/auth.service';
 import { AuthModalComponent } from '../../auth-modal/auth-modal.component';
 import { AquaLogoComponent } from '../aqua-logo/aqua-logo.component';
 
@@ -24,9 +25,18 @@ export class AquaHeaderComponent implements OnInit, OnDestroy {
   @Input() activeHref = '/inicio';
   authModalOpen = false;
   authInitialView: 'login' | 'register' = 'login';
+  readonly session = computed(() => this.currentSession());
+  readonly userDisplayName = computed(() => {
+    const session = this.session();
+    if (!session) {
+      return '';
+    }
+    return session.nombre?.trim() || session.correo.split('@')[0] || 'Usuario';
+  });
+  readonly userInitials = computed(() => this.initialsFromName(this.userDisplayName()));
   private readonly destroy$ = new Subject<void>();
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, readonly auth: AuthService) {}
 
   ngOnInit(): void {
     this.route.queryParamMap
@@ -72,5 +82,32 @@ export class AquaHeaderComponent implements OnInit, OnDestroy {
         replaceUrl: true
       });
     }
+  }
+
+  logout(): void {
+    this.auth.logout();
+  }
+
+  private initialsFromName(name: string): string {
+    const parts = name
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+    if (!parts.length) {
+      return 'AC';
+    }
+    if (parts.length === 1) {
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    return parts
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join('')
+      .toUpperCase();
+  }
+
+  private currentSession(): StoredSession | null {
+    const session = this.auth.session;
+    return typeof session === 'function' ? session() : null;
   }
 }

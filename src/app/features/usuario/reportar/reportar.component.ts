@@ -9,6 +9,7 @@ import { ReportesService } from '../../../core/api/reportes.service';
 import { UploadService } from '../../../core/api/upload.service';
 import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
 import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
+import { AquaMobileNavComponent } from '../../../shared/public/aqua-mobile-nav/aqua-mobile-nav.component';
 
 interface IncidentType {
   label: string;
@@ -25,18 +26,28 @@ interface EvidenceImage {
 }
 
 type ReportStep = 'form' | 'summary' | 'sent';
+type ValidationTarget = 'district' | 'location' | 'description' | 'evidence';
+
+interface ValidationResult {
+  message: string;
+  target?: ValidationTarget;
+}
 
 @Component({
   selector: 'app-reportar',
   standalone: true,
-  imports: [CommonModule, FormsModule, AquaHeaderComponent, AquaFooterComponent],
+  imports: [CommonModule, FormsModule, AquaHeaderComponent, AquaFooterComponent, AquaMobileNavComponent],
   templateUrl: './reportar.component.html',
   styleUrl: './reportar.component.css'
 })
 export class ReportarComponent implements AfterViewInit, OnDestroy {
   @ViewChild('districtMenu') districtMenu?: ElementRef<HTMLElement>;
   @ViewChild('reportWorkspace') reportWorkspace?: ElementRef<HTMLElement>;
+  @ViewChild('districtTrigger') districtTrigger?: ElementRef<HTMLButtonElement>;
+  @ViewChild('mapOpenButton') mapOpenButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('direccionInput') direccionInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('descriptionInput') descriptionInput?: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('evidenceArea') evidenceArea?: ElementRef<HTMLElement>;
   @ViewChild('mapPanel') mapPanel?: ElementRef<HTMLElement>;
 
   distrito = '';
@@ -52,9 +63,11 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
   reportStep: ReportStep = 'form';
   evidenceImages: EvidenceImage[] = [];
   previewImage?: EvidenceImage;
+  mapSheetOpen = false;
   submittedCode = '';
   submitting = false;
   submitMessage = '';
+  validationTarget?: ValidationTarget;
 
   readonly distritos = [
     'Ancón', 'Ate', 'Barranco', 'Breña', 'Carabayllo', 'Chaclacayo', 'Chorrillos', 'Cieneguilla', 'Comas', 'Cercado de Lima',
@@ -128,6 +141,7 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
       clearTimeout(this.scrollTimeoutId);
     }
     this.mapPanel?.nativeElement.removeEventListener('wheel', this.handleMapPanelWheel);
+    this.actualizarClaseMapaAbierto(false);
     this.revokeEvidenceUrls();
     if (this.map) {
       this.map.remove();
@@ -142,18 +156,45 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
 
   @HostListener('document:keydown.escape')
   closeDistrictDropdownWithEscape(): void {
+    if (this.mapSheetOpen) {
+      this.closeMapSelector();
+      return;
+    }
     this.districtDropdownOpen = false;
   }
 
   toggleDistrictDropdown(event: MouseEvent): void {
     event.stopPropagation();
     this.districtDropdownOpen = !this.districtDropdownOpen;
+    this.ensureElementVisible(this.districtTrigger?.nativeElement);
   }
 
   selectDistrict(district: string, event: MouseEvent): void {
     event.stopPropagation();
     this.distrito = district;
     this.districtDropdownOpen = false;
+    this.clearValidationIfResolved('district');
+  }
+
+  openMapSelector(): void {
+    this.mapSheetOpen = true;
+    this.actualizarClaseMapaAbierto(true);
+    window.setTimeout(() => this.map?.invalidateSize(), 180);
+  }
+
+  closeMapSelector(): void {
+    this.mapSheetOpen = false;
+    this.actualizarClaseMapaAbierto(false);
+  }
+
+  confirmMapLocation(): void {
+    this.closeMapSelector();
+    window.setTimeout(() => {
+      this.direccionInput?.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }, 120);
   }
 
   focusReportWorkspace(): void {
@@ -167,9 +208,10 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
+      const esMovil = typeof window !== 'undefined' && window.innerWidth <= 760;
       workspace.scrollIntoView({
         behavior: 'smooth',
-        block: 'center'
+        block: esMovil ? 'start' : 'center'
       });
     });
   }
@@ -193,6 +235,27 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
       }))
     ];
     input.value = '';
+    this.clearValidationIfResolved('evidence');
+  }
+
+  removeEvidenceImage(imageId: string, event?: Event): void {
+    event?.stopPropagation();
+    const image = this.evidenceImages.find((item) => item.id === imageId);
+    if (image) {
+      URL.revokeObjectURL(image.previewUrl);
+    }
+    this.evidenceImages = this.evidenceImages.filter((item) => item.id !== imageId);
+    if (this.previewImage?.id === imageId) {
+      this.previewImage = undefined;
+    }
+  }
+
+  onDescriptionInput(): void {
+    this.clearValidationIfResolved('description');
+  }
+
+  ensureControlVisible(event: FocusEvent): void {
+    this.ensureElementVisible(event.target as HTMLElement);
   }
 
   openEvidencePreview(image: EvidenceImage): void {
@@ -204,11 +267,14 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
   }
 
   goToSummary(): void {
-    this.submitMessage = this.validateForm();
-    if (this.submitMessage) {
-      this.focusReportWorkspace();
+    const validation = this.validateForm();
+    this.submitMessage = validation.message;
+    this.validationTarget = validation.target;
+    if (validation.message) {
+      this.focusValidationTarget(validation.target);
       return;
     }
+    this.validationTarget = undefined;
     this.reportStep = 'summary';
     this.focusReportWorkspace();
   }
@@ -225,18 +291,23 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
 
     if (!this.auth.token) {
       this.submitMessage = 'Inicia sesión para enviar el reporte y hacer seguimiento.';
+      this.validationTarget = undefined;
       this.focusReportWorkspace();
       return;
     }
 
-    this.submitMessage = this.validateForm();
-    if (this.submitMessage) {
+    const validation = this.validateForm();
+    this.submitMessage = validation.message;
+    this.validationTarget = validation.target;
+    if (validation.message) {
       this.reportStep = 'form';
-      this.focusReportWorkspace();
+      this.scheduleDetectChanges();
+      window.setTimeout(() => this.focusValidationTarget(validation.target));
       return;
     }
 
     this.submitting = true;
+    this.validationTarget = undefined;
     this.submitMessage = 'Subiendo evidencia...';
     try {
       const archivo = await firstValueFrom(
@@ -264,11 +335,13 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
 
       this.submittedCode = `REP-${reporte.id}`;
       this.submitMessage = '';
+      this.validationTarget = undefined;
       this.reportStep = 'sent';
       this.scheduleDetectChanges();
       this.focusReportWorkspace();
     } catch (error: unknown) {
       this.submitMessage = apiErrorMessage(error);
+      this.validationTarget = undefined;
       this.scheduleDetectChanges();
       this.focusReportWorkspace();
     } finally {
@@ -285,6 +358,7 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
     this.descripcion = '';
     this.mapMessage = '';
     this.submitMessage = '';
+    this.validationTarget = undefined;
     this.submittedCode = '';
     this.reportStep = 'form';
     this.revokeEvidenceUrls();
@@ -314,24 +388,117 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
     event.stopPropagation();
   }
 
-  private validateForm(): string {
+  fieldIsComplete(target: ValidationTarget): boolean {
+    switch (target) {
+      case 'district':
+        return Boolean(this.distrito.trim());
+      case 'location':
+        return Boolean(this.direccion.trim());
+      case 'description':
+        return Boolean(this.descripcion.trim());
+      case 'evidence':
+        return this.evidenceImages.length > 0;
+      default:
+        return false;
+    }
+  }
+
+  fieldHasError(target: ValidationTarget): boolean {
+    return this.validationTarget === target && Boolean(this.submitMessage) && !this.fieldIsComplete(target);
+  }
+
+  fieldIsValid(target: ValidationTarget): boolean {
+    return this.fieldIsComplete(target) && !this.fieldHasError(target);
+  }
+
+  private validateForm(): ValidationResult {
     if (!this.distrito.trim()) {
-      return 'Selecciona el distrito donde ocurre la incidencia.';
+      return { message: 'Selecciona el distrito donde ocurre la incidencia.', target: 'district' };
     }
     if (!this.direccion.trim()) {
-      return 'Selecciona el punto exacto en el mapa.';
+      return { message: 'Selecciona el punto exacto en el mapa.', target: 'location' };
     }
     if (!this.descripcion.trim()) {
-      return 'Describe brevemente el problema observado.';
+      return { message: 'Describe brevemente el problema observado.', target: 'description' };
     }
     if (!this.evidenceImages.length) {
-      return 'Adjunta al menos una foto de evidencia.';
+      return { message: 'Adjunta al menos una foto de evidencia.', target: 'evidence' };
     }
-    return '';
+    return { message: '' };
   }
 
   private scheduleDetectChanges(): void {
     queueMicrotask(() => this.cdr.detectChanges());
+  }
+
+  private focusValidationTarget(target?: ValidationTarget): void {
+    const targetElement = this.elementForValidationTarget(target);
+    if (!targetElement) {
+      this.focusReportWorkspace();
+      return;
+    }
+
+    this.ensureElementVisible(targetElement);
+    window.setTimeout(() => {
+      if (targetElement instanceof HTMLButtonElement || targetElement instanceof HTMLTextAreaElement) {
+        targetElement.focus({ preventScroll: true });
+      }
+      this.ensureElementVisible(targetElement, 0);
+    }, 260);
+  }
+
+  private elementForValidationTarget(target?: ValidationTarget): HTMLElement | undefined {
+    switch (target) {
+      case 'district':
+        return this.districtTrigger?.nativeElement;
+      case 'location':
+        return this.mapOpenButton?.nativeElement ?? this.direccionInput?.nativeElement;
+      case 'description':
+        return this.descriptionInput?.nativeElement;
+      case 'evidence':
+        return this.evidenceArea?.nativeElement;
+      default:
+        return undefined;
+    }
+  }
+
+  private ensureElementVisible(element?: HTMLElement, customDelay?: number): void {
+    if (!element) {
+      return;
+    }
+
+    const delay = customDelay ?? (this.isMobileViewport() ? 320 : 0);
+    window.setTimeout(() => {
+      if (this.isMobileViewport()) {
+        const top = element.getBoundingClientRect().top + window.scrollY - 118;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        return;
+      }
+
+      if (typeof element.scrollIntoView === 'function') {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, delay);
+  }
+
+  private isMobileViewport(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth <= 760;
+  }
+
+  private actualizarClaseMapaAbierto(abierto: boolean): void {
+    document.body.classList.toggle('aqua-map-open', abierto);
+  }
+
+  private clearValidationIfResolved(target: ValidationTarget): void {
+    if (this.validationTarget !== target || !this.fieldIsComplete(target)) {
+      return;
+    }
+
+    this.validationTarget = undefined;
+    this.submitMessage = '';
   }
 
   private initMap(): void {
@@ -468,6 +635,7 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
 
   private setDireccionValue(value: string): void {
     this.direccion = value;
+    this.clearValidationIfResolved('location');
     const input = this.direccionInput?.nativeElement;
     if (input && input.value !== value) input.value = value;
   }

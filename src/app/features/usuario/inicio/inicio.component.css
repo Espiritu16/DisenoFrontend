@@ -18,77 +18,10 @@
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.aqua-nav {
-  width: min(1352px, calc(100% - 144px));
-  min-height: 86px;
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  align-items: center;
-  gap: 36px;
-  margin: 0 auto;
-}
-
-.aqua-brand,
-.aqua-nav__links,
-.aqua-nav__actions,
 .aqua-hero__actions,
-.aqua-partner,
-.aqua-footer__bottom {
+.aqua-partner {
   display: flex;
   align-items: center;
-}
-
-.aqua-brand {
-  gap: 14px;
-  justify-self: start;
-  color: var(--aqua-ink);
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: 650;
-}
-
-.aqua-brand__text span {
-  color: var(--aqua-blue);
-  font-weight: 800;
-}
-
-.aqua-logo {
-  width: 30px;
-  height: 30px;
-  display: inline-grid;
-  place-items: center;
-  flex: 0 0 auto;
-}
-
-.aqua-logo svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  filter: drop-shadow(0 12px 24px rgba(37, 99, 235, 0.14));
-}
-
-.aqua-logo__drop {
-  fill: var(--aqua-blue);
-}
-
-.aqua-logo__wave {
-  fill: #ffffff;
-}
-
-.aqua-nav__links {
-  gap: 46px;
-}
-
-.aqua-nav__links a,
-.aqua-nav__signin {
-  color: var(--aqua-ink);
-  text-decoration: none;
-  font-size: 16px;
-}
-
-.aqua-nav__actions {
-  justify-content: flex-end;
-  gap: 28px;
 }
 
 .aqua-btn {
@@ -136,9 +69,7 @@
   fill: var(--aqua-blue);
 }
 
-.aqua-btn:focus-visible,
-.aqua-nav__links a:focus-visible,
-.aqua-nav__signin:focus-visible {
+.aqua-btn:focus-visible {
   outline: 3px solid rgba(37, 99, 235, 0.25);
   outline-offset: 4px;
 }
@@ -409,88 +340,7 @@
   line-height: 1.48;
 }
 
-.aqua-footer {
-  position: relative;
-  z-index: 2;
-  width: min(1352px, calc(100% - 144px));
-  margin: 116px auto 0;
-  padding: 54px 0 0;
-  border-top: 1px solid rgba(11, 18, 38, 0.1);
-}
-
-.aqua-footer__inner {
-  display: grid;
-  grid-template-columns: minmax(280px, 1.55fr) repeat(3, minmax(120px, 0.7fr));
-  gap: 54px;
-}
-
-.aqua-footer__brand {
-  max-width: 390px;
-}
-
-.aqua-footer__brand .aqua-brand {
-  width: fit-content;
-}
-
-.aqua-footer__brand p {
-  margin: 18px 0 0;
-  color: #4b5872;
-  font-size: 15px;
-  line-height: 1.72;
-}
-
-.aqua-footer__group {
-  display: grid;
-  align-content: start;
-  gap: 14px;
-}
-
-.aqua-footer__group h2 {
-  margin: 0 0 4px;
-  color: var(--aqua-ink);
-  font-size: 14px;
-  font-weight: 850;
-}
-
-.aqua-footer__group a,
-.aqua-footer__group span {
-  color: #4b5872;
-  font-size: 15px;
-  line-height: 1.2;
-  text-decoration: none;
-}
-
-.aqua-footer__group a:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.25);
-  outline-offset: 4px;
-}
-
-.aqua-footer__bottom {
-  min-height: 84px;
-  justify-content: space-between;
-  gap: 24px;
-  color: #66738d;
-  font-size: 14px;
-}
-
-.aqua-bottom-bar {
-  position: relative;
-  z-index: 2;
-  height: 48px;
-  margin-top: 0;
-  background: var(--aqua-blue);
-}
-
 @media (max-width: 900px) {
-  .aqua-nav {
-    min-height: 104px;
-    grid-template-columns: 1fr auto;
-  }
-
-  .aqua-nav__links {
-    display: none;
-  }
-
   .aqua-hero {
     min-height: auto;
     padding-top: 36px;
@@ -521,28 +371,16 @@
     left: 52px;
   }
 
-  .aqua-footer {
-    width: min(100% - 48px, 1352px);
-    margin-top: 76px;
+  .aqua-landing {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
   }
 
-  .aqua-footer__inner {
-    grid-template-columns: 1.4fr 1fr 1fr;
-    gap: 42px 34px;
-  }
-
-  .aqua-footer__brand {
-    grid-column: 1 / -1;
-    max-width: 560px;
-  }
 }
 
 @media (min-width: 901px) and (max-width: 1100px) {
-  .aqua-nav,
   .aqua-hero,
   .aqua-trust,
-  .aqua-steps,
-  .aqua-footer {
+  .aqua-steps {
     width: min(100% - 144px, 1352px);
   }
 
@@ -557,7 +395,7 @@
   }
 
   .aqua-trust {
-    margin-top: -125px;
+    margin-top: -68px;
   }
 
   .aqua-trust p {
@@ -574,25 +412,12 @@
     height: 48px;
   }
 
-  .aqua-footer {
-    margin-top: 96px;
-  }
-
-  .aqua-footer__inner {
-    gap: 40px;
-  }
 }
 
 @media (min-width: 1600px) {
-  .aqua-nav,
   .aqua-hero,
-  .aqua-steps,
-  .aqua-footer {
+  .aqua-steps {
     width: min(1540px, calc(100% - 160px));
-  }
-
-  .aqua-nav {
-    min-height: 112px;
   }
 
   .aqua-hero {
@@ -622,47 +447,20 @@
 }
 
 @media (max-width: 760px) {
-  .aqua-nav,
   .aqua-hero,
   .aqua-trust,
-  .aqua-steps,
-  .aqua-footer {
+  .aqua-steps {
     width: min(100% - 32px, 1352px);
   }
 
-  .aqua-nav {
-    min-height: 88px;
-    gap: 16px;
-  }
-
-  .aqua-brand__text {
-    max-width: 150px;
-    overflow: hidden;
-    font-size: 18px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .aqua-logo {
-    width: 42px;
-    height: 42px;
-  }
-
-  .aqua-nav__signin {
-    display: none;
-  }
-
-  .aqua-nav__actions .aqua-btn {
-    min-height: 44px;
-    padding-inline: 18px;
-    font-size: 14px;
-  }
-
   .aqua-hero h1 {
-    font-size: clamp(42px, 12vw, 62px);
+    max-width: 370px;
+    font-size: clamp(42px, 11.2vw, 54px);
+    line-height: 1.06;
   }
 
   .aqua-hero__copy > p {
+    max-width: 340px;
     font-size: 18px;
     line-height: 1.65;
   }
@@ -693,34 +491,68 @@
 
   .aqua-steps__list {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 18px;
     margin-top: 42px;
     overflow: visible;
   }
 
   .aqua-steps__list::before {
-    top: 40px;
-    bottom: 72px;
-    left: 41px;
-    width: 18px;
+    top: 22px;
+    bottom: 22px;
+    left: 29px;
+    width: 3px;
     height: auto;
     clip-path: none;
-    background: linear-gradient(180deg, #8ec8ca 0 20%, #df7465 20% 40%, #f1ad42 40% 60%, #d87950 60% 80%, #5f8af4 80% 100%);
+    background: linear-gradient(180deg, rgba(100, 173, 177, 0.72), rgba(37, 99, 235, 0.72));
+    border-radius: 999px;
+    box-shadow: none;
     transform: none;
   }
 
   .aqua-step {
-    min-height: 96px;
-    grid-template-columns: 82px 58px 1fr;
-    align-items: center;
-    justify-items: start;
-    column-gap: 14px;
+    min-height: 0;
+    grid-template-columns: 58px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+    justify-items: stretch;
+    column-gap: 16px;
+    border: 1px solid rgba(220, 228, 239, 0.92);
+    border-radius: 18px;
     background: #ffffff;
+    padding: 14px;
     text-align: left;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.055);
+  }
+
+  .aqua-step__marker {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    width: 56px;
+    height: 56px;
+    border-width: 5px;
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.14);
+  }
+
+  .aqua-step__icon {
+    width: 31px;
+    height: 31px;
+    border-radius: 9px;
+    font-size: 18px;
   }
 
   .aqua-step__number {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
     margin-top: 0;
+    width: auto;
+    height: 28px;
+    min-width: 42px;
+    border: 0;
+    border-radius: 999px;
+    padding: 0 10px;
+    box-shadow: none;
+    font-size: 12px;
   }
 
   .aqua-step__number::before {
@@ -728,35 +560,76 @@
   }
 
   .aqua-step h3 {
-    grid-column: 3;
-    margin-top: 0;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    margin: 2px 0 0 54px;
+    font-size: 18px;
   }
 
   .aqua-step p {
-    grid-column: 3;
+    grid-column: 2;
+    grid-row: 2;
     max-width: none;
-    margin-top: -26px;
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.48;
   }
 
-  .aqua-footer {
-    margin-top: 72px;
-    padding-top: 38px;
+}
+
+@media (max-width: 420px) {
+  .aqua-hero {
+    padding-top: 42px;
   }
 
-  .aqua-footer__inner {
-    grid-template-columns: 1fr;
-    gap: 34px;
+  .aqua-hero h1 {
+    max-width: 330px;
+    font-size: clamp(38px, 11.4vw, 46px);
   }
 
-  .aqua-footer__brand {
-    max-width: none;
+  .aqua-hero__copy > p {
+    max-width: 310px;
+    margin-top: 24px;
+    font-size: 17px;
   }
 
-  .aqua-footer__bottom {
-    min-height: 112px;
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: center;
+  .aqua-hero__actions {
+    margin-top: 26px;
+  }
+
+  .aqua-hero__actions .aqua-btn {
+    min-width: min(100%, 196px);
+  }
+
+  .aqua-trust {
+    margin-top: 58px;
+  }
+
+  .aqua-trust p {
+    max-width: 290px;
+    margin-inline: auto;
+    margin-bottom: 30px;
+    font-size: 16px;
+    line-height: 1.35;
+  }
+
+  .aqua-trust__list {
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 14px;
+  }
+
+  .aqua-partner__logo {
+    width: 132px;
+    height: 42px;
+  }
+
+  .aqua-steps__header h2 {
+    font-size: 28px;
+  }
+
+  .aqua-steps__header p {
+    font-size: 15px;
   }
 
 }

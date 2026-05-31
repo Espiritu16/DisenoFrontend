@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://aquacomunidad-backend.onrender.com/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://upload-aquacomunidad.proyectoutp.com/uploads/:path*"
+    }
+  ]
+}

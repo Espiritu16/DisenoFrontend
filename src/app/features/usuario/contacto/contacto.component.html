@@ -1,152 +1,94 @@
-<main class="contact-page">
-  <section class="contact-shell" aria-labelledby="contact-title">
-    <header class="contact-heading">
-      <h1 id="contact-title">Contacto AQUACOMUNIDAD</h1>
-      <p>Canales oficiales de atención y soporte.</p>
-    </header>
+<div class="contact-page">
+  <app-aqua-header
+    reportHref="/reportar"
+    reportsHref="/mis-reportes"
+    contactHref="/contacto"
+    activeHref="/contacto"
+  ></app-aqua-header>
 
-    <section class="contact-quick-grid" aria-label="Información rápida de atención">
-      <article class="contact-quick-card">
-        <span class="contact-icon material-symbols-outlined" aria-hidden="true">schedule</span>
-        <div>
-          <h2>Horario de atención</h2>
-          <p>Lun - Sáb, 8:00 AM - 6:00 PM</p>
-        </div>
-      </article>
+  <main class="contact-main" aria-label="Contacto AquaComunidad">
+    <section class="contact-intro" aria-labelledby="contact-title">
+      <h1 id="contact-title">
+        Contacta con
+        <span class="contact-highlight">
+          AquaComunidad
+          <svg viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M5 29C51 11 96 9 143 19c39 8 79 11 124 2 16-3 25-3 28 0" />
+            <path d="M52 34c60-8 132-11 238-2" />
+          </svg>
+        </span>
+      </h1>
+      <p>Encuentra canales de atención para consultas, soporte y seguimiento de incidencias.</p>
+    </section>
 
-      <article class="contact-quick-card contact-quick-card--alert">
-        <span class="contact-icon material-symbols-outlined" aria-hidden="true">warning</span>
+    <section class="contact-quick" aria-label="Información rápida de atención">
+      <article
+        *ngFor="let item of quickItems"
+        class="contact-quick__item"
+        [class.contact-quick__item--alert]="item.tone === 'alert'"
+      >
+        <span class="contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 7v5l3 2" />
+            <path d="M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+          </svg>
+        </span>
         <div>
-          <h2>Emergencias</h2>
-          <p>Atención 24/7 casos críticos</p>
-        </div>
-      </article>
-
-      <article class="contact-quick-card">
-        <span class="contact-icon material-symbols-outlined" aria-hidden="true">map</span>
-        <div>
-          <h2>Cobertura</h2>
-          <p>Provincia de Lima</p>
+          <strong>{{ item.label }}</strong>
+          <p>{{ item.value }}</p>
         </div>
       </article>
     </section>
 
-    <section class="contact-channel-grid" aria-label="Canales de contacto">
-      <article class="contact-channel-card">
-        <div class="contact-channel-card__head">
-          <span class="contact-channel-icon material-symbols-outlined" aria-hidden="true">call</span>
+    <section class="contact-shell" aria-label="Canales de contacto">
+      <article
+        *ngFor="let channel of channels"
+        class="contact-card"
+        [class.contact-card--whatsapp]="channel.tone === 'whatsapp'"
+      >
+        <header class="contact-card__head">
+          <span class="contact-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 7h10v7H9l-3 3V8a1 1 0 0 1 1-1Z" />
+            </svg>
+          </span>
           <div>
-            <h2>Teléfono principal</h2>
-            <p>Consultas generales</p>
+            <span>{{ channel.title }}</span>
+            <p>{{ channel.description }}</p>
           </div>
-        </div>
+        </header>
 
-        <p class="contact-phone">+51 999 000 111</p>
-
-        <div class="contact-resolves">
-          <h3>Lo que puedes resolver:</h3>
-          <ul>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Consultas generales</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Información sobre servicios</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Dudas sobre la plataforma</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Orientación ciudadana</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Información institucional</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Cobertura y horarios</li>
-          </ul>
-        </div>
-
-        <a class="contact-action" href="tel:+51999000111">
-          <span class="material-symbols-outlined" aria-hidden="true">phone_forwarded</span>
-          Llamar
-        </a>
-      </article>
-
-      <article class="contact-channel-card">
-        <div class="contact-channel-card__head">
-          <span class="contact-channel-icon material-symbols-outlined" aria-hidden="true">build</span>
+        <div class="contact-card__body">
           <div>
-            <h2>Soporte técnico</h2>
-            <p>Incidencias operativas</p>
+            <h2>{{ channel.value }}</h2>
+            <h3>Lo que puedes resolver:</h3>
+            <ul>
+              <li *ngFor="let item of channel.resolves">
+                <i aria-hidden="true"></i>
+                {{ item }}
+              </li>
+            </ul>
           </div>
+
+          <a
+            class="contact-action"
+            [class.contact-action--whatsapp]="channel.tone === 'whatsapp'"
+            [href]="channel.href"
+            [attr.target]="channel.href.startsWith('https') ? '_blank' : null"
+            rel="noopener noreferrer"
+          >
+            <svg *ngIf="channel.tone !== 'whatsapp'" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7.6 4.8 9.4 9c.2.5.1 1-.3 1.4l-1 1a12.4 12.4 0 0 0 4.5 4.5l1-1c.4-.4.9-.5 1.4-.3l4.2 1.8c.5.2.8.7.8 1.2v2.1c0 .7-.6 1.3-1.3 1.3A15.7 15.7 0 0 1 3 5.3C3 4.6 3.6 4 4.3 4h2.1c.5 0 1 .3 1.2.8Z" />
+            </svg>
+            <svg *ngIf="channel.tone === 'whatsapp'" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19.1 4.9A9.9 9.9 0 0 0 3.8 17.1L2.6 21.4l4.4-1.2a9.9 9.9 0 0 0 4.7 1.2h.1A9.9 9.9 0 0 0 19.1 4.9Zm-7.3 14.8h-.1a8.1 8.1 0 0 1-4.1-1.1l-.3-.2-2.6.7.7-2.5-.2-.3a8.1 8.1 0 1 1 6.6 3.4Zm4.4-6.1c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.2 0-.3 0-.5 0-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2 0 1.3.9 2.5 1.1 2.7.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .2-1.1-.1-.1-.3-.2-.5-.3Z" />
+            </svg>
+            {{ channel.action }}
+          </a>
         </div>
-
-        <p class="contact-phone">+51 944 555 221</p>
-
-        <div class="contact-resolves">
-          <h3>Lo que puedes resolver:</h3>
-          <ul>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Problemas de presión</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Fugas reportadas</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Calidad del agua</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Incidencias operativas</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Validación de reportes</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Casos en atención</li>
-          </ul>
-        </div>
-
-        <a class="contact-action" href="tel:+51944555221">
-          <span class="material-symbols-outlined" aria-hidden="true">phone_forwarded</span>
-          Llamar
-        </a>
-      </article>
-
-      <article class="contact-channel-card">
-        <div class="contact-channel-card__head">
-          <span class="contact-channel-icon contact-channel-icon--whatsapp material-symbols-outlined" aria-hidden="true">chat</span>
-          <div>
-            <h2>WhatsApp General</h2>
-            <p>Atención rápida</p>
-          </div>
-        </div>
-
-        <p class="contact-phone">+51 999 000 111</p>
-
-        <div class="contact-resolves">
-          <h3>Lo que puedes resolver:</h3>
-          <ul>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Estado de cuenta</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Información general</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Consultas rápidas</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Actualización de datos</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Orientación básica</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Uso de la plataforma</li>
-          </ul>
-        </div>
-
-        <a class="contact-action contact-action--whatsapp" href="https://wa.me/51999000111" target="_blank" rel="noopener noreferrer">
-          Abrir WhatsApp
-          <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
-        </a>
-      </article>
-
-      <article class="contact-channel-card">
-        <div class="contact-channel-card__head">
-          <span class="contact-channel-icon contact-channel-icon--whatsapp material-symbols-outlined" aria-hidden="true">support</span>
-          <div>
-            <h2>WhatsApp Soporte</h2>
-            <p>Seguimiento de incidencias</p>
-          </div>
-        </div>
-
-        <p class="contact-phone">+51 944 555 221</p>
-
-        <div class="contact-resolves">
-          <h3>Lo que puedes resolver:</h3>
-          <ul>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Estado de reportes</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Seguimiento de casos</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Validación de incidencias</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Soporte operativo</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Casos en proceso</li>
-            <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>Información de atención</li>
-          </ul>
-        </div>
-
-        <a class="contact-action contact-action--whatsapp" href="https://wa.me/51944555221" target="_blank" rel="noopener noreferrer">
-          Abrir WhatsApp
-          <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
-        </a>
       </article>
     </section>
-  </section>
-</main>
+  </main>
+
+  <app-aqua-footer reportHref="/reportar" reportsHref="/mis-reportes" contactHref="/contacto"></app-aqua-footer>
+</div>

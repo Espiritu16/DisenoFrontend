@@ -1,7 +1,8 @@
 <div class="atencion-casos-container">
   <header class="casos-header-bar">
-    <div class="search-input-wrapper">
-      <input type="text" class="search-input" placeholder="Casos operativos conectados al backend" readonly>
+    <div>
+      <h1 class="casos-title">Atención de casos</h1>
+      <p class="casos-subtitle">Gestiona responsables, evidencias y cierre operativo de cada incidencia.</p>
     </div>
     <div class="header-actions">
       <button class="btn-filtros" type="button" (click)="loadCasos()">Actualizar</button>
@@ -14,6 +15,9 @@
         <h2 class="bandeja-title">Bandeja de Entrada</h2>
         <span class="casos-count">{{ casos.length }} Activos</span>
       </div>
+
+      <div class="feedback-info" *ngIf="loading">Cargando casos...</div>
+      <div class="feedback-info" *ngIf="!loading && !casos.length">No hay casos operativos registrados.</div>
 
       <div class="table-wrapper">
         <table class="casos-table">
@@ -61,7 +65,7 @@
         <h3 class="section-title">Gestión del Caso</h3>
         <div class="form-group">
           <label class="form-label">Estado</label>
-          <select class="form-select" [(ngModel)]="estado">
+          <select class="form-select" [(ngModel)]="estado" [disabled]="selectedCaseClosed || saving">
             <option value="EN_PROCESO">En proceso</option>
             <option value="RESUELTO">Resuelto</option>
             <option value="ESCALADO">Escalado</option>
@@ -71,19 +75,24 @@
 
         <div class="form-group">
           <label class="form-label">Evidencia de Cierre / Notas Técnicas</label>
-          <textarea class="form-textarea" [(ngModel)]="observaciones" placeholder="Detalles de la reparación o notas técnicas..."></textarea>
+          <textarea class="form-textarea" [(ngModel)]="observaciones" [disabled]="selectedCaseClosed || saving" placeholder="Detalles de la reparación o notas técnicas..."></textarea>
         </div>
 
         <div class="upload-section">
-          <input class="form-select" type="file" accept="image/*" multiple (change)="onFileChange($event)" />
+          <input class="form-select" type="file" accept="image/*" multiple [disabled]="selectedCaseClosed || saving" (change)="onFileChange($event)" />
           <p class="upload-formats">JPG, PNG, WEBP o GIF. Máximo 10MB por imagen.</p>
           <a *ngFor="let url of selectedCaso.evidenciaCierreUrls" [href]="url" target="_blank" rel="noopener noreferrer">Ver evidencia</a>
         </div>
+        <div class="feedback-info" *ngIf="selectedCaseClosed">Caso cerrado. Los cambios quedan bloqueados para mantener la trazabilidad.</div>
       </div>
 
       <div class="action-buttons">
-        <button class="btn-secondary" type="button" (click)="onCerrarCaso()">Cerrar caso</button>
-        <button class="btn-primary" type="button" (click)="onGuardarCambios()">Guardar cambios</button>
+        <button class="btn-secondary" type="button" [disabled]="saving || selectedCaseClosed" (click)="onCerrarCaso()">
+          {{ saving && estado === 'RESUELTO' ? 'Cerrando...' : 'Cerrar caso' }}
+        </button>
+        <button class="btn-primary" type="button" [disabled]="saving || selectedCaseClosed" (click)="onGuardarCambios()">
+          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
       </div>
     </aside>
   </div>

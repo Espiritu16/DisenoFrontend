@@ -1,213 +1,130 @@
 <div class="reports-page">
-  <main class="reports-shell">
-    <section class="reports-hero">
-      <span class="reports-chip">
-        <span class="material-symbols-outlined" aria-hidden="true">query_stats</span>
-        Seguimiento ciudadano
-      </span>
-      <div class="reports-hero__content">
-        <div>
-          <h1>Revisa tus reportes</h1>
-          <p>Consulta el estado, historial y avance de las incidencias que registraste.</p>
+  <app-aqua-header
+    reportHref="/reportar"
+    reportsHref="/mis-reportes"
+    activeHref="/mis-reportes"
+  ></app-aqua-header>
+
+  <main class="reports-main" aria-label="Mis reportes">
+    <section class="reports-intro" aria-labelledby="reports-title">
+      <h1 id="reports-title">
+        Consulta tus
+        <span class="reports-highlight">
+          reportes
+          <svg viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M5 29C51 11 96 9 143 19c39 8 79 11 124 2 16-3 25-3 28 0" />
+            <path d="M52 34c60-8 132-11 238-2" />
+          </svg>
+        </span>
+      </h1>
+      <p>Revisa el estado, historial y avance de cada incidencia reportada en tu comunidad.</p>
+
+      <form class="reports-search" aria-label="Consulta por número de reporte" (ngSubmit)="consultReport()">
+        <label for="reports-query">Número de consulta</label>
+        <div class="reports-search__control">
+          <input
+            id="reports-query"
+            name="queryCode"
+            type="text"
+            [(ngModel)]="queryCode"
+            placeholder="Ej: AC-207956"
+            autocomplete="off"
+          />
+          <button type="submit">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 7.8v8.4L16 12 9 7.8Z" />
+            </svg>
+            Consultar
+          </button>
         </div>
-      </div>
+      </form>
     </section>
 
-    <section class="reports-kpi-grid" aria-label="Resumen de reportes">
-      <article class="reports-kpi">
-        <div>
-          <span>Total</span>
-          <strong>{{ total }}</strong>
-        </div>
-        <span class="material-symbols-outlined" aria-hidden="true">analytics</span>
-      </article>
-      <article class="reports-kpi reports-kpi--pending">
-        <div>
-          <span>Pendientes</span>
-          <strong>{{ pendientes }}</strong>
-        </div>
-        <span class="material-symbols-outlined" aria-hidden="true">pending_actions</span>
-      </article>
-      <article class="reports-kpi reports-kpi--process">
-        <div>
-          <span>En proceso</span>
-          <strong>{{ enProceso }}</strong>
-        </div>
-        <span class="material-symbols-outlined" aria-hidden="true">engineering</span>
-      </article>
-      <article class="reports-kpi reports-kpi--done">
-        <div>
-          <span>Resueltos</span>
-          <strong>{{ resueltos }}</strong>
-        </div>
-        <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-      </article>
-    </section>
+    <section #reportsPanel class="reports-shell" aria-label="Panel de seguimiento">
+      <div *ngIf="loading" class="reports-feedback">Cargando tus reportes...</div>
+      <div *ngIf="!loading && error" class="reports-feedback reports-feedback--error">{{ error }}</div>
 
-    <section class="reports-controls">
-      <p>
-        Mostrando <strong>{{ filtered.length }}</strong>
-        {{ filtered.length === 1 ? 'resultado' : 'resultados' }}
-      </p>
-      <div class="reports-controls__actions">
-        <label class="reports-filter">
-          <span>Filtrar por estado</span>
-          <select [(ngModel)]="statusFilter" (change)="onFilterChange()">
-            <option value="Todos">Todos</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="En proceso">En proceso</option>
-            <option value="Resuelto">Resuelto</option>
-          </select>
-        </label>
-        <button class="reports-refresh" type="button" (click)="refresh()" [disabled]="loading">
-          <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
-          {{ loading ? 'Actualizando...' : 'Actualizar' }}
-        </button>
-      </div>
-    </section>
+      <aside class="reports-sidebar" aria-label="Resumen de reportes">
+        <div class="reports-sidebar__head">
+          <span>Seguimiento</span>
+          <h2>Estado general</h2>
+        </div>
 
-    <section class="reports-layout">
-      <section class="reports-list-panel" aria-label="Lista de reportes">
-        <div #reportList class="reports-list" *ngIf="filtered.length > 0; else noReportes">
+        <div class="reports-stats" aria-label="Indicadores de reportes">
           <article
-            *ngFor="let reporte of filtered; trackBy: trackById"
-            class="report-card"
-            [class.report-card--active]="selected?.id === reporte.id"
-            [class.report-card--resolved]="reporte.estado === 'RESUELTO'"
-            (click)="select(reporte)"
-            tabindex="0"
-            role="button"
-            [attr.aria-pressed]="selected?.id === reporte.id"
-            (keydown.enter)="select(reporte)"
-            (keydown.space)="select(reporte)"
+            *ngFor="let card of statusCards"
+            class="reports-stat"
+            [class]="'reports-stat reports-stat--' + card.tone"
           >
-            <div class="report-card__main">
-              <div class="report-card__meta">
-                <span>#REP-{{ reporte.id }}</span>
-                <span class="estado-badge" [ngClass]="'estado-' + (reporte.estado | lowercase)">
-                  <span class="material-symbols-outlined" aria-hidden="true">
-                    {{ reporte.estado === 'PENDIENTE' ? 'pending' : reporte.estado === 'EN_PROCESO' ? 'engineering' : 'check_circle' }}
-                  </span>
-                  {{ statusLabel(reporte.estado) }}
-                </span>
-              </div>
-              <h2>{{ reporte.tipo }}</h2>
-              <p>
-                <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
-                {{ reporte.zona || reporte.direccion }}
-              </p>
-            </div>
-            <div class="report-card__side">
-              <time>{{ formatDate(reporte.fechaCreacion) }}</time>
-              <button type="button" class="report-card__link" title="Ver detalle" (click)="select(reporte); $event.stopPropagation()">
-                Ver detalle
-                <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
-              </button>
-            </div>
+            <span>{{ card.label }}</span>
+            <strong>{{ card.value }}</strong>
           </article>
         </div>
-
-        <ng-template #noReportes>
-          <div class="reports-empty">
-            <span class="material-symbols-outlined" aria-hidden="true">assignment</span>
-            <h2>No hay reportes que mostrar</h2>
-            <p>Cambia el filtro o registra una nueva incidencia para hacer seguimiento.</p>
-          </div>
-        </ng-template>
-      </section>
-
-      <aside class="reports-detail" *ngIf="selected; else selectPrompt">
-        <section class="reports-detail-card">
-          <header class="reports-detail__header">
-            <div>
-              <span>Reporte ID</span>
-              <h2>#REP-{{ selected.id }}</h2>
-            </div>
-            <span class="estado-badge" [ngClass]="'estado-' + (selected.estado | lowercase)">
-              <span class="material-symbols-outlined" aria-hidden="true">
-                {{ selected.estado === 'PENDIENTE' ? 'pending' : selected.estado === 'EN_PROCESO' ? 'engineering' : 'check_circle' }}
-              </span>
-              {{ statusLabel(selected.estado) }}
-            </span>
-          </header>
-
-          <div class="reports-detail__body">
-            <section class="detail-section">
-              <h3>Información del reporte</h3>
-              <dl class="detail-grid">
-                <div>
-                  <dt>Fecha</dt>
-                  <dd>{{ formatDate(selected.fechaCreacion) }}</dd>
-                </div>
-                <div>
-                  <dt>Tipo</dt>
-                  <dd>{{ selected.tipo }}</dd>
-                </div>
-                <div>
-                  <dt>Zona</dt>
-                  <dd>{{ selected.zona }}</dd>
-                </div>
-                <div>
-                  <dt>Dirección</dt>
-                  <dd>{{ selected.direccion }}</dd>
-                </div>
-                <div class="detail-grid__full">
-                  <dt>Descripción</dt>
-                  <dd>{{ selected.descripcion }}</dd>
-                </div>
-              </dl>
-            </section>
-
-            <section class="detail-section" *ngIf="selected.fotoUrl">
-              <h3>Evidencia adjunta</h3>
-              <a [href]="selected.fotoUrl" target="_blank" rel="noopener noreferrer" class="evidence-button">
-                <span class="material-symbols-outlined" aria-hidden="true">image</span>
-                Ver foto
-              </a>
-            </section>
-          </div>
-
-          <section class="reports-timeline">
-            <h3>Historial del reporte</h3>
-            <div class="timeline" *ngIf="trazabilidad?.historialReporte?.length; else timelineEmpty">
-              <article class="timeline-item" *ngFor="let evento of trazabilidad?.historialReporte">
-                <span class="timeline-dot" aria-hidden="true"></span>
-                <div>
-                  <p>{{ evento.estadoAnterior || 'Nuevo' }} → {{ evento.estadoNuevo }}</p>
-                  <time>{{ formatDate(evento.fechaCambio) }}</time>
-                </div>
-              </article>
-            </div>
-            <ng-template #timelineEmpty>
-              <p class="timeline-empty">El historial estará disponible cuando el caso tenga actualizaciones.</p>
-            </ng-template>
-          </section>
-        </section>
-
-        <section class="reports-help-card">
-          <h3>
-            <span class="material-symbols-outlined" aria-hidden="true">help</span>
-            ¿Qué significan los estados?
-          </h3>
-          <ul>
-            <li><i class="dot-pending" aria-hidden="true"></i><span><strong>Pendiente:</strong> recibido, a la espera de asignación técnica.</span></li>
-            <li><i class="dot-process" aria-hidden="true"></i><span><strong>En proceso:</strong> cuadrilla asignada o trabajando en sitio.</span></li>
-            <li><i class="dot-done" aria-hidden="true"></i><span><strong>Resuelto:</strong> la incidencia ha sido solucionada.</span></li>
-          </ul>
-        </section>
-
-        <p *ngIf="message" class="feedback-message">{{ message }}</p>
       </aside>
 
-      <ng-template #selectPrompt>
-        <aside class="reports-detail">
-          <section class="reports-detail-card reports-detail-card--empty">
-            <span class="material-symbols-outlined" aria-hidden="true">fact_check</span>
-            <h2>Selecciona un reporte</h2>
-            <p>El detalle, la evidencia y el historial aparecerán en este panel.</p>
-          </section>
-        </aside>
-      </ng-template>
+      <section class="reports-list" aria-label="Lista de reportes">
+        <div class="reports-list__head">
+          <div>
+            <span>Reportes recientes</span>
+            <h2>Casos registrados</h2>
+          </div>
+          <a class="reports-link" href="/reportar">Nuevo reporte</a>
+        </div>
+
+        <div *ngIf="!loading && !error && !reports.length" class="reports-empty">
+          Aún no tienes reportes registrados.
+        </div>
+
+        <div class="reports-cards" *ngIf="reports.length">
+          <button
+            *ngFor="let report of reports; trackBy: trackReport"
+            type="button"
+            class="reports-card"
+            [class.reports-card--active]="selectedReport?.id === report.id"
+            (click)="selectReport(report)"
+          >
+            <div>
+              <span>REP-{{ report.id }}</span>
+              <h3>{{ report.tipo }}</h3>
+              <p>{{ report.zona }} · {{ formatDate(report.fechaCreacion) }}</p>
+            </div>
+            <strong>{{ statusLabel(report.estado) }}</strong>
+          </button>
+        </div>
+      </section>
+
+      <aside class="reports-detail" aria-label="Detalle del reporte">
+        <span>Detalle</span>
+        <ng-container *ngIf="selectedReport; else noReportSelected">
+          <h2>Consulta REP-{{ selectedReport.id }}</h2>
+          <p>{{ selectedReport.descripcion }}</p>
+          <dl class="reports-detail__grid">
+            <div>
+              <dt>Estado</dt>
+              <dd>{{ statusLabel(selectedReport.estado) }}</dd>
+            </div>
+            <div>
+              <dt>Distrito</dt>
+              <dd>{{ selectedReport.zona }}</dd>
+            </div>
+            <div>
+              <dt>Dirección</dt>
+              <dd>{{ selectedReport.direccion }}</dd>
+            </div>
+            <div>
+              <dt>Fecha</dt>
+              <dd>{{ formatDate(selectedReport.fechaCreacion) }}</dd>
+            </div>
+          </dl>
+        </ng-container>
+        <ng-template #noReportSelected>
+          <h2>Selecciona un reporte</h2>
+          <p>El historial, evidencia y próximos pasos aparecerán aquí cuando tengas reportes registrados.</p>
+        </ng-template>
+      </aside>
     </section>
   </main>
+
+  <app-aqua-footer reportHref="/reportar" reportsHref="/mis-reportes"></app-aqua-footer>
+  <div class="reports-bottom-bar" aria-hidden="true"></div>
 </div>

@@ -6,9 +6,12 @@ describe('DashboardComponent', () => {
   const dashboardService = {
     kpis: vi.fn()
   } as unknown as DashboardService;
+  const cdr = {
+    detectChanges: vi.fn()
+  } as any;
 
   function createComponent() {
-    return new DashboardComponent(dashboardService);
+    return new DashboardComponent(dashboardService, cdr);
   }
 
   beforeEach(() => {
@@ -20,7 +23,14 @@ describe('DashboardComponent', () => {
       reportesPendientes: 11,
       reportesEnProceso: 7,
       reportesResueltos: 20,
-      casosAbiertos: 4
+      casosAbiertos: 4,
+      actividadSemanal: [
+        { dia: 'Lun', valor: 2 },
+        { dia: 'Hoy', valor: 5 }
+      ],
+      reportesPorZona: [
+        { nombre: 'Cercado de Lima', cantidad: 3 }
+      ]
     }));
 
     const component = createComponent();
@@ -31,6 +41,10 @@ describe('DashboardComponent', () => {
     expect(component.kpis.casosActivos).toBe(4);
     expect(component.kpis.reportesNuevos).toBe(11);
     expect(component.kpis.casosEnEspera).toBe(7);
+    expect(component.actividadSemanal).toHaveLength(2);
+    expect(component.reportesPorZona[0].nombre).toBe('Cercado de Lima');
+    expect(component.alturaActividad(5)).toBe(100);
+    expect(component.anchoZona(3)).toBe(100);
   });
 
   it('debe manejar error de kpis', () => {

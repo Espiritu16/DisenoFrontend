@@ -1,0 +1,27 @@
+<header class="aqua-nav" aria-label="Cabecera principal">
+  <a class="aqua-brand" routerLink="/inicio" aria-label="AquaComunidad inicio">
+    <app-aqua-logo></app-aqua-logo>
+    <span class="aqua-brand__text">Aqua<span>Comunidad</span></span>
+  </a>
+
+  <nav class="aqua-nav__links" aria-label="Navegación">
+    <a
+      *ngFor="let link of navLinks"
+      [routerLink]="link.href"
+      [class.aqua-nav__link--active]="activeHref === link.href"
+    >
+      {{ link.label }}
+    </a>
+  </nav>
+
+  <div class="aqua-nav__actions">
+    <button type="button" class="aqua-nav__signin" (click)="openAuth('login')">Acceder</button>
+    <button type="button" class="aqua-btn aqua-btn--blue" (click)="openAuth('register')">Registrarse</button>
+  </div>
+</header>
+
+<app-auth-modal
+  *ngIf="authModalOpen"
+  [initialView]="authInitialView"
+  (closed)="closeAuth()"
+></app-auth-modal>

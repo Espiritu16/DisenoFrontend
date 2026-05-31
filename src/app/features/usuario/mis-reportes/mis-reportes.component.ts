@@ -1,106 +1,143 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DetalleTrazabilidadReporte, ReporteResponse } from '../../../core/api/api-models';
-import { formatDateTime, reportStatusFromLabel, reportStatusLabel } from '../../../core/api/api-mappers';
 import { apiErrorMessage } from '../../../core/api/api-error';
+import { ApiReportStatus, ReporteResponse } from '../../../core/api/api-models';
 import { ReportesService } from '../../../core/api/reportes.service';
+import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
+import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
 
 @Component({
   selector: 'app-mis-reportes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AquaHeaderComponent, AquaFooterComponent],
   templateUrl: './mis-reportes.component.html',
-  styleUrl: './mis-reportes.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './mis-reportes.component.css'
 })
-export class MisReportesComponent implements OnInit {
-  @ViewChild('reportList') private reportList?: ElementRef<HTMLElement>;
+export class MisReportesComponent implements OnInit, OnDestroy {
+  @ViewChild('reportsPanel') private reportsPanel?: ElementRef<HTMLElement>;
 
-  statusFilter = 'Todos';
-  selected?: ReporteResponse;
-  trazabilidad?: DetalleTrazabilidadReporte;
-  message = '';
+  queryCode = '';
+  consultedCode = '';
   loading = false;
-  reportes: ReporteResponse[] = [];
+  error = '';
+  reports: ReporteResponse[] = [];
+  selectedReport?: ReporteResponse;
 
   constructor(private reportesService: ReportesService, private cdr: ChangeDetectorRef) {}
 
+  get statusCards(): Array<{ label: string; value: string; tone: string }> {
+    const pendientes = this.countByStatus(['PENDIENTE']);
+    const enAtencion = this.countByStatus(['EN_PROCESO', 'ESCALADO']);
+    const resueltos = this.countByStatus(['RESUELTO']);
+    return [
+      { label: 'Pendientes', value: this.padCount(pendientes), tone: 'pending' },
+      { label: 'En atención', value: this.padCount(enAtencion), tone: 'process' },
+      { label: 'Resueltos', value: this.padCount(resueltos), tone: 'done' }
+    ];
+  }
+
+  private scrollTimeoutId?: ReturnType<typeof setTimeout>;
+
   ngOnInit(): void {
-    this.refresh();
+    this.loadReports();
   }
 
-  get total(): number { return this.reportes.length; }
-  get pendientes(): number { return this.reportes.filter((r) => r.estado === 'PENDIENTE').length; }
-  get enProceso(): number { return this.reportes.filter((r) => r.estado === 'EN_PROCESO').length; }
-  get resueltos(): number { return this.reportes.filter((r) => r.estado === 'RESUELTO').length; }
-
-  get filtered(): ReporteResponse[] {
-    if (!this.reportes || this.reportes.length === 0) {
-      return [];
+  ngOnDestroy(): void {
+    if (this.scrollTimeoutId) {
+      clearTimeout(this.scrollTimeoutId);
     }
+  }
 
-    if (this.statusFilter === 'Todos') {
-      return this.reportes;
+  consultReport(): void {
+    this.consultedCode = this.queryCode.trim();
+    const normalized = this.consultedCode.toLowerCase().replace(/^rep-/, '');
+    this.selectedReport = this.reports.find((report) => {
+      const id = String(report.id);
+      return id === normalized || `rep-${id}` === this.consultedCode.toLowerCase();
+    }) ?? this.reports[0];
+    this.focusReportsPanel();
+  }
+
+  selectReport(report: ReporteResponse): void {
+    this.selectedReport = report;
+    this.consultedCode = `REP-${report.id}`;
+  }
+
+  trackReport(_index: number, report: ReporteResponse): number {
+    return report.id;
+  }
+
+  statusLabel(status: ApiReportStatus): string {
+    const labels: Record<ApiReportStatus, string> = {
+      PENDIENTE: 'Pendiente',
+      EN_PROCESO: 'En atención',
+      RESUELTO: 'Resuelto',
+      DUPLICADO: 'Duplicado',
+      RECHAZADO: 'Rechazado',
+      ESCALADO: 'Escalado'
+    };
+    return labels[status];
+  }
+
+  formatDate(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return 'Fecha no disponible';
     }
-
-    const estado = reportStatusFromLabel(this.statusFilter);
-    return estado ? this.reportes.filter((r) => r.estado === estado) : this.reportes;
+    return new Intl.DateTimeFormat('es-PE', { day: '2-digit', month: 'short', year: 'numeric' }).format(date);
   }
 
-  onFilterChange(): void {
-    this.selected = undefined;
-    this.trazabilidad = undefined;
-    this.resetReportListScroll();
-    this.cdr.markForCheck();
-  }
-
-  select(r: ReporteResponse): void {
-    this.selected = r;
-    this.trazabilidad = undefined;
-    this.reportesService.trazabilidad(r.id).subscribe({
-      next: (data) => {
-        this.trazabilidad = data;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.trazabilidad = undefined;
-        this.cdr.markForCheck();
-      }
-    });
-  }
-
-  refresh(): void {
+  private loadReports(): void {
     this.loading = true;
-    this.message = '';
+    this.error = '';
     this.reportesService.listarMisReportes().subscribe({
-      next: (reportes) => {
-        this.reportes = reportes;
-        this.statusFilter = 'Todos';
-        this.selected = undefined;
-        this.trazabilidad = undefined;
+      next: (reports) => {
         this.loading = false;
-        this.cdr.markForCheck();
-        this.resetReportListScroll();
-        if (reportes.length > 0) {
-          this.select(reportes[0]);
+        this.reports = reports;
+        this.selectedReport = reports[0];
+        if (this.selectedReport) {
+          this.consultedCode = `REP-${this.selectedReport.id}`;
         }
+        this.scheduleDetectChanges();
       },
       error: (error: unknown) => {
         this.loading = false;
-        this.message = apiErrorMessage(error);
-        this.cdr.markForCheck();
+        this.error = apiErrorMessage(error);
+        this.reports = [];
+        this.selectedReport = undefined;
+        this.scheduleDetectChanges();
       }
     });
   }
 
-  statusLabel = reportStatusLabel;
-  formatDate = formatDateTime;
-  trackById(_: number, r: ReporteResponse): number { return r.id; }
+  private countByStatus(statuses: ApiReportStatus[]): number {
+    return this.reports.filter((report) => statuses.includes(report.estado)).length;
+  }
 
-  private resetReportListScroll(): void {
-    queueMicrotask(() => {
-      this.reportList?.nativeElement.scrollTo({ top: 0, left: 0 });
+  private padCount(value: number): string {
+    return value.toString().padStart(2, '0');
+  }
+
+  private scheduleDetectChanges(): void {
+    queueMicrotask(() => this.cdr.detectChanges());
+  }
+
+  private focusReportsPanel(): void {
+    if (this.scrollTimeoutId) {
+      clearTimeout(this.scrollTimeoutId);
+    }
+
+    this.scrollTimeoutId = setTimeout(() => {
+      const panel = this.reportsPanel?.nativeElement;
+      if (typeof panel?.scrollIntoView !== 'function') {
+        return;
+      }
+
+      panel.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
     });
   }
 }

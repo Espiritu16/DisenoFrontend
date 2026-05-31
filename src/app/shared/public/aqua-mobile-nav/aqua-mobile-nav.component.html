@@ -1,0 +1,23 @@
+<ng-container *ngFor="let item of navItems">
+  <a
+    *ngIf="item.href; else chatAction"
+    [routerLink]="item.href"
+    [class.aqua-mobile-nav__item--active]="isActive(item)"
+    [attr.aria-current]="isActive(item) ? 'page' : null"
+    class="aqua-mobile-nav__item"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path [attr.d]="item.path" />
+    </svg>
+    <span>{{ item.label }}</span>
+  </a>
+
+  <ng-template #chatAction>
+    <a [attr.href]="activeHref + '?chat=ayuda'" class="aqua-mobile-nav__item" (click)="openChat($event)" aria-label="Abrir ayuda">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path [attr.d]="item.path" />
+      </svg>
+      <span>{{ item.label }}</span>
+    </a>
+  </ng-template>
+</ng-container>

@@ -386,11 +386,6 @@
   outline-offset: 4px;
 }
 
-.reports-bottom-bar {
-  height: 48px;
-  background: var(--aqua-blue);
-}
-
 @media (min-width: 1600px) {
   .reports-main {
     width: min(1540px, calc(100% - 160px));
@@ -408,6 +403,10 @@
 }
 
 @media (max-width: 900px) {
+  .reports-page {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+
   .reports-main {
     width: min(100% - 48px, 1352px);
     padding-top: 64px;

@@ -37,6 +37,7 @@ describe('ReportarComponent', () => {
   beforeEach(async () => {
     uploadService.subirReportes.mockClear();
     reportesService.crear.mockClear();
+    document.body.classList.remove('aqua-map-open');
 
     await TestBed.configureTestingModule({
       imports: [ReportarComponent],
@@ -47,6 +48,10 @@ describe('ReportarComponent', () => {
         { provide: ReportesService, useValue: reportesService }
       ]
     }).compileComponents();
+  });
+
+  afterEach(() => {
+    document.body.classList.remove('aqua-map-open');
   });
 
   it('renderiza la base publica con body disponible para el formulario', () => {
@@ -70,11 +75,64 @@ describe('ReportarComponent', () => {
     expect(text).toContain('Selecciona distrito');
     expect(text).not.toContain('Cercado de Lima');
     expect(text).toContain('Tipo de incidencia');
+    expect(text).toContain('Seleccionar ubicación en mapa');
     expect(text).toContain('Dirección detectada');
     expect(text).toContain('Evidencia');
     expect(text).toContain('Siguiente');
     expect(text).not.toContain('Datos del reporte');
     expect(text).not.toContain('Ubicación exacta');
+  });
+
+  it('abre y cierra el selector de mapa movil sin conservar el scroll bloqueado', () => {
+    const fixture = TestBed.createComponent(ReportarComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const openButton = compiled.querySelector<HTMLButtonElement>('.report-map-open');
+
+    openButton?.click();
+    fixture.detectChanges();
+
+    expect(component.mapSheetOpen).toBe(true);
+    expect(document.body.classList.contains('aqua-map-open')).toBe(true);
+    expect(compiled.querySelector('.report-panel--map-open')).toBeTruthy();
+
+    const closeButton = compiled.querySelector<HTMLButtonElement>('.report-map-close');
+    closeButton?.click();
+    fixture.detectChanges();
+
+    expect(component.mapSheetOpen).toBe(false);
+    expect(document.body.classList.contains('aqua-map-open')).toBe(false);
+  });
+
+  it('confirma ubicacion y vuelve a la direccion detectada sin abrir teclado', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(ReportarComponent);
+      const component = fixture.componentInstance;
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const addressInput = compiled.querySelector<HTMLInputElement>('#report-address');
+      const focusSpy = vi.spyOn(addressInput as HTMLInputElement, 'focus');
+      const scrollSpy = vi.fn();
+      Object.defineProperty(addressInput, 'scrollIntoView', {
+        configurable: true,
+        value: scrollSpy
+      });
+
+      component.openMapSelector();
+      component.confirmMapLocation();
+      vi.runAllTimers();
+
+      expect(component.mapSheetOpen).toBe(false);
+      expect(document.body.classList.contains('aqua-map-open')).toBe(false);
+      expect(focusSpy).not.toHaveBeenCalled();
+      expect(scrollSpy).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('abre el selector de distrito y actualiza la seleccion', () => {
@@ -133,13 +191,142 @@ describe('ReportarComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const evidenceCard = compiled.querySelector<HTMLButtonElement>('.report-evidence-card');
+    const evidenceCard = compiled.querySelector<HTMLButtonElement>('.report-evidence-preview');
 
     evidenceCard?.click();
     fixture.detectChanges();
 
     expect(compiled.querySelector('.report-modal')).toBeTruthy();
     expect(compiled.textContent).toContain('fuga.png');
+  });
+
+  it('permite quitar una evidencia seleccionada', () => {
+    const fixture = TestBed.createComponent(ReportarComponent);
+    const component = fixture.componentInstance;
+    component.evidenceImages = [
+      {
+        id: 'evidence-1',
+        name: 'fuga.png',
+        sizeLabel: '0.10 MB',
+        previewUrl: 'blob://fuga',
+        file: new File(['x'], 'fuga.png', { type: 'image/png' })
+      }
+    ];
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const removeButton = compiled.querySelector<HTMLButtonElement>('.report-evidence-remove');
+
+    removeButton?.click();
+    fixture.detectChanges();
+
+    expect(component.evidenceImages).toHaveLength(0);
+    expect(compiled.textContent).toContain('Las fotos aparecerán aquí.');
+  });
+
+  it('envia la validacion al campo exacto con problema', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(ReportarComponent);
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const districtTrigger = compiled.querySelector<HTMLButtonElement>('.report-select__trigger');
+      const scrollSpy = vi.fn();
+      const focusSpy = vi.spyOn(districtTrigger as HTMLButtonElement, 'focus');
+      Object.defineProperty(districtTrigger, 'scrollIntoView', {
+        configurable: true,
+        value: scrollSpy
+      });
+
+      const nextButton = compiled.querySelector<HTMLButtonElement>('.report-next');
+      nextButton?.click();
+      vi.runAllTimers();
+
+      expect(fixture.componentInstance.submitMessage).toBe('Selecciona el distrito donde ocurre la incidencia.');
+      expect(scrollSpy).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
+      expect(focusSpy).toHaveBeenCalledWith(expect.objectContaining({ preventScroll: true }));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('marca el campo con error en rojo y el campo completo en verde', () => {
+    const errorFixture = TestBed.createComponent(ReportarComponent);
+    errorFixture.detectChanges();
+
+    const compiled = errorFixture.nativeElement as HTMLElement;
+    compiled.querySelector<HTMLButtonElement>('.report-next')?.click();
+    errorFixture.detectChanges();
+
+    const districtField = compiled.querySelector('#report-district')?.closest('.report-field');
+    expect(districtField?.classList.contains('report-field--error')).toBe(true);
+    expect(compiled.querySelector('.report-feedback--error')?.textContent).toContain('Selecciona el distrito');
+
+    const validFixture = TestBed.createComponent(ReportarComponent);
+    validFixture.componentInstance.distrito = 'Cercado de Lima';
+    validFixture.detectChanges();
+    const validCompiled = validFixture.nativeElement as HTMLElement;
+    const validDistrictField = validCompiled.querySelector('#report-district')?.closest('.report-field');
+
+    expect(validDistrictField?.classList.contains('report-field--error')).toBe(false);
+    expect(validDistrictField?.classList.contains('report-field--valid')).toBe(true);
+  });
+
+  it('envia cada validacion pendiente a su control correspondiente', () => {
+    vi.useFakeTimers();
+    try {
+      const locationFixture = TestBed.createComponent(ReportarComponent);
+      const locationComponent = locationFixture.componentInstance;
+      locationComponent.distrito = 'Cercado de Lima';
+      locationFixture.detectChanges();
+      const locationCompiled = locationFixture.nativeElement as HTMLElement;
+      const mapButton = locationCompiled.querySelector<HTMLButtonElement>('.report-map-open');
+      const mapScrollSpy = vi.fn();
+      const mapFocusSpy = vi.spyOn(mapButton as HTMLButtonElement, 'focus');
+      Object.defineProperty(mapButton, 'scrollIntoView', { configurable: true, value: mapScrollSpy });
+      locationCompiled.querySelector<HTMLButtonElement>('.report-next')?.click();
+      vi.runAllTimers();
+
+      expect(locationComponent.submitMessage).toBe('Selecciona el punto exacto en el mapa.');
+      expect(mapScrollSpy).toHaveBeenCalled();
+      expect(mapFocusSpy).toHaveBeenCalledWith(expect.objectContaining({ preventScroll: true }));
+
+      const descriptionFixture = TestBed.createComponent(ReportarComponent);
+      const descriptionComponent = descriptionFixture.componentInstance;
+      descriptionComponent.distrito = 'Cercado de Lima';
+      descriptionComponent.direccion = 'Av. Principal 123';
+      descriptionFixture.detectChanges();
+      const descriptionCompiled = descriptionFixture.nativeElement as HTMLElement;
+      const descriptionInput = descriptionCompiled.querySelector<HTMLTextAreaElement>('#report-description');
+      const descriptionScrollSpy = vi.fn();
+      const descriptionFocusSpy = vi.spyOn(descriptionInput as HTMLTextAreaElement, 'focus');
+      Object.defineProperty(descriptionInput, 'scrollIntoView', { configurable: true, value: descriptionScrollSpy });
+      descriptionCompiled.querySelector<HTMLButtonElement>('.report-next')?.click();
+      vi.runAllTimers();
+
+      expect(descriptionComponent.submitMessage).toBe('Describe brevemente el problema observado.');
+      expect(descriptionScrollSpy).toHaveBeenCalled();
+      expect(descriptionFocusSpy).toHaveBeenCalledWith(expect.objectContaining({ preventScroll: true }));
+
+      const evidenceFixture = TestBed.createComponent(ReportarComponent);
+      const evidenceComponent = evidenceFixture.componentInstance;
+      evidenceComponent.distrito = 'Cercado de Lima';
+      evidenceComponent.direccion = 'Av. Principal 123';
+      evidenceComponent.descripcion = 'Fuga visible en la vereda.';
+      evidenceFixture.detectChanges();
+      const evidenceCompiled = evidenceFixture.nativeElement as HTMLElement;
+      const evidenceArea = evidenceCompiled.querySelector<HTMLInputElement>('#report-evidence')?.closest<HTMLElement>('.report-field');
+      const evidenceScrollSpy = vi.fn();
+      Object.defineProperty(evidenceArea, 'scrollIntoView', { configurable: true, value: evidenceScrollSpy });
+      evidenceCompiled.querySelector<HTMLButtonElement>('.report-next')?.click();
+      vi.runAllTimers();
+
+      expect(evidenceComponent.submitMessage).toBe('Adjunta al menos una foto de evidencia.');
+      expect(evidenceScrollSpy).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('permite pasar de formulario a resumen y luego a enviado', async () => {
@@ -168,6 +355,7 @@ describe('ReportarComponent', () => {
     expect(component.reportStep).toBe('summary');
     expect(compiled.textContent).toContain('Revisa tu reporte antes de enviarlo');
     expect(compiled.textContent).toContain('Av. Principal 123');
+    expect(compiled.textContent).not.toContain('Coordenadas');
 
     const sendButton = compiled.querySelector<HTMLButtonElement>('.report-review__actions .report-next');
 
@@ -179,6 +367,10 @@ describe('ReportarComponent', () => {
     expect(component.submittedCode).toBe('REP-45');
     expect(uploadService.subirReportes).toHaveBeenCalledOnce();
     expect(reportesService.crear).toHaveBeenCalledOnce();
+    expect(reportesService.crear).toHaveBeenCalledWith(expect.objectContaining({
+      lat: Number(component.lat.toFixed(7)),
+      lng: Number(component.lng.toFixed(7))
+    }));
     expect(compiled.textContent).toContain('Tu incidencia fue registrada correctamente.');
     expect(compiled.textContent).toContain('Ver seguimiento');
   });

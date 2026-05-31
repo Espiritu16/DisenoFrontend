@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnDestroy, ViewChild, computed, signal } from '@angular/core';
+import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ChatbotService } from '../../core/api/chatbot.service';
@@ -26,14 +26,17 @@ interface GuestChatStorage {
   templateUrl: './chatbot-widget.component.html',
   styleUrl: './chatbot-widget.component.css'
 })
-export class ChatbotWidgetComponent {
+export class ChatbotWidgetComponent implements OnInit, OnDestroy {
   private readonly guestStorageKey = 'aquacomunidad.chatbot.invitado.v1';
   private readonly maxGuestDays = 30;
   private readonly maxGuestMessagesPerDay = 80;
   private readonly puedeUsarDocumento = typeof document !== 'undefined';
   private removerCapturaScroll?: () => void;
+  private removerClickExterior?: () => void;
+  private removerAperturaMovil?: () => void;
 
   @ViewChild('messageScroller') private messageScroller?: ElementRef<HTMLElement>;
+  @ViewChild('messageInput') private messageInput?: ElementRef<HTMLInputElement>;
 
   readonly isOpen = signal(false);
   readonly isSending = signal(false);
@@ -65,26 +68,61 @@ export class ChatbotWidgetComponent {
   constructor(
     private chatbotService: ChatbotService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private hostRef?: ElementRef<HTMLElement>,
+    private ngZone?: NgZone
   ) {}
+
+  ngOnInit(): void {
+    const abrirDesdeNav = (): void => {
+      if (this.ngZone) {
+        this.ngZone.run(() => this.openChat());
+        return;
+      }
+      this.openChat();
+    };
+    window.addEventListener('aqua-chatbot-open', abrirDesdeNav);
+    this.removerAperturaMovil = () => window.removeEventListener('aqua-chatbot-open', abrirDesdeNav);
+    this.abrirDesdeParametroUrl();
+  }
 
   ngOnDestroy(): void {
     this.desactivarCapturaScroll();
+    this.desactivarClickExterior();
+    this.removerAperturaMovil?.();
+    this.actualizarClaseChatAbierto(false);
   }
 
   toggleChat(): void {
     this.isOpen.update((open) => !open);
     if (!this.isOpen()) {
       this.desactivarCapturaScroll();
+      this.desactivarClickExterior();
+      this.actualizarClaseChatAbierto(false);
       return;
     }
+    this.actualizarClaseChatAbierto(true);
     this.activarCapturaScroll();
+    this.activarClickExterior();
+    this.cargarHistorialInicial();
+  }
+
+  openChat(): void {
+    if (this.isOpen()) {
+      return;
+    }
+    this.isOpen.set(true);
+    this.actualizarClaseChatAbierto(true);
+    this.activarCapturaScroll();
+    window.setTimeout(() => this.activarClickExterior());
     this.cargarHistorialInicial();
   }
 
   closeChat(): void {
     this.isOpen.set(false);
+    this.actualizarClaseChatAbierto(false);
     this.desactivarCapturaScroll();
+    this.desactivarClickExterior();
   }
 
   sendMessage(): void {
@@ -96,10 +134,13 @@ export class ChatbotWidgetComponent {
     const userMessage: ChatMessage = { author: 'user', text };
     const history = this.messages();
     this.messages.update((messages) => [...messages, userMessage]);
+    this.desplazarChatAlFinal();
     this.guardarHistorialInvitado();
     this.draft = '';
     this.error.set(null);
     this.isSending.set(true);
+    this.desplazarChatAlFinal();
+    this.cerrarTecladoMovil();
 
     this.chatbotService.enviarMensaje({
       mensaje: text,
@@ -120,6 +161,7 @@ export class ChatbotWidgetComponent {
           ...messages,
           { author: 'assistant', text: response.respuesta, actions }
         ]);
+        this.desplazarChatAlFinal();
         this.guardarHistorialInvitado();
         this.isSending.set(false);
         if (response.persistido) {
@@ -164,7 +206,6 @@ export class ChatbotWidgetComponent {
     if (!accion.ruta) {
       return;
     }
-    this.closeChat();
     void this.router.navigateByUrl(accion.ruta);
   }
 
@@ -175,6 +216,27 @@ export class ChatbotWidgetComponent {
     }
     this.recargarConversaciones();
     this.cargarMensajesDelDia(this.fechaSeleccionada());
+  }
+
+  private abrirDesdeParametroUrl(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('chat') !== 'ayuda') {
+      return;
+    }
+
+    const abrir = (): void => this.openChat();
+    if (this.ngZone) {
+      this.ngZone.run(abrir);
+    } else {
+      abrir();
+    }
+
+    url.searchParams.delete('chat');
+    const rutaLimpia = `${url.pathname}${url.search}${url.hash}`;
+    window.history.replaceState(window.history.state, '', rutaLimpia || '/');
   }
 
   private recargarConversaciones(): void {
@@ -202,6 +264,7 @@ export class ChatbotWidgetComponent {
           actions: mensaje.rol === 'assistant' ? this.accionesDesdeTexto(mensaje.contenido) : []
         } satisfies ChatMessage));
         this.messages.set(mensajes.length ? mensajes : [this.mensajeBienvenida()]);
+        this.desplazarChatAlFinal();
         this.estaCargandoHistorial.set(false);
       },
       error: (error: unknown) => {
@@ -264,6 +327,7 @@ export class ChatbotWidgetComponent {
     const historial = this.leerHistorialInvitado();
     const mensajes = historial.conversaciones[fecha] ?? [];
     this.messages.set(mensajes.length ? mensajes : [this.mensajeBienvenidaInvitado()]);
+    this.desplazarChatAlFinal();
   }
 
   private guardarHistorialInvitado(): void {
@@ -363,8 +427,93 @@ export class ChatbotWidgetComponent {
     this.removerCapturaScroll = undefined;
   }
 
+  private actualizarClaseChatAbierto(abierto: boolean): void {
+    if (!this.puedeUsarDocumento) {
+      return;
+    }
+    document.body.classList.toggle('aqua-chat-open', abierto);
+  }
+
+  private cerrarTecladoMovil(): void {
+    if (!this.esViewportMovilOTablet()) {
+      return;
+    }
+    this.messageInput?.nativeElement.blur();
+  }
+
+  private esViewportMovilOTablet(): boolean {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+
+    const usaPunteroTactil = typeof window.matchMedia === 'function'
+      ? window.matchMedia('(pointer: coarse)').matches
+      : false;
+    return usaPunteroTactil || window.innerWidth <= 1024;
+  }
+
+  private desplazarChatAlFinal(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.setTimeout(() => {
+      const scroller = this.messageScroller?.nativeElement;
+      if (!scroller) {
+        return;
+      }
+      scroller.scrollTop = scroller.scrollHeight;
+    });
+  }
+
+  private activarClickExterior(): void {
+    if (!this.puedeUsarDocumento || this.removerClickExterior) {
+      return;
+    }
+
+    const cerrarSiEsClickExterior = (event: MouseEvent) => this.cerrarConClickExterior(event);
+    document.addEventListener('click', cerrarSiEsClickExterior);
+    this.removerClickExterior = () => document.removeEventListener('click', cerrarSiEsClickExterior);
+  }
+
+  private desactivarClickExterior(): void {
+    this.removerClickExterior?.();
+    this.removerClickExterior = undefined;
+  }
+
+  private cerrarConClickExterior(event: MouseEvent): void {
+    if (!this.isOpen()) {
+      return;
+    }
+
+    const host = this.hostRef?.nativeElement;
+    if (host?.contains(event.target as Node)) {
+      return;
+    }
+    if (this.esClickDeNavegacion(event.target)) {
+      return;
+    }
+
+    this.closeChat();
+  }
+
+  private esClickDeNavegacion(target: EventTarget | null): boolean {
+    if (!(target instanceof Element)) {
+      return false;
+    }
+    const enlace = target.closest('a[href]');
+    if (!enlace) {
+      return false;
+    }
+    return true;
+  }
+
   private redirigirScrollAlChat(event: WheelEvent): void {
     if (!this.isOpen() || event.ctrlKey) {
+      return;
+    }
+
+    const host = this.hostRef?.nativeElement;
+    if (!host?.contains(event.target as Node)) {
       return;
     }
 

@@ -1,4 +1,4 @@
-<header class="aqua-nav" aria-label="Cabecera principal">
+<header class="aqua-nav" [class.aqua-nav--authenticated]="session()" aria-label="Cabecera principal">
   <a class="aqua-brand" routerLink="/inicio" aria-label="AquaComunidad inicio">
     <app-aqua-logo></app-aqua-logo>
     <span class="aqua-brand__text">Aqua<span>Comunidad</span></span>
@@ -14,10 +14,20 @@
     </a>
   </nav>
 
-  <div class="aqua-nav__actions">
+  <div class="aqua-nav__actions" *ngIf="!session(); else loggedActions">
     <button type="button" class="aqua-nav__signin" (click)="openAuth('login')">Acceder</button>
     <button type="button" class="aqua-btn aqua-btn--blue" (click)="openAuth('register')">Registrarse</button>
   </div>
+
+  <ng-template #loggedActions>
+    <div class="aqua-nav__actions aqua-nav__actions--session">
+      <div class="aqua-account" aria-label="Usuario autenticado">
+        <span class="aqua-account__avatar" aria-hidden="true">{{ userInitials() }}</span>
+        <span class="aqua-account__name">{{ userDisplayName() }}</span>
+      </div>
+      <button type="button" class="aqua-nav__signin aqua-nav__logout" (click)="logout()">Salir</button>
+    </div>
+  </ng-template>
 </header>
 
 <app-auth-modal

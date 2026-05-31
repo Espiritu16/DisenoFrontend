@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
 import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
+import { AquaMobileNavComponent } from '../../../shared/public/aqua-mobile-nav/aqua-mobile-nav.component';
 
 @Component({
   selector: 'app-contacto',
   standalone: true,
-  imports: [CommonModule, AquaHeaderComponent, AquaFooterComponent],
+  imports: [CommonModule, AquaHeaderComponent, AquaFooterComponent, AquaMobileNavComponent],
   templateUrl: './contacto.component.html',
   styleUrl: './contacto.component.css'
 })

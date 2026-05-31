@@ -68,6 +68,7 @@
         <form class="chatbot-panel__composer" (ngSubmit)="sendMessage()">
           <label class="sr-only" for="chatbot-message">Mensaje</label>
           <input
+            #messageInput
             id="chatbot-message"
             name="chatbot-message"
             type="text"

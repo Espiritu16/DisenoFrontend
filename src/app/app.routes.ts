@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
-import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 import { adminCanActivateChildGuard, adminCanMatchGuard } from './core/guards/admin-access.guard';
 
 export const routes: Routes = [
@@ -10,26 +9,20 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: '',
-    component: PublicLayoutComponent,
-    children: [
-      {
-        path: 'inicio',
-        loadComponent: () => import('./features/usuario/inicio/inicio.component').then((m) => m.InicioComponent)
-      },
-      {
-        path: 'mis-reportes',
-        loadComponent: () => import('./features/usuario/mis-reportes/mis-reportes.component').then((m) => m.MisReportesComponent)
-      },
-      {
-        path: 'reportar',
-        loadComponent: () => import('./features/usuario/reportar-incidencia/reportar-incidencia.component').then((m) => m.ReportarIncidenciaComponent)
-      },
-      {
-        path: 'contacto',
-        loadComponent: () => import('./features/usuario/contacto/contacto.component').then((m) => m.ContactoComponent)
-      }
-    ]
+    path: 'inicio',
+    loadComponent: () => import('./features/usuario/inicio/inicio.component').then((m) => m.InicioComponent)
+  },
+  {
+    path: 'reportar',
+    loadComponent: () => import('./features/usuario/reportar/reportar.component').then((m) => m.ReportarComponent)
+  },
+  {
+    path: 'mis-reportes',
+    loadComponent: () => import('./features/usuario/mis-reportes/mis-reportes.component').then((m) => m.MisReportesComponent)
+  },
+  {
+    path: 'contacto',
+    loadComponent: () => import('./features/usuario/contacto/contacto.component').then((m) => m.ContactoComponent)
   },
   {
     path: 'administrador',

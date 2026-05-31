@@ -91,6 +91,18 @@ export interface TableroKpi {
   reportesEnProceso: number;
   reportesResueltos: number;
   casosAbiertos: number;
+  actividadSemanal: ActividadSemanalItem[];
+  reportesPorZona: ReportePorZonaItem[];
+}
+
+export interface ActividadSemanalItem {
+  dia: string;
+  valor: number;
+}
+
+export interface ReportePorZonaItem {
+  nombre: string;
+  cantidad: number;
 }
 
 export interface ArchivoSubidoResponse {
@@ -104,4 +116,55 @@ export interface ArchivoSubidoItem {
   url: string;
   nombreArchivo: string;
   publicId?: string;
+}
+
+export interface ChatbotMessageRequest {
+  rol: 'user' | 'assistant';
+  contenido: string;
+}
+
+export interface ChatbotRequest {
+  mensaje: string;
+  historial: ChatbotMessageRequest[];
+  fechaConversacion?: string;
+}
+
+export interface ChatbotResponse {
+  respuesta: string;
+  proveedor: string;
+  modelo: string;
+  iaDisponible: boolean;
+  conversacionId?: number;
+  fechaConversacion?: string;
+  persistido: boolean;
+  acciones: ChatbotAction[];
+}
+
+export interface ChatbotAction {
+  etiqueta: string;
+  ruta: string;
+}
+
+export interface ChatbotConversationSummary {
+  id: number;
+  fechaConversacion: string;
+  titulo: string;
+  totalMensajes: number;
+  actualizadoEn: string;
+}
+
+export interface ChatbotHistoryMessage {
+  id: number;
+  rol: 'user' | 'assistant';
+  contenido: string;
+  proveedor?: string;
+  modelo?: string;
+  iaDisponible: boolean;
+  creadoEn: string;
+}
+
+export interface ChatbotDayHistory {
+  conversacionId?: number;
+  fechaConversacion: string;
+  mensajes: ChatbotHistoryMessage[];
 }

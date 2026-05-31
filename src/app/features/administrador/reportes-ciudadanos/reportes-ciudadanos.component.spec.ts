@@ -17,8 +17,12 @@ describe('ReportesCiudadanosComponent', () => {
     listar: vi.fn()
   } as unknown as UsuariosService;
 
+  const cdr = {
+    detectChanges: vi.fn()
+  };
+
   function createComponent() {
-    return new ReportesCiudadanosComponent(reportesService, casosService, usuariosService);
+    return new ReportesCiudadanosComponent(reportesService, casosService, usuariosService, cdr as any);
   }
 
   beforeEach(() => {

@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DashboardService } from '../../../core/api/dashboard.service';
 import { apiErrorMessage } from '../../../core/api/api-error';
+import { ActividadSemanalItem, ReportePorZonaItem } from '../../../core/api/api-models';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,26 +22,11 @@ export class DashboardComponent implements OnInit {
     casosPorAsignar: 0
   };
 
-  actividadSemanal = [
-    { dia: 'Lun', valor: 45 },
-    { dia: 'Mar', valor: 60 },
-    { dia: 'Mié', valor: 75 },
-    { dia: 'Jue', valor: 95 },
-    { dia: 'Vie', valor: 50 },
-    { dia: 'Sáb', valor: 35 },
-    { dia: 'Hoy', valor: 55 }
-  ];
+  actividadSemanal: ActividadSemanalItem[] = [];
 
-  // Districts Data
-  reportesPorDistrito = [
-    { nombre: 'San Borja', cantidad: 124 },
-    { nombre: 'Miraflores', cantidad: 98 },
-    { nombre: 'Surco', cantidad: 76 },
-    { nombre: 'La Molina', cantidad: 45 },
-    { nombre: 'San Isidro', cantidad: 32 }
-  ];
+  reportesPorZona: ReportePorZonaItem[] = [];
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(private dashboardService: DashboardService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.cargarKpis();
@@ -57,12 +43,42 @@ export class DashboardComponent implements OnInit {
           casosEnEspera: kpi.reportesEnProceso,
           casosPorAsignar: kpi.reportesPendientes
         };
+        this.actividadSemanal = kpi.actividadSemanal ?? [];
+        this.reportesPorZona = kpi.reportesPorZona ?? [];
         this.loading = false;
+        this.scheduleChangeDetection();
       },
       error: (error: unknown) => {
         this.loading = false;
         this.error = apiErrorMessage(error);
+        this.scheduleChangeDetection();
       }
     });
+  }
+
+  get actividadMaxima(): number {
+    return Math.max(...this.actividadSemanal.map((item) => item.valor), 1);
+  }
+
+  get zonaMaxima(): number {
+    return Math.max(...this.reportesPorZona.map((item) => item.cantidad), 1);
+  }
+
+  alturaActividad(valor: number): number {
+    if (valor <= 0) {
+      return 4;
+    }
+    return Math.max(8, Math.round((valor / this.actividadMaxima) * 100));
+  }
+
+  anchoZona(cantidad: number): number {
+    if (cantidad <= 0) {
+      return 0;
+    }
+    return Math.round((cantidad / this.zonaMaxima) * 100);
+  }
+
+  private scheduleChangeDetection(): void {
+    queueMicrotask(() => this.cdr.detectChanges());
   }
 }

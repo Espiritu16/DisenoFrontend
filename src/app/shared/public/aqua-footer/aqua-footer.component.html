@@ -1,0 +1,38 @@
+<footer class="aqua-footer" aria-label="Pie de página">
+  <div class="aqua-footer__inner">
+    <section class="aqua-footer__brand" aria-label="AquaComunidad">
+      <a class="aqua-brand" routerLink="/inicio" aria-label="AquaComunidad inicio">
+        <app-aqua-logo></app-aqua-logo>
+        <span class="aqua-brand__text">Aqua<span>Comunidad</span></span>
+      </a>
+      <p>
+        Gestión simple y transparente para reportar incidencias, revisar
+        avances y mantener trazabilidad del servicio de agua.
+      </p>
+    </section>
+
+    <nav class="aqua-footer__group" aria-label="Producto">
+      <h2>Producto</h2>
+      <a routerLink="/inicio">Inicio</a>
+      <a [routerLink]="reportHref">Reportar</a>
+      <a [routerLink]="reportsHref">Mis Reportes</a>
+    </nav>
+
+    <nav class="aqua-footer__group" aria-label="Soporte">
+      <h2>Soporte</h2>
+      <a [routerLink]="contactHref">Contacto</a>
+      <a routerLink="/inicio">Acceder</a>
+      <a routerLink="/inicio">Registrarse</a>
+    </nav>
+
+    <section class="aqua-footer__group" aria-label="Aliados principales">
+      <h2>Aliados</h2>
+      <span *ngFor="let partner of partners">{{ partner }}</span>
+    </section>
+  </div>
+
+  <div class="aqua-footer__bottom">
+    <span>© 2026 AquaComunidad. Todos los derechos reservados.</span>
+    <span>Sistema seguro · Portal ciudadano</span>
+  </div>
+</footer>

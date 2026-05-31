@@ -7,25 +7,63 @@
     </button>
 
     <div class="auth-logo-wrap">
-      <div class="auth-logo-badge">
-        <span class="material-symbols-outlined">water_drop</span>
+      <div class="auth-logo-badge" aria-hidden="true">
+        <svg viewBox="0 0 72 72">
+          <defs>
+            <linearGradient id="authDropGradient" x1="18" y1="9" x2="54" y2="62" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#5BA8FF" />
+              <stop offset="0.52" stop-color="#2563EB" />
+              <stop offset="1" stop-color="#0B3DAE" />
+            </linearGradient>
+          </defs>
+          <path class="auth-drop-main" d="M36 7C27.4 18.8 18 29.3 18 42.3 18 53.1 25.6 61 36 61s18-7.9 18-18.7C54 29.3 44.6 18.8 36 7Z" />
+          <path class="auth-drop-wave" d="M22.8 42.2c4.3 2.5 8.1 2.7 12.6.6 5.6-2.7 9.5-2.5 13.8.5" />
+          <path class="auth-drop-shine" d="M29.1 23.7c-3.2 4.7-5.3 9-5.7 13" />
+        </svg>
       </div>
     </div>
 
     <ng-container *ngIf="modalView === 'login'">
-      <h1 class="auth-title">Bienvenido a AQUACOMUNIDAD</h1>
-      <p class="auth-copy">Inicia sesión para realizar tus pedidos y revisar tu historial</p>
+      <h1 class="auth-title">Bienvenido de vuelta</h1>
+      <p class="auth-copy">Ingresa tus datos para acceder a AquaComunidad.</p>
+
+      <div class="auth-social" aria-label="Opciones de acceso social">
+        <button type="button" aria-label="Continuar con Google">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3Z" />
+            <path fill="#34A853" d="M12 22c2.7 0 5-0.9 6.6-2.5L15.4 17c-.9.6-2 .9-3.4.9-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22Z" />
+            <path fill="#FBBC05" d="M6.4 13.8A6 6 0 0 1 6.1 12c0-.6.1-1.2.3-1.8V7.6H3.1A10 10 0 0 0 2 12c0 1.6.4 3.1 1.1 4.4l3.3-2.6Z" />
+            <path fill="#EA4335" d="M12 6.1c1.5 0 2.8.5 3.8 1.5l2.8-2.8A9.6 9.6 0 0 0 12 2a10 10 0 0 0-8.9 5.6l3.3 2.6c.8-2.3 3-4.1 5.6-4.1Z" />
+          </svg>
+        </button>
+        <button type="button" aria-label="Continuar con Microsoft">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#F25022" d="M3 3h8.4v8.4H3V3Z" />
+            <path fill="#7FBA00" d="M12.6 3H21v8.4h-8.4V3Z" />
+            <path fill="#00A4EF" d="M3 12.6h8.4V21H3v-8.4Z" />
+            <path fill="#FFB900" d="M12.6 12.6H21V21h-8.4v-8.4Z" />
+          </svg>
+        </button>
+        <button type="button" aria-label="Continuar con correo institucional">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="auth-social-mail">
+            <path d="M4.5 7.2h15v9.6h-15V7.2Z" />
+            <path d="m5.2 8 6.8 5 6.8-5" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="auth-divider"><span>O</span></div>
 
       <form class="auth-form" autocomplete="off" (ngSubmit)="submitLogin()">
-        <label class="auth-label">Correo Electrónico</label>
+        <label class="auth-label" for="login-email">Correo electrónico</label>
         <div class="auth-field">
-          <span class="material-symbols-outlined">mail</span>
           <input
+            id="login-email"
             class="auth-field__control"
             type="email"
             name="login_email"
             [(ngModel)]="loginEmail"
-            placeholder="cliente@correo.com"
+            placeholder="Ingresa tu correo..."
             inputmode="email"
             autocomplete="username"
             autocapitalize="off"
@@ -33,19 +71,22 @@
           />
         </div>
 
-        <label class="auth-label">Contraseña</label>
+        <label class="auth-label" for="login-password">Contraseña</label>
         <div class="auth-field" [class.auth-field--error]="!!loginError">
-          <span class="material-symbols-outlined">lock</span>
           <input
+            id="login-password"
             class="auth-field__control"
             [type]="showLoginPassword ? 'text' : 'password'"
             name="login_password"
             [(ngModel)]="loginPassword"
-            placeholder="********"
+            placeholder="••••••••••"
             autocomplete="current-password"
           />
           <button type="button" (click)="showLoginPassword = !showLoginPassword" aria-label="Mostrar contraseña">
-            <span class="material-symbols-outlined">{{ showLoginPassword ? 'visibility' : 'visibility_off' }}</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2.8 12s3.4-5.2 9.2-5.2 9.2 5.2 9.2 5.2-3.4 5.2-9.2 5.2S2.8 12 2.8 12Z" />
+              <circle cx="12" cy="12" r="2.2" />
+            </svg>
           </button>
         </div>
 
@@ -53,7 +94,13 @@
           <span class="material-symbols-outlined">error</span> {{ loginError }}
         </small>
 
-        <button type="button" class="auth-forgot" (click)="openView('recover')">¿Olvidaste tu contraseña?</button>
+        <div class="auth-options">
+          <label class="auth-remember">
+            <input type="checkbox" name="remember_me" />
+            <span>Recordarme</span>
+          </label>
+          <button type="button" class="auth-forgot">¿Olvidaste tu contraseña?</button>
+        </div>
 
         <button class="btn-primary auth-submit" type="submit" [disabled]="loginLoading">
           {{ loginLoading ? 'Ingresando...' : 'Ingresar' }}
@@ -61,158 +108,53 @@
       </form>
 
       <div class="auth-switch">
-        ¿No tienes cuenta? <button type="button" (click)="openView('register')">Regístrate aquí</button>
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="modalView === 'recover'">
-      <h1 class="auth-title">Recuperar Cuenta</h1>
-      <p class="auth-copy">Te ayudaremos a restablecer tu contraseña</p>
-
-      <small class="auth-success" *ngIf="recoverSuccess">{{ recoverSuccess }}</small>
-      <small class="auth-error" *ngIf="recoverError">
-        <span class="material-symbols-outlined">error</span> {{ recoverError }}
-      </small>
-
-      <form class="auth-form" *ngIf="recoverStep === 'request'" autocomplete="off" (ngSubmit)="requestRecoveryCode()">
-        <label class="auth-label">Correo Electrónico</label>
-        <div class="auth-field">
-          <span class="material-symbols-outlined">mail</span>
-          <input
-            class="auth-field__control"
-            type="email"
-            name="recover_email"
-            [(ngModel)]="recoverEmail"
-            placeholder="cliente@correo.com"
-            inputmode="email"
-            autocomplete="email"
-          />
-        </div>
-        <button class="btn-primary auth-submit" type="submit" [disabled]="recoverLoading">
-          {{ recoverLoading ? 'Enviando...' : 'Enviar código' }}
-        </button>
-      </form>
-
-      <form class="auth-form" *ngIf="recoverStep === 'code'" (ngSubmit)="goToRecoverResetStep()">
-        <label class="auth-label">Código de verificación</label>
-        <div class="recovery-code" (paste)="onRecoveryCodePaste($event)">
-          <input
-            *ngFor="let code of recoverCodeDigits; let idx = index"
-            [id]="'recover-code-' + idx"
-            type="text"
-            inputmode="numeric"
-            maxlength="1"
-            autocomplete="one-time-code"
-            [value]="code"
-            (input)="onRecoveryCodeInput(idx, $event)"
-            (keydown)="onRecoveryCodeKeydown(idx, $event)"
-            aria-label="Dígito {{ idx + 1 }} del código"
-          />
-        </div>
-        <button class="btn-primary auth-submit" type="submit">Continuar</button>
-      </form>
-
-      <form class="auth-form" *ngIf="recoverStep === 'reset'" autocomplete="off" (ngSubmit)="confirmPasswordReset()">
-        <label class="auth-label">Nueva Contraseña</label>
-        <div class="auth-field">
-          <span class="material-symbols-outlined">lock</span>
-          <input
-            class="auth-field__control"
-            [type]="showRecoverNewPassword ? 'text' : 'password'"
-            name="recover_new_password"
-            [(ngModel)]="recoverNewPassword"
-            placeholder="Mínimo 8 caracteres"
-            autocomplete="new-password"
-          />
-          <button type="button" (click)="showRecoverNewPassword = !showRecoverNewPassword" aria-label="Mostrar contraseña nueva">
-            <span class="material-symbols-outlined">{{ showRecoverNewPassword ? 'visibility' : 'visibility_off' }}</span>
-          </button>
-        </div>
-
-        <label class="auth-label">Confirmar Contraseña</label>
-        <div class="auth-field">
-          <span class="material-symbols-outlined">lock</span>
-          <input
-            class="auth-field__control"
-            [type]="showRecoverConfirmPassword ? 'text' : 'password'"
-            name="recover_confirm_password"
-            [(ngModel)]="recoverConfirmPassword"
-            placeholder="Repite la contraseña"
-            autocomplete="new-password"
-          />
-          <button type="button" (click)="showRecoverConfirmPassword = !showRecoverConfirmPassword" aria-label="Mostrar confirmar contraseña">
-            <span class="material-symbols-outlined">{{ showRecoverConfirmPassword ? 'visibility' : 'visibility_off' }}</span>
-          </button>
-        </div>
-
-        <button class="btn-primary auth-submit" type="submit" [disabled]="recoverLoading">
-          {{ recoverLoading ? 'Guardando...' : 'Guardar contraseña' }}
-        </button>
-      </form>
-
-      <div class="auth-done" *ngIf="recoverStep === 'done'">
-        <button class="btn-primary auth-submit" type="button" (click)="backToLogin()">Volver a iniciar sesión</button>
-      </div>
-
-      <div class="auth-switch" *ngIf="recoverStep !== 'done'">
-        <button type="button" (click)="backToLogin()">Volver al inicio de sesión</button>
+        ¿Aún no tienes una cuenta? <button type="button" (click)="openView('register')">Regístrate</button>
       </div>
     </ng-container>
 
     <ng-container *ngIf="modalView === 'register'">
-      <h1 class="auth-title">Crear Cuenta</h1>
-      <p class="auth-copy">Regístrate para empezar a pedir</p>
+      <h1 class="auth-title">Crea tu cuenta</h1>
+      <p class="auth-copy">Regístrate para reportar incidencias y consultar el avance de tus casos.</p>
 
       <small class="auth-success" *ngIf="registerSuccess">{{ registerSuccess }}</small>
       <small class="auth-error" *ngIf="registerError">
         <span class="material-symbols-outlined">error</span> {{ registerError }}
       </small>
 
-      <form class="auth-form" autocomplete="off" (ngSubmit)="submitRegister()">
-        <label class="auth-label">Correo Electrónico</label>
-        <div class="auth-row-two auth-row-two--email">
-          <div class="auth-field">
-            <span class="material-symbols-outlined">mail</span>
-            <input
-              class="auth-field__control"
-              type="text"
-              name="register_email_local"
-              [(ngModel)]="registerData.correoLocal"
-              placeholder="cliente"
-              autocapitalize="off"
-              inputmode="email"
-              maxlength="64"
-            />
-          </div>
-          <select class="auth-select" name="register_email_domain" [(ngModel)]="registerData.correoDominio">
-            <option value="gmail.com">@gmail.com</option>
-            <option value="hotmail.com">@hotmail.com</option>
-            <option value="outlook.com">@outlook.com</option>
-          </select>
-        </div>
-
-        <label class="auth-label">Nombres</label>
+      <form class="auth-form auth-form--register" autocomplete="off" (ngSubmit)="submitRegister()">
+        <label class="auth-label" for="register-name">Nombre completo</label>
         <div class="auth-field">
-          <span class="material-symbols-outlined">person</span>
-          <input class="auth-field__control" type="text" name="register_nombres" [(ngModel)]="registerData.nombre" placeholder="Nombres" />
-        </div>
-
-        <label class="auth-label">Apellidos</label>
-        <div class="auth-field">
-          <span class="material-symbols-outlined">person</span>
-          <input class="auth-field__control" type="text" name="register_apellidos" [(ngModel)]="registerData.apellidos" placeholder="Apellidos" />
-        </div>
-
-        <label class="auth-label">Teléfono (Opcional)</label>
-        <div class="auth-field">
-          <span class="material-symbols-outlined">call</span>
-          <input class="auth-field__control" type="tel" name="register_telefono" [(ngModel)]="registerData.telefono" inputmode="numeric" maxlength="9" placeholder="987654321" />
-        </div>
-
-        <label class="auth-label">Contraseña</label>
-        <div class="auth-field">
-          <span class="material-symbols-outlined">lock</span>
           <input
+            id="register-name"
+            class="auth-field__control"
+            type="text"
+            name="register_name"
+            [(ngModel)]="registerData.nombre"
+            placeholder="Ej: María Torres"
+            autocomplete="name"
+          />
+        </div>
+
+        <label class="auth-label" for="register-email">Correo electrónico</label>
+        <div class="auth-field">
+          <input
+            id="register-email"
+            class="auth-field__control"
+            type="email"
+            name="register_email"
+            [(ngModel)]="registerData.correo"
+            placeholder="tu.correo@email.com"
+            inputmode="email"
+            autocomplete="email"
+            autocapitalize="off"
+            spellcheck="false"
+          />
+        </div>
+
+        <label class="auth-label" for="register-password">Contraseña</label>
+        <div class="auth-field">
+          <input
+            id="register-password"
             class="auth-field__control"
             [type]="showRegisterPassword ? 'text' : 'password'"
             name="register_password"
@@ -220,29 +162,35 @@
             placeholder="Mínimo 8 caracteres"
             autocomplete="new-password"
           />
-          <button type="button" (click)="showRegisterPassword = !showRegisterPassword" aria-label="Mostrar contraseña de registro">
-            <span class="material-symbols-outlined">{{ showRegisterPassword ? 'visibility' : 'visibility_off' }}</span>
+          <button type="button" (click)="showRegisterPassword = !showRegisterPassword" aria-label="Mostrar contraseña">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2.8 12s3.4-5.2 9.2-5.2 9.2 5.2 9.2 5.2-3.4 5.2-9.2 5.2S2.8 12 2.8 12Z" />
+              <circle cx="12" cy="12" r="2.2" />
+            </svg>
           </button>
         </div>
 
-        <label class="auth-label">Confirmar Contraseña</label>
+        <label class="auth-label" for="register-confirm-password">Confirmar contraseña</label>
         <div class="auth-field">
-          <span class="material-symbols-outlined">lock</span>
           <input
+            id="register-confirm-password"
             class="auth-field__control"
             [type]="showRegisterConfirmPassword ? 'text' : 'password'"
             name="register_confirm_password"
             [(ngModel)]="registerData.confirmPassword"
-            placeholder="Repite la contraseña"
+            placeholder="Repite tu contraseña"
             autocomplete="new-password"
           />
-          <button type="button" (click)="showRegisterConfirmPassword = !showRegisterConfirmPassword" aria-label="Mostrar confirmar contraseña de registro">
-            <span class="material-symbols-outlined">{{ showRegisterConfirmPassword ? 'visibility' : 'visibility_off' }}</span>
+          <button type="button" (click)="showRegisterConfirmPassword = !showRegisterConfirmPassword" aria-label="Mostrar confirmación de contraseña">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2.8 12s3.4-5.2 9.2-5.2 9.2 5.2 9.2 5.2-3.4 5.2-9.2 5.2S2.8 12 2.8 12Z" />
+              <circle cx="12" cy="12" r="2.2" />
+            </svg>
           </button>
         </div>
 
         <button class="btn-primary auth-submit" type="submit" [disabled]="registerLoading">
-          {{ registerLoading ? 'Registrando...' : 'Crear cuenta' }}
+          {{ registerLoading ? 'Creando cuenta...' : 'Crear cuenta' }}
         </button>
       </form>
 

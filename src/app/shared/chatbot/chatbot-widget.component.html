@@ -1,0 +1,102 @@
+<section class="chatbot-widget" [class.chatbot-widget--open]="isOpen()" aria-label="Chat de ayuda AquaComunidad">
+  <article class="chatbot-panel" *ngIf="isOpen()" role="dialog" aria-modal="false" aria-label="Asistente AquaComunidad">
+    <header class="chatbot-panel__header">
+      <div class="chatbot-panel__brand">
+        <app-aqua-logo size="sm"></app-aqua-logo>
+        <div>
+          <strong>Asistente AquaComunidad</strong>
+          <span>En línea</span>
+        </div>
+      </div>
+      <button class="chatbot-icon-button" type="button" (click)="closeChat()" aria-label="Cerrar chat">
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+
+    <div class="chatbot-panel__content">
+      <aside class="chatbot-panel__history" aria-label="Historial del chat por día">
+        <div class="chatbot-history-title">
+          <strong>Historial</strong>
+          <span>Por día</span>
+        </div>
+        <button
+          *ngFor="let conversacion of conversacionesVisibles()"
+          class="chatbot-history-day"
+          type="button"
+          [class.chatbot-history-day--active]="conversacion.fechaConversacion === fechaSeleccionada()"
+          (click)="seleccionarFecha(conversacion.fechaConversacion)"
+        >
+          <span>{{ etiquetaFecha(conversacion.fechaConversacion) }}</span>
+          <small>{{ conversacion.totalMensajes }} mensajes</small>
+        </button>
+        <p class="chatbot-history-note" *ngIf="!tieneSesion()">
+          Inicia sesión para conservar tus conversaciones.
+        </p>
+      </aside>
+
+      <div class="chatbot-panel__main">
+        <div #messageScroller class="chatbot-panel__body" aria-live="polite">
+          <div class="chatbot-loading" *ngIf="estaCargandoHistorial()">Cargando historial...</div>
+          <div
+            *ngFor="let message of messages()"
+            class="chatbot-message"
+            [class.chatbot-message--user]="message.author === 'user'"
+          >
+            <span>{{ message.text }}</span>
+            <div class="chatbot-message__actions" *ngIf="message.actions?.length">
+              <button
+                *ngFor="let action of message.actions"
+                class="chatbot-action"
+                type="button"
+                (click)="abrirAccion(action)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m9 7 7 5-7 5V7Z" />
+                </svg>
+                <span>{{ action.etiqueta }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="chatbot-message chatbot-message--typing" *ngIf="isSending()">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <p class="chatbot-error" *ngIf="error()">{{ error() }}</p>
+        </div>
+
+        <form class="chatbot-panel__composer" (ngSubmit)="sendMessage()">
+          <label class="sr-only" for="chatbot-message">Mensaje</label>
+          <input
+            id="chatbot-message"
+            name="chatbot-message"
+            type="text"
+            [(ngModel)]="draft"
+            placeholder="Escribe tu consulta..."
+            autocomplete="off"
+            maxlength="700"
+            [disabled]="isSending()"
+          />
+          <button type="submit" aria-label="Enviar mensaje" [disabled]="isSending() || !draft.trim()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4.5 19.2 20.4 12 4.5 4.8l1.7 6.2 7.7 1-7.7 1-1.7 6.2Z" />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </article>
+
+  <button
+    class="chatbot-launcher"
+    type="button"
+    (click)="toggleChat()"
+    [attr.aria-expanded]="isOpen()"
+    aria-controls="chatbot-message"
+    aria-label="Abrir chat de AquaComunidad"
+  >
+    <app-aqua-logo size="lg"></app-aqua-logo>
+    <span class="chatbot-launcher__label">Ayuda</span>
+    <span class="chatbot-launcher__pulse" aria-hidden="true"></span>
+  </button>
+</section>

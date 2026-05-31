@@ -130,7 +130,10 @@
             </div>
           </div>
 
-          <button class="btn-derivar" (click)="onMostrarDerivar()">Derivar a Atención de casos</button>
+          <button *ngIf="detalle.estado === 'PENDIENTE'; else reporteNoDerivable" class="btn-derivar" (click)="onMostrarDerivar()">Derivar a Atención de casos</button>
+          <ng-template #reporteNoDerivable>
+            <div class="feedback info">Este reporte ya fue gestionado y no puede derivarse nuevamente.</div>
+          </ng-template>
 
           <div class="derivar-panel" *ngIf="mostrarDerivar">
             <h4 class="detail-sub-title">Derivar reporte</h4>

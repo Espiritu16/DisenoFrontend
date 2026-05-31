@@ -2,26 +2,27 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/api/auth.service';
+import { AquaLogoComponent } from '../../shared/public/aqua-logo/aqua-logo.component';
 
 @Component({
   selector: 'app-dashboard-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, AquaLogoComponent],
   template: `
     <div class="admin-layout">
       <aside class="admin-sidebar" [class.open]="menuOpen">
         <a class="admin-brand" routerLink="/administrador/dashboard" (click)="closeMenuOnMobile()">
-          <span class="material-symbols-outlined">water_drop</span>
+          <app-aqua-logo size="sm"></app-aqua-logo>
           <div>
-            <strong>AQUACOMUNIDAD</strong>
-            <small>Panel Administrador</small>
+            <strong>AquaComunidad</strong>
+            <small>Centro operativo</small>
           </div>
         </a>
 
         <nav class="nav-links">
           <a routerLink="/administrador/dashboard" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
             <span class="material-symbols-outlined">space_dashboard</span>
-            <span>Dashboard</span>
+            <span>Resumen</span>
           </a>
           <a routerLink="/administrador/atencion-casos" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
             <span class="material-symbols-outlined">assignment</span>
@@ -56,7 +57,11 @@ import { AuthService } from '../../core/api/auth.service';
           <button class="menu-btn" (click)="menuOpen = !menuOpen" aria-label="Abrir menú">
             <span class="material-symbols-outlined">menu</span>
           </button>
-          <span>{{ auth.session()?.correo || 'Administrador' }}</span>
+          <div class="topbar-copy">
+            <span class="topbar-kicker">Panel administrativo</span>
+            <strong>Operación AquaComunidad</strong>
+          </div>
+          <span class="admin-user-name">{{ userDisplayName }}</span>
         </header>
 
         <main class="admin-content">
@@ -67,27 +72,32 @@ import { AuthService } from '../../core/api/auth.service';
   `,
   styles: [
     `
-      .admin-layout { min-height: 100vh; display: grid; grid-template-columns: 290px 1fr; background: var(--color-bg-main); }
-      .admin-sidebar { background: var(--color-brand-primary); color: var(--color-on-brand); padding: 1rem .9rem; display: flex; flex-direction: column; gap: .75rem; }
-      .admin-brand { display:flex; align-items:center; gap:.55rem; text-decoration:none; color:var(--color-on-brand); padding:.25rem .35rem .9rem; border-bottom:1px solid rgba(255,255,255,.24);}
-      .admin-brand .material-symbols-outlined { font-size: 26px; }
-      .admin-brand strong { display:block; font-weight:800; font-size:1rem; letter-spacing:.03em; }
-      .admin-brand small { display:block; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; opacity:.9; }
-      .nav-links { display: grid; gap: .35rem; }
-      .nav-links a { display:flex; align-items:center; gap:.55rem; color: rgba(255,255,255,.86); padding: .62rem .72rem; border-radius: .7rem; text-decoration: none; font-size: .89rem; border:1px solid transparent; font-weight:600;}
-      .nav-links a .material-symbols-outlined { font-size: 19px; }
-      .nav-links a:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.2); }
-      .active-link { background: var(--color-on-brand); color: var(--color-brand-primary) !important; border-color:var(--color-on-brand); font-weight: 700; }
-      .sidebar-footer { margin-top: auto; display: grid; gap: .4rem; padding-top: .9rem; }
-      .sidebar-footer a { display:flex; align-items:center; gap:.4rem; color: rgba(255,255,255,.86); text-decoration: none; padding: .52rem .62rem; border-radius: .62rem; font-size: .86rem; border:1px solid rgba(255,255,255,.28);}
-      .sidebar-footer a .material-symbols-outlined { font-size: 18px; }
-      .sidebar-footer a:hover { background: rgba(255,255,255,.08); }
-      .admin-main { min-width: 0; }
-      .admin-topbar { height: 56px; display: flex; align-items: center; gap: .8rem; padding: 0 1rem; border-bottom: 1px solid var(--color-border); background: var(--color-on-brand); color: var(--color-brand-primary); font-weight: 700; }
-      .menu-btn { display: none; min-height: 42px; border: 1px solid var(--color-border); background: #ffffff; color: var(--color-brand-primary); border-radius: .25rem; padding: .35rem .65rem; }
-      .menu-btn:hover { border-color: #0060ac; color: #0060ac; background: #f8fbff; }
+      .admin-layout { height: 100vh; overflow: hidden; display: grid; grid-template-columns: 280px 1fr; background: #f7f9fd; }
+      .admin-sidebar { height: 100vh; min-height: 0; overflow-y: auto; background: #ffffff; color: var(--color-text-main); padding: 1.1rem .9rem; display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid #dbe4f0; box-shadow: 18px 0 45px rgba(15, 23, 42, .035); }
+      .admin-brand { display:flex; align-items:center; gap:.65rem; text-decoration:none; color:var(--color-text-main); padding:.2rem .35rem 1rem; border-bottom:1px solid #e4ebf5;}
+      .admin-brand strong { display:block; font-family:'Hanken Grotesk', Inter, sans-serif; font-weight:900; font-size:1.02rem; letter-spacing:0; color:#0b1224; }
+      .admin-brand small { display:block; font-size:.72rem; letter-spacing:.02em; color:#64748b; font-weight:800; margin-top: .1rem; }
+      .nav-links { display: grid; gap: .45rem; }
+      .nav-links a { min-height: 44px; display:flex; align-items:center; gap:.7rem; color: #334155; padding: .62rem .72rem; border-radius: .5rem; text-decoration: none; font-size: .9rem; border:1px solid transparent; font-weight:800; transition: background .18s ease, border-color .18s ease, color .18s ease;}
+      .nav-links a .material-symbols-outlined { width: 24px; height: 24px; display:grid; place-items:center; font-size: 19px; color:#2563eb; }
+      .nav-links a:hover { background: #f4f7ff; border-color: #dbe7ff; color: #0f172a; }
+      .active-link { background: #eff5ff !important; color: #0b1224 !important; border-color:#bcd3ff !important; box-shadow: inset 3px 0 0 #2563eb; }
+      .sidebar-footer { margin-top: auto; display: grid; gap: .45rem; padding-top: .9rem; border-top: 1px solid #e4ebf5; }
+      .sidebar-footer a { min-height: 42px; display:flex; align-items:center; gap:.55rem; color: #334155; text-decoration: none; padding: .52rem .62rem; border-radius: .5rem; font-size: .86rem; border:1px solid #dbe4f0; font-weight:800; background:#fff;}
+      .sidebar-footer a .material-symbols-outlined { font-size: 18px; color:#2563eb; }
+      .sidebar-footer a:hover { background: #f4f7ff; border-color: #bcd3ff; }
+      .admin-main { min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+      .admin-topbar { min-height: 68px; display: flex; align-items: center; gap: .8rem; padding: 0 clamp(1rem, 2vw, 1.6rem); border-bottom: 1px solid #dbe4f0; background: rgba(255,255,255,.92); color: #0b1224; font-weight: 800; backdrop-filter: blur(12px); }
+      .topbar-copy { display:grid; gap:.12rem; min-width:0; }
+      .topbar-copy strong { font-size: .98rem; white-space: nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .topbar-kicker { font-size:.72rem; color:#64748b; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+      .admin-user-name { margin-left: auto; min-width: 0; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; color:#334155; border:1px solid #dbe4f0; padding:.55rem .75rem; border-radius:999px; background:#fff; }
+      .menu-btn { display: none; min-height: 44px; min-width:44px; border: 1px solid #dbe4f0; background: #ffffff; color: #2563eb; border-radius: .5rem; padding: .35rem .65rem; }
+      .menu-btn:hover { border-color: #bcd3ff; color: #1d4ed8; background: #f4f7ff; }
       .menu-btn .material-symbols-outlined { font-size: 20px; }
-      .admin-content { padding: 1rem 1.2rem; }
+      .admin-content { flex: 1 1 auto; min-height: 0; overflow: auto; padding: clamp(1rem, 2vw, 1.5rem); background:
+        linear-gradient(180deg, rgba(239,245,255,.7), rgba(247,249,253,0) 320px),
+        #f7f9fd; }
       .admin-content .app-shell { width: 100%; max-width: none; margin: 0; padding-left: 0; padding-right: 0; }
       .admin-backdrop { display: none; }
 
@@ -104,7 +114,10 @@ import { AuthService } from '../../core/api/auth.service';
       }
 
       @media (max-width: 640px) {
-        .admin-topbar { height: 52px; padding: 0 .75rem; }
+        .admin-topbar { min-height: 58px; padding: 0 .75rem; }
+        .topbar-kicker { display:none; }
+        .topbar-copy strong { font-size: .9rem; }
+        .admin-user-name { max-width: 140px; padding:.45rem .6rem; }
         .admin-content { padding: .7rem; }
         .admin-sidebar { width: min(280px, calc(100vw - .75rem)); }
       }
@@ -115,6 +128,11 @@ export class DashboardLayoutComponent {
   menuOpen = false;
 
   constructor(public auth: AuthService) {}
+
+  get userDisplayName(): string {
+    const session = this.auth.session();
+    return session?.nombre?.trim() || session?.correo || 'Administrador';
+  }
 
   closeMenuOnMobile(): void {
     if (typeof window !== 'undefined' && window.matchMedia('(max-width: 960px)').matches) {

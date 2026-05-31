@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/api/auth.service';
@@ -27,10 +27,7 @@ export class AuthModalComponent implements OnChanges {
 
   registerData = {
     nombre: '',
-    apellidos: '',
-    correoLocal: '',
-    correoDominio: 'gmail.com',
-    telefono: '',
+    correo: '',
     password: '',
     confirmPassword: ''
   };
@@ -51,7 +48,7 @@ export class AuthModalComponent implements OnChanges {
   showRecoverConfirmPassword = false;
   private recoveryToken = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private cdr: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['initialView']) {
@@ -95,6 +92,7 @@ export class AuthModalComponent implements OnChanges {
     this.auth.login(this.normalizeEmail(this.loginEmail), this.loginPassword).subscribe({
       next: (session) => {
         this.loginLoading = false;
+        this.scheduleChangeDetection();
         this.closed.emit();
         const destino = session.rol === 'CIUDADANO' ? '/mis-reportes' : '/administrador/dashboard';
         void this.router.navigateByUrl(destino);
@@ -102,6 +100,7 @@ export class AuthModalComponent implements OnChanges {
       error: (error: unknown) => {
         this.loginLoading = false;
         this.loginError = apiErrorMessage(error);
+        this.scheduleChangeDetection();
       }
     });
   }
@@ -110,8 +109,8 @@ export class AuthModalComponent implements OnChanges {
     this.registerError = '';
     this.registerSuccess = '';
 
-    const correo = this.normalizeEmail(this.buildRegisterEmail());
-    if (!this.registerData.nombre.trim() || !this.registerData.apellidos.trim() || !this.registerData.correoLocal.trim() || !this.registerData.password || !this.registerData.confirmPassword) {
+    const correo = this.normalizeEmail(this.registerData.correo);
+    if (!this.registerData.nombre.trim() || !correo || !this.registerData.password || !this.registerData.confirmPassword) {
       this.registerError = 'Completa todos los campos obligatorios.';
       return;
     }
@@ -127,14 +126,14 @@ export class AuthModalComponent implements OnChanges {
     }
 
     this.registerLoading = true;
-    const nombreCompleto = `${this.registerData.nombre.trim()} ${this.registerData.apellidos.trim()}`.trim();
-    this.auth.register(nombreCompleto, correo, this.registerData.password).subscribe({
+    this.auth.register(this.registerData.nombre.trim(), correo, this.registerData.password).subscribe({
       next: () => {
         this.registerLoading = false;
         this.registerSuccess = 'Cuenta creada. Ahora inicia sesión.';
         this.modalView = 'login';
         this.loginEmail = correo;
         this.loginPassword = '';
+        this.scheduleChangeDetection();
       },
       error: (error: unknown) => {
         this.registerLoading = false;
@@ -142,6 +141,7 @@ export class AuthModalComponent implements OnChanges {
         this.registerError = message === 'El correo ya esta registrado'
           ? 'Ese correo ya está registrado. Inicia sesión o recupera tu contraseña.'
           : message;
+        this.scheduleChangeDetection();
       }
     });
   }
@@ -162,10 +162,12 @@ export class AuthModalComponent implements OnChanges {
         this.recoverSuccess = 'Te enviamos un código al correo.';
         this.recoverStep = 'code';
         this.recoverCodeDigits = ['', '', '', '', '', ''];
+        this.scheduleChangeDetection();
       },
       error: (error: unknown) => {
         this.recoverLoading = false;
         this.recoverError = apiErrorMessage(error);
+        this.scheduleChangeDetection();
       }
     });
   }
@@ -233,10 +235,12 @@ export class AuthModalComponent implements OnChanges {
         this.recoveryToken = token;
         this.recoverLoading = false;
         this.recoverStep = 'reset';
+        this.scheduleChangeDetection();
       },
       error: (error: unknown) => {
         this.recoverLoading = false;
         this.recoverError = apiErrorMessage(error);
+        this.scheduleChangeDetection();
       }
     });
   }
@@ -267,10 +271,12 @@ export class AuthModalComponent implements OnChanges {
         this.recoverStep = 'done';
         this.recoverSuccess = 'Contraseña actualizada.';
         this.loginPassword = '';
+        this.scheduleChangeDetection();
       },
       error: (error: unknown) => {
         this.recoverLoading = false;
         this.recoverError = apiErrorMessage(error);
+        this.scheduleChangeDetection();
       }
     });
   }
@@ -283,11 +289,11 @@ export class AuthModalComponent implements OnChanges {
     this.recoverSuccess = '';
   }
 
-  private buildRegisterEmail(): string {
-    return `${this.registerData.correoLocal.trim()}@${this.registerData.correoDominio}`;
-  }
-
   private normalizeEmail(email: string): string {
     return email.trim().toLowerCase();
+  }
+
+  private scheduleChangeDetection(): void {
+    queueMicrotask(() => this.cdr.detectChanges());
   }
 }

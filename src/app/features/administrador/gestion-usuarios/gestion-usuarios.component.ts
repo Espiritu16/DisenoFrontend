@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import { ApiRole, ApiUserStatus, UsuarioResponse } from '../../../core/api/api-models';
@@ -27,7 +27,7 @@ export class GestionUsuariosComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private usuariosService: UsuariosService) {}
+  constructor(private usuariosService: UsuariosService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadUsuarios();
@@ -40,10 +40,12 @@ export class GestionUsuariosComponent implements OnInit {
       next: (usuarios) => {
         this.usuarios = usuarios.map((usuario) => this.toVista(usuario));
         this.loading = false;
+        this.scheduleChangeDetection();
       },
       error: (error: unknown) => {
         this.error = apiErrorMessage(error);
         this.loading = false;
+        this.scheduleChangeDetection();
       }
     });
   }
@@ -100,9 +102,11 @@ export class GestionUsuariosComponent implements OnInit {
     this.usuariosService.actualizarRolEstado(usuario.id, usuario.rol, nuevoEstado).subscribe({
       next: (actualizado) => {
         this.usuarios = this.usuarios.map((item) => item.id === actualizado.id ? this.toVista(actualizado) : item);
+        this.scheduleChangeDetection();
       },
       error: (error: unknown) => {
         this.error = apiErrorMessage(error);
+        this.scheduleChangeDetection();
       }
     });
   }
@@ -125,5 +129,9 @@ export class GestionUsuariosComponent implements OnInit {
       .slice(0, 2)
       .map((parte) => parte[0]?.toUpperCase())
       .join('') || 'US';
+  }
+
+  private scheduleChangeDetection(): void {
+    queueMicrotask(() => this.cdr.detectChanges());
   }
 }

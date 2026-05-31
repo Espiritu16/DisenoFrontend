@@ -89,40 +89,25 @@
       <section class="dashboard-card chart-card">
         <div class="card-header">
           <h2 class="card-title">Actividad Reciente de Reportes</h2>
-          <span class="pending-source">Pendiente de fuente backend</span>
+          <span class="data-source">Datos backend</span>
         </div>
 
         <div class="chart-container">
-          <div class="bar-chart">
-            <div class="bar-wrapper">
-              <div class="bar" style="height: 45%;"></div>
-              <span class="bar-label">Lun</span>
-            </div>
-            <div class="bar-wrapper">
-              <div class="bar" style="height: 60%;"></div>
-              <span class="bar-label">Mar</span>
-            </div>
-            <div class="bar-wrapper">
-              <div class="bar" style="height: 75%;"></div>
-              <span class="bar-label">Mié</span>
-            </div>
-            <div class="bar-wrapper">
-              <div class="bar bar-highlight" style="height: 95%;"></div>
-              <span class="bar-label">Jue</span>
-            </div>
-            <div class="bar-wrapper">
-              <div class="bar" style="height: 50%;"></div>
-              <span class="bar-label">Vie</span>
-            </div>
-            <div class="bar-wrapper">
-              <div class="bar" style="height: 35%;"></div>
-              <span class="bar-label">Sáb</span>
-            </div>
-            <div class="bar-wrapper">
-              <div class="bar" style="height: 55%;"></div>
-              <span class="bar-label">Hoy</span>
+          <div class="bar-chart" *ngIf="actividadSemanal.length; else actividadVacia">
+            <div class="bar-wrapper" *ngFor="let item of actividadSemanal">
+              <span class="bar-value">{{ item.valor }}</span>
+              <div
+                class="bar"
+                [class.bar-highlight]="item.dia === 'Hoy'"
+                [style.height.%]="alturaActividad(item.valor)"
+                [attr.aria-label]="item.dia + ': ' + item.valor + ' reportes'"
+              ></div>
+              <span class="bar-label">{{ item.dia }}</span>
             </div>
           </div>
+          <ng-template #actividadVacia>
+            <p class="empty-state">No hay reportes registrados en los últimos 7 días.</p>
+          </ng-template>
         </div>
       </section>
 
@@ -134,61 +119,24 @@
       <!-- REPORTES POR DISTRITO -->
       <section class="dashboard-card">
         <div class="card-header">
-          <h2 class="card-title">Reportes por Distrito</h2>
-          <span class="pending-source">Pendiente de fuente backend</span>
+          <h2 class="card-title">Reportes por zona</h2>
+          <span class="data-source">Datos backend</span>
         </div>
 
-        <div class="district-list">
-          <div class="district-item">
+        <div class="district-list" *ngIf="reportesPorZona.length; else zonasVacias">
+          <div class="district-item" *ngFor="let zona of reportesPorZona">
             <div class="district-header">
-              <span class="district-name">San Borja</span>
-              <span class="district-count">124</span>
+              <span class="district-name">{{ zona.nombre }}</span>
+              <span class="district-count">{{ zona.cantidad }}</span>
             </div>
             <div class="district-bar">
-              <div class="bar-progress" style="width: 100%;"></div>
-            </div>
-          </div>
-
-          <div class="district-item">
-            <div class="district-header">
-              <span class="district-name">Miraflores</span>
-              <span class="district-count">98</span>
-            </div>
-            <div class="district-bar">
-              <div class="bar-progress" style="width: 79%;"></div>
-            </div>
-          </div>
-
-          <div class="district-item">
-            <div class="district-header">
-              <span class="district-name">Surco</span>
-              <span class="district-count">76</span>
-            </div>
-            <div class="district-bar">
-              <div class="bar-progress" style="width: 61%;"></div>
-            </div>
-          </div>
-
-          <div class="district-item">
-            <div class="district-header">
-              <span class="district-name">La Molina</span>
-              <span class="district-count">45</span>
-            </div>
-            <div class="district-bar">
-              <div class="bar-progress" style="width: 36%;"></div>
-            </div>
-          </div>
-
-          <div class="district-item">
-            <div class="district-header">
-              <span class="district-name">San Isidro</span>
-              <span class="district-count">32</span>
-            </div>
-            <div class="district-bar">
-              <div class="bar-progress" style="width: 26%;"></div>
+              <div class="bar-progress" [style.width.%]="anchoZona(zona.cantidad)"></div>
             </div>
           </div>
         </div>
+        <ng-template #zonasVacias>
+          <p class="empty-state">No hay zonas con reportes registrados.</p>
+        </ng-template>
       </section>
 
     </aside>

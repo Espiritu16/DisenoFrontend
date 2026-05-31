@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiCasePriority, ApiReportStatus, ReporteResponse, UsuarioResponse } from '../../../core/api/api-models';
 import { reportStatusLabel, formatDateTime, reportStatusClass } from '../../../core/api/api-mappers';
@@ -53,7 +53,8 @@ export class ReportesCiudadanosComponent implements OnInit {
   constructor(
     private reportesService: ReportesService,
     private casosService: CasosService,
-    private usuariosService: UsuariosService
+    private usuariosService: UsuariosService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -65,17 +66,22 @@ export class ReportesCiudadanosComponent implements OnInit {
     this.usuariosService.listar().subscribe({
       next: (usuarios) => {
         this.operadores = usuarios.filter((u) => u.rol === 'OPERADOR' && u.estado === 'ACTIVO');
+        this.scheduleDetectChanges();
       },
       error: () => {
         this.operadores = [];
+        this.scheduleDetectChanges();
       }
     });
   }
 
-  loadReportes() {
+  loadReportes(options: { clearFeedback?: boolean } = {}) {
+    const clearFeedback = options.clearFeedback ?? true;
     this.loading = true;
-    this.error = '';
-    this.success = '';
+    if (clearFeedback) {
+      this.error = '';
+      this.success = '';
+    }
     this.empty = false;
 
     this.reportesService.listarTodos({
@@ -97,6 +103,7 @@ export class ReportesCiudadanosComponent implements OnInit {
           this.selectedReporte = null;
         }
         this.loading = false;
+        this.scheduleDetectChanges();
       },
       error: (error: unknown) => {
         this.loading = false;
@@ -104,6 +111,7 @@ export class ReportesCiudadanosComponent implements OnInit {
         this.reportes = [];
         this.selectedReporte = null;
         this.empty = false;
+        this.scheduleDetectChanges();
       }
     });
   }
@@ -155,16 +163,22 @@ export class ReportesCiudadanosComponent implements OnInit {
         this.success = `Reporte derivado correctamente al caso #${caso.id}.`;
         const selectedId = this.selectedReporte?.id ?? null;
         this.mostrarDerivar = false;
-        this.loadReportes();
+        this.loadReportes({ clearFeedback: false });
         if (selectedId != null) {
           this.selectedReporte = this.reportes.find((r) => r.id === selectedId) ?? this.selectedReporte;
         }
+        this.scheduleDetectChanges();
       },
       error: (error: unknown) => {
         this.submitting = false;
         this.error = apiErrorMessage(error);
+        this.scheduleDetectChanges();
       }
     });
+  }
+
+  private scheduleDetectChanges(): void {
+    queueMicrotask(() => this.cdr.detectChanges());
   }
 
   statusClass(estado: ApiReportStatus): string {

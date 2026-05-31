@@ -1,63 +1,50 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
+import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AquaHeaderComponent, AquaFooterComponent],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css'
 })
 export class InicioComponent {
-  readonly metrics = [
-    { value: '1,204', label: 'Reportes registrados' },
-    { value: '98%', label: 'Casos atendidos' },
-    { value: '15', label: 'Distritos monitoreados' },
-    { value: '42', label: 'Seguimientos activos' }
+  readonly partners = [
+    { name: 'Sedapar', logo: '/brand-logos/sedapar.png' },
+    { name: 'Sedalib', logo: '/brand-logos/sedalib.png' },
+    { name: 'Sedacusco', logo: '/brand-logos/sedacusco.png' },
+    { name: 'Epsel', logo: '/brand-logos/epsel.png' },
+    { name: 'Emapa', logo: '/brand-logos/emapa.png' }
   ];
 
-  readonly benefits = [
+  readonly processSteps = [
     {
-      icon: 'flash_on',
-      title: 'Reporte rápido',
-      text: 'Registra incidencias en pocos pasos de forma clara y estructurada.'
-    },
-    {
-      icon: 'visibility',
-      title: 'Seguimiento transparente',
-      text: 'Consulta el avance de tus casos y mantén trazabilidad total.'
-    },
-    {
-      icon: 'notifications_active',
-      title: 'Alertas comunitarias',
-      text: 'Mantente informado sobre avisos importantes en tu zona.'
-    },
-    {
-      icon: 'group_work',
-      title: 'Coordinación operativa',
-      text: 'Facilita la atención de incidencias mediante reportes estandarizados.'
-    }
-  ];
-
-  readonly process = [
-    {
-      icon: 'location_on',
-      kicker: 'Paso 1',
       title: 'Reporta',
-      text: 'Crea un caso detallando la ubicación y el problema.'
+      text: 'El ciudadano registra ubicación, tipo de incidencia y evidencias.',
+      icon: '!'
     },
     {
-      icon: 'engineering',
-      kicker: 'Paso 2',
-      title: 'Se revisa',
-      text: 'El equipo operativo evalúa y programa la atención.'
+      title: 'Valida',
+      text: 'El reporte queda pendiente y se revisa si es válido o duplicado.',
+      icon: '?'
     },
     {
-      icon: 'check_circle',
-      kicker: 'Paso 3',
-      title: 'Resolución',
-      text: 'Consulta actualizaciones hasta la resolución del caso.'
+      title: 'Asigna',
+      text: 'El administrador deriva el reporte y crea un caso con responsable.',
+      icon: '→'
+    },
+    {
+      title: 'Atiende',
+      text: 'El operador trabaja el caso, actualiza avances o escala si corresponde.',
+      icon: '✓'
+    },
+    {
+      title: 'Consulta',
+      text: 'El vecino revisa trazabilidad, historial y resolución del caso.',
+      icon: 'i'
     }
   ];
 }

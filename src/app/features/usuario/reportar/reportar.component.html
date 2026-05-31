@@ -1,0 +1,295 @@
+<div class="report-page">
+  <app-aqua-header reportHref="/reportar" activeHref="/reportar"></app-aqua-header>
+
+  <main class="report-main" aria-label="Reporte ciudadano">
+    <section class="report-intro" aria-labelledby="report-title">
+      <h1 id="report-title">
+        Reporta una
+        <span class="report-highlight">
+          incidencia
+          <svg viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M5 29C51 11 96 9 143 19c39 8 79 11 124 2 16-3 25-3 28 0" />
+            <path d="M52 34c60-8 132-11 238-2" />
+          </svg>
+        </span>
+      </h1>
+      <p>Ubica el problema, adjunta evidencia y envía tu reporte para iniciar el seguimiento.</p>
+      <button type="button" class="report-start" (click)="focusReportWorkspace()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 7.8v8.4L16 12 9 7.8Z" />
+        </svg>
+        Iniciar reporte
+      </button>
+    </section>
+
+    <section #reportWorkspace class="report-workspace" aria-label="Formulario y mapa de reporte">
+      <article class="report-panel report-panel--form" aria-label="Formulario de incidencia">
+        <form *ngIf="reportStep === 'form'" class="report-form">
+          <div class="report-field">
+            <label for="report-district">Distrito</label>
+            <div class="report-select" (click)="$event.stopPropagation()">
+              <button
+                id="report-district"
+                type="button"
+                class="report-select__trigger"
+                aria-haspopup="listbox"
+                [attr.aria-expanded]="districtDropdownOpen"
+                aria-controls="report-district-list"
+                (click)="toggleDistrictDropdown($event)"
+              >
+                <span [class.report-select__placeholder]="!distrito">
+                  {{ distrito || 'Selecciona distrito' }}
+                </span>
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M5.7 7.4 10 11.7l4.3-4.3 1.1 1.2-5.4 5.3-5.4-5.3 1.1-1.2Z" />
+                </svg>
+              </button>
+
+              <div
+                *ngIf="districtDropdownOpen"
+                #districtMenu
+                id="report-district-list"
+                class="report-select__menu"
+                role="listbox"
+                aria-label="Distrito"
+                (wheel)="$event.stopPropagation()"
+                (touchmove)="$event.stopPropagation()"
+              >
+                <button
+                  *ngFor="let distritoOption of distritos"
+                  type="button"
+                  class="report-select__option"
+                  role="option"
+                  [class.report-select__option--active]="distrito === distritoOption"
+                  [attr.aria-selected]="distrito === distritoOption"
+                  (click)="selectDistrict(distritoOption, $event)"
+                >
+                  {{ distritoOption }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <fieldset class="report-field report-field--type">
+            <legend>Tipo de incidencia</legend>
+            <div class="report-type-grid">
+              <button
+                *ngFor="let incidentType of incidentTypes"
+                type="button"
+                class="report-type"
+                [class.report-type--active]="tipo === incidentType.value"
+                [attr.aria-pressed]="tipo === incidentType.value"
+                (click)="tipo = incidentType.value"
+              >
+                <strong>{{ incidentType.label }}</strong>
+                <span>{{ incidentType.helper }}</span>
+              </button>
+            </div>
+          </fieldset>
+
+          <div class="report-field">
+            <label for="report-address">Dirección detectada</label>
+            <input
+              #direccionInput
+              id="report-address"
+              name="address"
+              type="text"
+              [(ngModel)]="direccion"
+              placeholder="Se completará cuando selecciones el punto en el mapa"
+              readonly
+              aria-readonly="true"
+            />
+          </div>
+
+          <div class="report-field">
+            <label for="report-reference">Referencia</label>
+            <input
+              id="report-reference"
+              name="reference"
+              type="text"
+              [(ngModel)]="referencia"
+              placeholder="Ej: frente al parque central"
+            />
+          </div>
+
+          <div class="report-field">
+            <label for="report-description">
+              Descripción
+              <span>{{ descripcion.length }}/500</span>
+            </label>
+            <textarea
+              id="report-description"
+              name="description"
+              [(ngModel)]="descripcion"
+              maxlength="500"
+              rows="5"
+              placeholder="Describe lo que está ocurriendo..."
+            ></textarea>
+          </div>
+
+          <div class="report-field">
+            <label for="report-evidence">Evidencia</label>
+            <div class="report-evidence-row">
+              <label class="report-upload" for="report-evidence">
+                <input id="report-evidence" type="file" accept="image/*" multiple (change)="onEvidenceChange($event)" />
+                <span class="report-upload__icon" aria-hidden="true">
+                  <svg viewBox="0 0 32 32">
+                    <path d="M13.6 24.5H9.4a6.2 6.2 0 0 1-.8-12.3 7.8 7.8 0 0 1 14.7-2.4 5.5 5.5 0 0 1-.9 10.9h-3.9" />
+                    <path d="M16 25V14.4" />
+                    <path d="m11.9 18.4 4.1-4.1 4.1 4.1" />
+                  </svg>
+                </span>
+                <span>Adjuntar fotos</span>
+                <small>JPG, PNG, WEBP o GIF</small>
+              </label>
+
+              <div class="report-evidence-list" aria-label="Imágenes seleccionadas">
+                <button
+                  *ngFor="let image of evidenceImages"
+                  type="button"
+                  class="report-evidence-card"
+                  (click)="openEvidencePreview(image)"
+                >
+                  <img [src]="image.previewUrl" [alt]="image.name" />
+                  <span>{{ image.name }}</span>
+                </button>
+
+                <div *ngIf="!evidenceImages.length" class="report-evidence-empty">
+                  Las fotos aparecerán aquí.
+                </div>
+              </div>
+
+              <div class="report-evidence-actions">
+                <button type="button" class="report-next" [disabled]="submitting" (click)="goToSummary()">Siguiente</button>
+                <button type="button" class="report-back" disabled>Retroceder</button>
+              </div>
+            </div>
+            <p *ngIf="submitMessage" class="report-feedback">{{ submitMessage }}</p>
+          </div>
+        </form>
+
+        <section *ngIf="reportStep === 'summary'" class="report-review" aria-label="Resumen del reporte">
+          <div class="report-review__header">
+            <span>Resumen</span>
+            <h2>Revisa tu reporte antes de enviarlo</h2>
+            <p>Confirma que la ubicación, el tipo de incidencia y la evidencia estén correctos.</p>
+          </div>
+
+          <dl class="report-review__grid">
+            <div>
+              <dt>Distrito</dt>
+              <dd>{{ distrito || 'Sin seleccionar' }}</dd>
+            </div>
+            <div>
+              <dt>Tipo</dt>
+              <dd>{{ tipo }}</dd>
+            </div>
+            <div>
+              <dt>Dirección detectada</dt>
+              <dd>{{ direccion || 'Pendiente de seleccionar en el mapa' }}</dd>
+            </div>
+            <div>
+              <dt>Referencia</dt>
+              <dd>{{ referencia || 'Sin referencia adicional' }}</dd>
+            </div>
+            <div class="report-review__wide">
+              <dt>Descripción</dt>
+              <dd>{{ descripcion || 'Sin descripción registrada' }}</dd>
+            </div>
+            <div>
+              <dt>Evidencia</dt>
+              <dd>{{ evidenceImages.length ? evidenceImages.length + ' foto(s) adjunta(s)' : 'Sin fotos adjuntas' }}</dd>
+            </div>
+            <div>
+              <dt>Coordenadas</dt>
+              <dd>{{ lat.toFixed(6) }}, {{ lng.toFixed(6) }}</dd>
+            </div>
+          </dl>
+
+          <div *ngIf="evidenceImages.length" class="report-review__photos" aria-label="Fotos adjuntas al reporte">
+            <button
+              *ngFor="let image of evidenceImages"
+              type="button"
+              class="report-review__photo"
+              (click)="openEvidencePreview(image)"
+            >
+              <img [src]="image.previewUrl" [alt]="image.name" />
+            </button>
+          </div>
+
+          <div class="report-review__actions">
+            <button type="button" class="report-back" (click)="goBackToForm()">Retroceder</button>
+            <button type="button" class="report-next" [disabled]="submitting" (click)="sendReport()">
+              {{ submitting ? 'Enviando...' : 'Enviar' }}
+            </button>
+          </div>
+          <p *ngIf="submitMessage" class="report-feedback report-feedback--review">{{ submitMessage }}</p>
+        </section>
+
+        <section *ngIf="reportStep === 'sent'" class="report-sent" aria-label="Reporte enviado">
+          <div class="report-sent__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="m5 12.5 4.2 4.2L19 6.8" />
+            </svg>
+          </div>
+          <span>Reporte enviado</span>
+          <h2>Tu incidencia fue registrada correctamente.</h2>
+          <p>
+            Código de seguimiento
+            <strong>{{ submittedCode }}</strong>
+          </p>
+          <small>Podrás revisar el avance desde Mis Reportes cuando el caso sea atendido.</small>
+
+          <div class="report-sent__actions">
+            <button type="button" class="report-back" (click)="resetReport()">Nuevo reporte</button>
+            <a class="report-next" href="/mis-reportes">Ver seguimiento</a>
+          </div>
+        </section>
+      </article>
+
+      <article
+        #mapPanel
+        class="report-panel report-panel--map"
+        aria-label="Mapa de ubicación"
+      >
+        <div class="report-map-toolbar">
+          <div>
+            <span>Ubicación actual</span>
+            <strong>
+              <i aria-hidden="true"></i>
+              {{ direccion ? 'Marcador activo' : 'Selecciona en el mapa' }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Distrito seleccionado</span>
+            <strong>{{ distrito || 'Pendiente' }}</strong>
+          </div>
+        </div>
+
+        <div id="report-map" class="report-map-canvas" aria-label="Mapa de Lima para seleccionar ubicación"></div>
+
+        <div class="report-map-footer">
+          <span>{{ lat.toFixed(6) }}, {{ lng.toFixed(6) }}</span>
+          <button type="button" (click)="useCurrentLocation()">Usar mi ubicación</button>
+        </div>
+
+        <p *ngIf="mapMessage" class="report-map-message">{{ mapMessage }}</p>
+      </article>
+    </section>
+  </main>
+
+  <app-aqua-footer reportHref="/reportar"></app-aqua-footer>
+  <div class="report-bottom-bar" aria-hidden="true"></div>
+
+  <div *ngIf="previewImage" class="report-modal" role="dialog" aria-modal="true" aria-label="Vista previa de evidencia" (click)="closeEvidencePreview()">
+    <div class="report-modal__content" (click)="$event.stopPropagation()">
+      <button type="button" class="report-modal__close" aria-label="Cerrar vista previa" (click)="closeEvidencePreview()">×</button>
+      <img [src]="previewImage.previewUrl" [alt]="previewImage.name" />
+      <div class="report-modal__meta">
+        <strong>{{ previewImage.name }}</strong>
+        <span>{{ previewImage.sizeLabel }}</span>
+      </div>
+    </div>
+  </div>
+</div>

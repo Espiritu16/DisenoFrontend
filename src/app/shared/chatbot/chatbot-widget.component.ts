@@ -277,7 +277,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
   private mensajeBienvenida(): ChatMessage {
     return {
       author: 'assistant',
-      text: 'Hola, soy el asistente de AquaComunidad. Puedo orientarte para reportar una incidencia o consultar el avance de un reporte.',
+      text: 'Hola, soy el asistente de AquaComunidad. Puedo ayudarte a reportar una incidencia, revisar tus reportes o contactar a soporte. ¿Qué necesitas hacer?',
       actions: [
         { etiqueta: 'Ir a reportar', ruta: '/reportar' },
         { etiqueta: 'Ver Mis Reportes', ruta: '/mis-reportes' }
@@ -406,7 +406,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
   private mensajeBienvenidaInvitado(): ChatMessage {
     return {
       ...this.mensajeBienvenida(),
-      text: 'Hola, soy el asistente de AquaComunidad. Tu chat se conservará en este navegador; inicia sesión para guardarlo en tu cuenta.'
+      text: 'Hola, soy el asistente de AquaComunidad. Puedo orientarte para reportar una incidencia, revisar un seguimiento o contactar a soporte. Si inicias sesión, también podré guardar el chat en tu cuenta.'
     };
   }
 

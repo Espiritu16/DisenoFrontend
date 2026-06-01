@@ -1,0 +1,122 @@
+<div class="wf-landing">
+  <header class="wf-header" aria-label="Cabecera principal wireframe">
+    <a class="wf-brand" routerLink="/wireframe/inicio" aria-label="AquaComunidad inicio wireframe">
+      <span class="wf-logo" aria-hidden="true">AC</span>
+      <span class="wf-brand__text">Aqua<span>Comunidad</span></span>
+    </a>
+
+    <nav class="wf-header__links" aria-label="Navegación wireframe">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.href"
+        [class.wf-header__link--active]="item.active"
+        [attr.aria-current]="item.active ? 'page' : null"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <section class="wf-account" aria-label="Usuario autenticado">
+      <span class="wf-account__avatar" aria-hidden="true">MC</span>
+      <span class="wf-account__name">{{ citizenName }}</span>
+      <button type="button">Salir</button>
+    </section>
+  </header>
+
+  <main class="wf-hero">
+    <section class="wf-hero__copy" aria-labelledby="wireframe-inicio-title">
+      <h1 id="wireframe-inicio-title">
+        Gestión del agua
+        <span class="wf-highlight">simple</span>
+        <span class="wf-break">para tu comunidad.</span>
+      </h1>
+
+      <p>
+        Reporta incidencias, revisa avances y mantén trazabilidad clara desde
+        cualquier dispositivo.
+      </p>
+
+      <div class="wf-hero__actions">
+        <a routerLink="/wireframe/reportar" class="wf-btn wf-btn--dark">Reportar ahora</a>
+        <a routerLink="/wireframe/inicio" class="wf-btn wf-btn--ghost">
+          <span class="wf-play" aria-hidden="true"></span>
+          Ver plataforma
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <section class="wf-trust" aria-label="Aliados">
+    <p>Aliados y referentes en servicios de saneamiento</p>
+    <div class="wf-trust__list">
+      <article *ngFor="let partner of partners" class="wf-partner">
+        <span>{{ partner.name }}</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="wf-steps" aria-labelledby="wireframe-steps-title">
+    <div class="wf-steps__header">
+      <h2 id="wireframe-steps-title">Proceso de atención</h2>
+      <p>Desde el reporte ciudadano hasta la resolución con trazabilidad.</p>
+    </div>
+
+    <div class="wf-steps__list">
+      <article *ngFor="let step of steps; index as index" class="wf-step">
+        <div class="wf-step__marker">
+          <span class="wf-step__icon">{{ step.icon }}</span>
+        </div>
+        <span class="wf-step__number">{{ (index + 1).toString().padStart(2, '0') }}</span>
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.text }}</p>
+      </article>
+    </div>
+  </section>
+
+  <footer class="wf-footer" aria-label="Pie de página wireframe">
+    <section class="wf-footer__brand" aria-label="AquaComunidad">
+      <a class="wf-brand" routerLink="/wireframe/inicio" aria-label="AquaComunidad inicio wireframe">
+        <span class="wf-logo" aria-hidden="true">AC</span>
+        <span class="wf-brand__text">Aqua<span>Comunidad</span></span>
+      </a>
+      <p>Sistema seguro · Portal ciudadano</p>
+    </section>
+
+    <nav class="wf-footer__group" aria-label="Producto">
+      <strong>Producto</strong>
+      <a routerLink="/wireframe/inicio">Inicio</a>
+      <a routerLink="/wireframe/reportar">Reportar</a>
+      <a routerLink="/wireframe/mis-reportes">Mis Reportes</a>
+    </nav>
+
+    <nav class="wf-footer__group" aria-label="Soporte">
+      <strong>Soporte</strong>
+      <a routerLink="/wireframe/contacto">Contacto</a>
+      <a routerLink="/wireframe/inicio">Acceder</a>
+      <a routerLink="/wireframe/inicio">Registrarse</a>
+    </nav>
+
+    <section class="wf-footer__group" aria-label="Aliados principales">
+      <strong>Aliados</strong>
+      <span>Sedapar</span>
+      <span>Sedalib</span>
+      <span>Sedacusco</span>
+    </section>
+  </footer>
+
+  <nav class="wf-mobile-nav" aria-label="Navegación móvil wireframe">
+    <a
+      *ngFor="let item of navItems"
+      [routerLink]="item.href"
+      [class.wf-mobile-nav__item--active]="item.active"
+      [attr.aria-current]="item.active ? 'page' : null"
+    >
+      <span aria-hidden="true"></span>
+      {{ item.label }}
+    </a>
+    <button type="button">
+      <span aria-hidden="true"></span>
+      Ayuda
+    </button>
+  </nav>
+</div>

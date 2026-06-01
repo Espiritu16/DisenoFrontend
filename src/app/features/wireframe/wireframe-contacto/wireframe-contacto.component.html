@@ -1,0 +1,128 @@
+<div class="wf-contact-page">
+  <header class="wf-header" aria-label="Cabecera principal wireframe">
+    <a class="wf-brand" routerLink="/wireframe/inicio" aria-label="AquaComunidad inicio wireframe">
+      <span class="wf-logo" aria-hidden="true">AC</span>
+      <span>Aqua<span>Comunidad</span></span>
+    </a>
+
+    <nav class="wf-header__links" aria-label="Navegación wireframe">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.href"
+        [class.wf-header__link--active]="item.active"
+        [attr.aria-current]="item.active ? 'page' : null"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <section class="wf-account" aria-label="Usuario autenticado">
+      <span class="wf-account__avatar" aria-hidden="true">MC</span>
+      <span>{{ citizenName }}</span>
+      <button type="button">Salir</button>
+    </section>
+  </header>
+
+  <main class="wf-contact-main" aria-label="Contacto AquaComunidad wireframe">
+    <section class="wf-intro" aria-labelledby="wf-contact-title">
+      <h1 id="wf-contact-title">
+        Contacta con
+        <span>AquaComunidad</span>
+      </h1>
+      <p>Encuentra canales de atención para consultas, soporte y seguimiento de incidencias.</p>
+    </section>
+
+    <section class="wf-quick" aria-label="Información rápida de atención">
+      <article
+        *ngFor="let item of quickItems"
+        class="wf-quick__item"
+        [class.wf-quick__item--alert]="item.tone === 'alert'"
+      >
+        <span class="wf-icon" aria-hidden="true"></span>
+        <div>
+          <strong>{{ item.label }}</strong>
+          <p>{{ item.value }}</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="wf-contact-shell" aria-label="Canales de contacto">
+      <article
+        *ngFor="let channel of channels"
+        class="wf-contact-card"
+        [class.wf-contact-card--whatsapp]="channel.tone === 'whatsapp'"
+      >
+        <header class="wf-contact-card__head">
+          <span class="wf-icon" aria-hidden="true"></span>
+          <div>
+            <span>{{ channel.title }}</span>
+            <p>{{ channel.description }}</p>
+          </div>
+        </header>
+
+        <div class="wf-contact-card__body">
+          <div>
+            <h2>{{ channel.value }}</h2>
+            <h3>Lo que puedes resolver:</h3>
+            <ul>
+              <li *ngFor="let item of channel.resolves">
+                <i aria-hidden="true"></i>
+                {{ item }}
+              </li>
+            </ul>
+          </div>
+
+          <a
+            class="wf-contact-action"
+            [class.wf-contact-action--whatsapp]="channel.tone === 'whatsapp'"
+            [href]="channel.href"
+            [attr.target]="channel.href.startsWith('https') ? '_blank' : null"
+            rel="noopener noreferrer"
+          >
+            {{ channel.action }}
+          </a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="wf-footer" aria-label="Pie de página wireframe">
+    <section>
+      <a class="wf-brand" routerLink="/wireframe/inicio" aria-label="AquaComunidad inicio wireframe">
+        <span class="wf-logo" aria-hidden="true">AC</span>
+        <span>Aqua<span>Comunidad</span></span>
+      </a>
+      <p>Sistema seguro · Portal ciudadano</p>
+    </section>
+
+    <nav aria-label="Producto">
+      <strong>Producto</strong>
+      <a routerLink="/wireframe/inicio">Inicio</a>
+      <a routerLink="/wireframe/reportar">Reportar</a>
+      <a routerLink="/wireframe/mis-reportes">Mis Reportes</a>
+    </nav>
+
+    <nav aria-label="Soporte">
+      <strong>Soporte</strong>
+      <a routerLink="/wireframe/contacto">Contacto</a>
+      <a routerLink="/wireframe/inicio">Acceder</a>
+      <a routerLink="/wireframe/inicio">Registrarse</a>
+    </nav>
+  </footer>
+
+  <nav class="wf-mobile-nav" aria-label="Navegación móvil wireframe">
+    <a
+      *ngFor="let item of navItems"
+      [routerLink]="item.href"
+      [class.wf-mobile-nav__item--active]="item.active"
+      [attr.aria-current]="item.active ? 'page' : null"
+    >
+      <span aria-hidden="true"></span>
+      {{ item.label }}
+    </a>
+    <button type="button">
+      <span aria-hidden="true"></span>
+      Ayuda
+    </button>
+  </nav>
+</div>

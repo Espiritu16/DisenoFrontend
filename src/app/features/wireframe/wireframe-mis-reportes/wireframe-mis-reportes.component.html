@@ -1,0 +1,152 @@
+<div class="wf-reports-page">
+  <header class="wf-header" aria-label="Cabecera principal wireframe">
+    <a class="wf-brand" routerLink="/wireframe/inicio" aria-label="AquaComunidad inicio wireframe">
+      <span class="wf-logo" aria-hidden="true">AC</span>
+      <span>Aqua<span>Comunidad</span></span>
+    </a>
+
+    <nav class="wf-header__links" aria-label="Navegación wireframe">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.href"
+        [class.wf-header__link--active]="item.active"
+        [attr.aria-current]="item.active ? 'page' : null"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <section class="wf-account" aria-label="Usuario autenticado">
+      <span class="wf-account__avatar" aria-hidden="true">MC</span>
+      <span>{{ citizenName }}</span>
+      <button type="button">Salir</button>
+    </section>
+  </header>
+
+  <main class="wf-reports-main" aria-label="Mis reportes wireframe">
+    <section class="wf-intro" aria-labelledby="wf-reports-title">
+      <h1 id="wf-reports-title">
+        Consulta tus
+        <span>reportes</span>
+      </h1>
+      <p>Revisa el estado, historial y avance de cada incidencia reportada en tu comunidad.</p>
+
+      <form class="wf-search" aria-label="Consulta por número de reporte">
+        <label for="wf-reports-query">Número de consulta</label>
+        <div class="wf-search__control">
+          <input id="wf-reports-query" type="text" value="REP-128" aria-label="Número de consulta" readonly />
+          <button type="button">
+            <span aria-hidden="true"></span>
+            Consultar
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="wf-shell" aria-label="Panel de seguimiento">
+      <aside class="wf-sidebar" aria-label="Resumen de reportes">
+        <div class="wf-panel-head">
+          <span>Seguimiento</span>
+          <h2>Estado general</h2>
+        </div>
+
+        <div class="wf-stats" aria-label="Indicadores de reportes">
+          <article *ngFor="let card of statusCards" class="wf-stat">
+            <span>{{ card.label }}</span>
+            <strong>{{ card.value }}</strong>
+          </article>
+        </div>
+      </aside>
+
+      <section class="wf-list" aria-label="Lista de reportes">
+        <div class="wf-list__head">
+          <div>
+            <span>Reportes recientes</span>
+            <h2>Casos registrados</h2>
+          </div>
+          <a class="wf-link" routerLink="/wireframe/reportar">Nuevo reporte</a>
+        </div>
+
+        <div class="wf-cards">
+          <button
+            *ngFor="let report of reports; first as first"
+            type="button"
+            class="wf-card"
+            [class.wf-card--active]="first"
+          >
+            <div>
+              <span>REP-{{ report.id }}</span>
+              <h3>{{ report.tipo }}</h3>
+              <p>{{ report.zona }} · {{ report.fecha }}</p>
+            </div>
+            <strong>{{ report.estado }}</strong>
+          </button>
+        </div>
+      </section>
+
+      <aside class="wf-detail" aria-label="Detalle del reporte">
+        <span>Detalle</span>
+        <h2>Consulta REP-{{ selectedReport.id }}</h2>
+        <p>{{ selectedReport.descripcion }}</p>
+        <dl class="wf-detail__grid">
+          <div>
+            <dt>Estado</dt>
+            <dd>{{ selectedReport.estado }}</dd>
+          </div>
+          <div>
+            <dt>Distrito</dt>
+            <dd>{{ selectedReport.zona }}</dd>
+          </div>
+          <div>
+            <dt>Dirección</dt>
+            <dd>{{ selectedReport.direccion }}</dd>
+          </div>
+          <div>
+            <dt>Fecha</dt>
+            <dd>{{ selectedReport.fecha }}</dd>
+          </div>
+        </dl>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="wf-footer" aria-label="Pie de página wireframe">
+    <section>
+      <a class="wf-brand" routerLink="/wireframe/inicio" aria-label="AquaComunidad inicio wireframe">
+        <span class="wf-logo" aria-hidden="true">AC</span>
+        <span>Aqua<span>Comunidad</span></span>
+      </a>
+      <p>Sistema seguro · Portal ciudadano</p>
+    </section>
+
+    <nav aria-label="Producto">
+      <strong>Producto</strong>
+      <a routerLink="/wireframe/inicio">Inicio</a>
+      <a routerLink="/wireframe/reportar">Reportar</a>
+      <a routerLink="/wireframe/mis-reportes">Mis Reportes</a>
+    </nav>
+
+    <nav aria-label="Soporte">
+      <strong>Soporte</strong>
+      <a routerLink="/wireframe/contacto">Contacto</a>
+      <a routerLink="/wireframe/inicio">Acceder</a>
+      <a routerLink="/wireframe/inicio">Registrarse</a>
+    </nav>
+  </footer>
+
+  <nav class="wf-mobile-nav" aria-label="Navegación móvil wireframe">
+    <a
+      *ngFor="let item of navItems"
+      [routerLink]="item.href"
+      [class.wf-mobile-nav__item--active]="item.active"
+      [attr.aria-current]="item.active ? 'page' : null"
+    >
+      <span aria-hidden="true"></span>
+      {{ item.label }}
+    </a>
+    <button type="button">
+      <span aria-hidden="true"></span>
+      Ayuda
+    </button>
+  </nav>
+</div>

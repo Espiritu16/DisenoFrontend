@@ -1,0 +1,184 @@
+<div class="wf-report-page">
+  <header class="wf-header" aria-label="Cabecera principal wireframe">
+    <a class="wf-brand" routerLink="/wireframe/inicio" aria-label="AquaComunidad inicio wireframe">
+      <span class="wf-logo" aria-hidden="true">AC</span>
+      <span>Aqua<span>Comunidad</span></span>
+    </a>
+
+    <nav class="wf-header__links" aria-label="Navegación wireframe">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.href"
+        [class.wf-header__link--active]="item.active"
+        [attr.aria-current]="item.active ? 'page' : null"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <section class="wf-account" aria-label="Usuario autenticado">
+      <span class="wf-account__avatar" aria-hidden="true">MC</span>
+      <span>{{ citizenName }}</span>
+      <button type="button">Salir</button>
+    </section>
+  </header>
+
+  <main class="wf-report-main" aria-label="Reporte ciudadano wireframe">
+    <section class="wf-intro" aria-labelledby="wf-report-title">
+      <h1 id="wf-report-title">
+        Reporta una
+        <span>incidencia</span>
+      </h1>
+      <p>Ubica el problema, adjunta evidencia y envía tu reporte para iniciar el seguimiento.</p>
+      <button type="button" class="wf-start">
+        <span aria-hidden="true"></span>
+        Iniciar reporte
+      </button>
+    </section>
+
+    <section class="wf-workspace" aria-label="Formulario y mapa de reporte">
+      <article class="wf-panel wf-panel--form" aria-label="Formulario de incidencia">
+        <form class="wf-form">
+          <div class="wf-field">
+            <label for="wf-report-district">Distrito</label>
+            <button id="wf-report-district" type="button" class="wf-select">
+              <span>San Miguel</span>
+              <i aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <fieldset class="wf-field wf-field--type">
+            <legend>Tipo de incidencia</legend>
+            <div class="wf-type-grid">
+              <button
+                *ngFor="let incidentType of incidentTypes"
+                type="button"
+                class="wf-type"
+                [class.wf-type--active]="incidentType.active"
+              >
+                <strong>{{ incidentType.label }}</strong>
+                <span>{{ incidentType.helper }}</span>
+              </button>
+            </div>
+          </fieldset>
+
+          <div class="wf-location-picker" aria-label="Ubicación en mapa">
+            <button type="button" class="wf-map-open">Seleccionar ubicación en mapa</button>
+          </div>
+
+          <div class="wf-field">
+            <label for="wf-report-address">Dirección detectada</label>
+            <input id="wf-report-address" type="text" value="Av. La Marina 1450" readonly />
+          </div>
+
+          <div class="wf-field">
+            <label for="wf-report-reference">Referencia</label>
+            <input id="wf-report-reference" type="text" value="Frente al parque central" readonly />
+          </div>
+
+          <div class="wf-field">
+            <label for="wf-report-description">
+              Descripción
+              <span>86/500</span>
+            </label>
+            <textarea id="wf-report-description" rows="5" readonly>Fuga visible cerca de la vereda principal. El flujo aumenta por la tarde.</textarea>
+          </div>
+
+          <div class="wf-field">
+            <label>Evidencia</label>
+            <div class="wf-evidence-row">
+              <div class="wf-upload">
+                <span aria-hidden="true"></span>
+                <strong>Adjuntar fotos</strong>
+                <small>JPG, PNG, WEBP o GIF</small>
+              </div>
+
+              <div class="wf-evidence-list" aria-label="Imágenes seleccionadas">
+                <article class="wf-evidence-card">
+                  <button type="button" aria-label="Quitar evidencia">x</button>
+                  <div></div>
+                  <span>fuga-01.jpg</span>
+                </article>
+                <article class="wf-evidence-card">
+                  <button type="button" aria-label="Quitar evidencia">x</button>
+                  <div></div>
+                  <span>vereda.jpg</span>
+                </article>
+              </div>
+
+              <div class="wf-evidence-actions">
+                <button type="button" class="wf-next">Siguiente</button>
+                <button type="button" class="wf-back">Retroceder</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </article>
+
+      <article class="wf-panel wf-panel--map" aria-label="Mapa de ubicación">
+        <div class="wf-map-toolbar">
+          <div>
+            <span>Ubicación actual</span>
+            <strong>Marcador activo</strong>
+          </div>
+          <div>
+            <span>Distrito seleccionado</span>
+            <strong>San Miguel</strong>
+          </div>
+        </div>
+
+        <div class="wf-map-canvas" aria-label="Mapa de Lima para seleccionar ubicación">
+          <span class="wf-map-gridline wf-map-gridline--one"></span>
+          <span class="wf-map-gridline wf-map-gridline--two"></span>
+          <span class="wf-map-pin" aria-hidden="true"></span>
+        </div>
+
+        <div class="wf-map-footer">
+          <span>-12.046400, -77.042800</span>
+          <button type="button">Usar mi ubicación</button>
+          <button type="button">Confirmar ubicación</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="wf-footer" aria-label="Pie de página wireframe">
+    <section>
+      <a class="wf-brand" routerLink="/wireframe/inicio" aria-label="AquaComunidad inicio wireframe">
+        <span class="wf-logo" aria-hidden="true">AC</span>
+        <span>Aqua<span>Comunidad</span></span>
+      </a>
+      <p>Sistema seguro · Portal ciudadano</p>
+    </section>
+
+    <nav aria-label="Producto">
+      <strong>Producto</strong>
+      <a routerLink="/wireframe/inicio">Inicio</a>
+      <a routerLink="/wireframe/reportar">Reportar</a>
+      <a routerLink="/wireframe/mis-reportes">Mis Reportes</a>
+    </nav>
+
+    <nav aria-label="Soporte">
+      <strong>Soporte</strong>
+      <a routerLink="/wireframe/contacto">Contacto</a>
+      <a routerLink="/wireframe/inicio">Acceder</a>
+      <a routerLink="/wireframe/inicio">Registrarse</a>
+    </nav>
+  </footer>
+
+  <nav class="wf-mobile-nav" aria-label="Navegación móvil wireframe">
+    <a
+      *ngFor="let item of navItems"
+      [routerLink]="item.href"
+      [class.wf-mobile-nav__item--active]="item.active"
+      [attr.aria-current]="item.active ? 'page' : null"
+    >
+      <span aria-hidden="true"></span>
+      {{ item.label }}
+    </a>
+    <button type="button">
+      <span aria-hidden="true"></span>
+      Ayuda
+    </button>
+  </nav>
+</div>

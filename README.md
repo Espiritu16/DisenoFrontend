@@ -1,145 +1,239 @@
 # AquaComunidad Frontend
 
-Aplicación frontend del sistema **AquaComunidad**, orientada a la gestión integral de incidencias hídricas reportadas por la ciudadanía, su atención operativa y la administración de usuarios del panel interno.
+Frontend Angular de AquaComunidad para ciudadanos y personal operativo. Permite registrar incidencias de agua, consultar reportes, usar el asistente ciudadano y administrar reportes, casos y usuarios.
 
-## 1. Objetivo del sistema
+## Stack
 
-El sistema tiene como finalidad estandarizar y centralizar el ciclo de atención de incidencias relacionadas con el servicio de agua:
+| Tecnologia | Uso |
+|---|---|
+| Angular 21 | Framework de aplicacion |
+| TypeScript 5.9 | Lenguaje principal |
+| Angular Router | Navegacion publica y administrativa |
+| Angular Forms | Formularios de autenticacion, reportes y filtros |
+| RxJS | Flujo reactivo de datos HTTP/UI |
+| Leaflet | Mapa para ubicacion de incidencias |
+| Tailwind/PostCSS | Tooling de estilos disponible |
+| Vitest + JSDOM | Pruebas unitarias |
+| pnpm 10.12.4 | Gestor de paquetes |
+| Nginx | Runtime Docker de produccion |
 
-- Registrar reportes ciudadanos con información estructurada.
-- Gestionar el seguimiento técnico y operativo de cada caso.
-- Proveer visualización de indicadores para soporte de decisiones.
-- Administrar usuarios, roles y estados de acceso al sistema.
-
-## 2. Módulos principales
-
-La solución frontend se organiza en módulos funcionales según perfil y contexto de uso:
-
-- **Dashboard (Administrador):** vista de indicadores operativos, actividad reciente y resumen general.
-- **Reportes ciudadanos (Administrador):** consulta, filtrado y revisión detallada de incidencias reportadas.
-- **Atención de casos (Administrador):** gestión de estado, prioridad, asignación y trazabilidad de casos.
-- **Gestión de usuarios (Administrador):** administración de cuentas, roles y estado de usuarios.
-- **Flujo público/usuario:** inicio, registro de incidencias, consulta de reportes propios, estado del servicio y contacto.
-- **Autenticación:** acceso y control de sesión en el entorno administrativo.
-
-## 3. Estructura del proyecto
-
-### Estructura de paquetes (`src/app`)
+## Estructura
 
 ```text
 src/app/
 ├── core/
-│   ├── models/                  # Tipos e interfaces del dominio
-│   └── services/                # Servicios transversales y lógica base
+│   ├── api/             # Cliente HTTP y servicios hacia backend
+│   ├── guards/          # Proteccion de rutas administrativas
+│   ├── models/          # Tipos compartidos
+│   └── services/        # Servicios transversales
 ├── features/
 │   ├── administrador/
-│   │   ├── atencion-casos/      # Gestión operativa de casos
-│   │   ├── dashboard/           # Resumen e indicadores del panel
-│   │   ├── gestion-usuarios/    # Administración de usuarios
-│   │   └── reportes-ciudadanos/ # Gestión y detalle de reportes
-│   ├── login/                   # Acceso al sistema
-│   ├── not-found/               # Manejo de ruta no encontrada (404)
-│   └── usuario/
-│       ├── contacto/            # Canal de contacto
-│       ├── estado-servicio/     # Estado general del servicio
-│       ├── inicio/              # Página de inicio pública
-│       ├── mis-reportes/        # Historial de reportes del ciudadano
-│       └── reportar-incidencia/ # Registro de nuevas incidencias
+│   │   ├── dashboard/
+│   │   ├── atencion-casos/
+│   │   ├── reportes-ciudadanos/
+│   │   └── gestion-usuarios/
+│   ├── usuario/
+│   │   ├── inicio/
+│   │   ├── reportar/
+│   │   ├── reportar-incidencia/
+│   │   ├── mis-reportes/
+│   │   ├── estado-servicio/
+│   │   └── contacto/
+│   ├── login/
+│   └── not-found/
 ├── layouts/
-│   ├── auth-layout/             # Layout para autenticación
-│   ├── dashboard-layout/        # Layout para panel administrativo
-│   └── public-layout/           # Layout para vistas públicas
+│   ├── auth-layout/
+│   └── dashboard-layout/
 └── shared/
-    ├── auth-modal/              # Modal compartido de autenticación
-    └── components/              # Componentes reutilizables
+    ├── auth-modal/
+    ├── chatbot/
+    ├── notifications/
+    └── public/
+        ├── aqua-header/
+        ├── aqua-mobile-nav/
+        ├── aqua-footer/
+        └── aqua-logo/
 ```
 
-### Archivos clave en la raíz
+## Rutas principales
 
-- `angular.json`: configuración del workspace Angular.
-- `package.json`: scripts de ejecución, dependencias y metadatos del proyecto.
-- `tsconfig*.json`: configuración de compilación TypeScript.
-- `public/`: recursos estáticos públicos.
-- `src/`: código fuente principal de la aplicación.
-
-## 4. Stack tecnológico
-
-| Capa | Tecnología |
+| Ruta | Descripcion |
 |---|---|
-| Framework | Angular 21 |
-| Lenguaje | TypeScript 5.9 |
-| Interfaz | HTML + CSS (arquitectura por componentes) |
-| Enrutamiento | Angular Router |
-| Formularios | Angular Forms |
-| Programación reactiva | RxJS 7 |
-| Mapas | Leaflet |
-| Tooling | Angular CLI 21 |
-| Pruebas | Vitest + JSDOM |
-| Formato de código | Prettier |
-| Gestión de paquetes | npm |
+| `/inicio` | Inicio publico, autenticacion modal y acceso ciudadano |
+| `/reportar` | Reporte ciudadano publico |
+| `/mis-reportes` | Reportes del ciudadano autenticado |
+| `/contacto` | Canales de contacto |
+| `/administrador/dashboard` | KPIs del panel administrativo |
+| `/administrador/atencion-casos` | Gestion operativa de casos |
+| `/administrador/reportes` | Revision de reportes ciudadanos |
+| `/administrador/reportar-incidencia` | Registro interno de incidencias |
+| `/administrador/gestion-usuarios` | Administracion de usuarios |
 
-## 5. Dependencias principales
+## Requisitos
 
-### Runtime (`dependencies`)
+- Node.js 24 recomendado para igualar el `Dockerfile`
+- Corepack habilitado
+- pnpm 10.12.4
 
-- `@angular/*`: núcleo del framework, renderizado, routing y formularios.
-- `rxjs`: composición reactiva y manejo de asincronía.
-- `leaflet`: visualización cartográfica de incidencias.
-- `@types/leaflet`: tipado TypeScript para Leaflet.
-- `tslib`: utilidades de runtime generadas por TypeScript.
-
-### Desarrollo (`devDependencies`)
-
-- `@angular/cli`, `@angular/build`, `@angular/compiler-cli`: compilación, build y utilidades de desarrollo.
-- `typescript`: compilación y validación estática de tipos.
-- `vitest`, `jsdom`: ejecución de pruebas unitarias en entorno simulado de navegador.
-- `prettier`: normalización de formato de código.
-
-## 6. Instalación y ejecución
-
-### Requisitos mínimos
-
-- **Node.js** 20 o superior
-- **npm** 10 o superior (el proyecto está configurado con `npm@11.6.0`)
-
-### Instalación de dependencias
+Activar pnpm si hace falta:
 
 ```bash
-npm install
+corepack enable
+corepack prepare pnpm@10.12.4 --activate
 ```
 
-### Ejecución en entorno de desarrollo
+## Instalacion
 
 ```bash
-npm start
+pnpm install
 ```
 
-URL local por defecto: `http://localhost:4200/`
-
-### Compilación del proyecto
+## Desarrollo local
 
 ```bash
-npm run build
+pnpm start
 ```
 
-### Compilación en modo observación
+La aplicacion queda en:
+
+```text
+http://localhost:4200
+```
+
+El comando local usa `proxy.conf.json`:
+
+```text
+/api     -> http://localhost:8080
+/uploads -> http://localhost:8080
+```
+
+Por eso, en local el backend debe estar corriendo en `http://localhost:8080`.
+
+## Build
 
 ```bash
-npm run watch
+pnpm build
 ```
 
-### Ejecución de pruebas
+Salida de produccion:
+
+```text
+dist/diseno-frontend-ng/browser
+```
+
+## Pruebas
 
 ```bash
-npm test
+pnpm test
 ```
 
-## 7. Comandos útiles
+Prueba puntual de un componente:
 
 ```bash
-# Generar un componente
-npx ng generate component nombre-componente
-
-# Consultar ayuda de Angular CLI
-npx ng --help
+pnpm ng test --watch=false --include=src/app/shared/chatbot/chatbot-widget.component.spec.ts
 ```
+
+## Configuracion de API
+
+Los environments usan rutas relativas:
+
+```ts
+apiBaseUrl: '/api/v1'
+```
+
+Esto permite que el frontend funcione en distintos entornos sin recompilar URLs absolutas:
+
+| Entorno | Resolucion de `/api` |
+|---|---|
+| Local | `proxy.conf.json` redirige a `localhost:8080` |
+| VPS Docker | `nginx.conf` redirige a `backend:8080` |
+| Vercel | `vercel.json` redirige a Render |
+
+`/uploads` tambien se proxya:
+
+| Entorno | Resolucion de `/uploads` |
+|---|---|
+| Local | Backend local |
+| VPS Docker | Backend del compose |
+| Vercel | `https://upload-aquacomunidad.proyectoutp.com/uploads` |
+
+## Docker
+
+Construir imagen:
+
+```bash
+docker build -t aquacomunidad-frontend .
+```
+
+Ejecutar contenedor:
+
+```bash
+docker run --rm -p 8096:80 aquacomunidad-frontend
+```
+
+El `Dockerfile` compila con pnpm y sirve el build con Nginx.
+
+## Produccion en VPS
+
+En el VPS se despliega junto al backend en:
+
+```text
+/opt/proyectos/aquacomunidad/
+├── backend/
+├── frontend/
+├── uploads/
+├── .env
+└── docker-compose.yml
+```
+
+El contenedor frontend publica Nginx en puerto interno `80`; el compose lo expone en `127.0.0.1:8096` y Nginx del VPS sirve HTTPS para:
+
+```text
+https://aquacomunidad.proyectoutp.com
+```
+
+Flujo recomendado:
+
+```bash
+cd /opt/proyectos/aquacomunidad/frontend
+git checkout dev
+git pull --ff-only origin dev
+
+cd /opt/proyectos/aquacomunidad
+docker compose up -d --build frontend
+```
+
+Validacion rapida:
+
+```bash
+curl -I https://aquacomunidad.proyectoutp.com/inicio
+```
+
+## Produccion en Vercel
+
+Configuracion usada:
+
+| Campo | Valor |
+|---|---|
+| Framework | Angular |
+| Install command | `pnpm install` |
+| Build command | `pnpm build` |
+| Output directory | `dist/diseno-frontend-ng/browser` |
+
+`vercel.json` contiene rewrites para:
+
+- `/api/:path*` hacia el backend de Render.
+- `/uploads/:path*` hacia el dominio publico de uploads en el VPS.
+
+## Comandos utiles
+
+```bash
+pnpm ng generate component nombre-componente
+pnpm ng --help
+```
+
+## Notas de seguridad
+
+- No colocar URLs secretas, tokens ni credenciales en archivos versionados.
+- Mantener las peticiones contra rutas relativas (`/api/v1`) para que Nginx/Vercel resuelvan el destino.
+- Validar formularios en frontend, pero considerar al backend como autoridad final.

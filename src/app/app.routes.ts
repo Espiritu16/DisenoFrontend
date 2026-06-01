@@ -25,6 +25,32 @@ export const routes: Routes = [
     loadComponent: () => import('./features/usuario/contacto/contacto.component').then((m) => m.ContactoComponent)
   },
   {
+    path: 'wireframe',
+    children: [
+      {
+        path: 'inicio',
+        loadComponent: () => import('./features/wireframe/wireframe-inicio/wireframe-inicio.component').then((m) => m.WireframeInicioComponent)
+      },
+      {
+        path: 'reportar',
+        loadComponent: () => import('./features/wireframe/wireframe-reportar/wireframe-reportar.component').then((m) => m.WireframeReportarComponent)
+      },
+      {
+        path: 'mis-reportes',
+        loadComponent: () => import('./features/wireframe/wireframe-mis-reportes/wireframe-mis-reportes.component').then((m) => m.WireframeMisReportesComponent)
+      },
+      {
+        path: 'contacto',
+        loadComponent: () => import('./features/wireframe/wireframe-contacto/wireframe-contacto.component').then((m) => m.WireframeContactoComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'inicio',
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
     path: 'administrador',
     component: DashboardLayoutComponent,
     canMatch: [adminCanMatchGuard],

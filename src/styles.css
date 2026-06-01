@@ -161,6 +161,11 @@ body.aqua-map-open app-chatbot-widget {
   display: none;
 }
 
+body.aqua-wireframe-open app-chatbot-widget,
+body.aqua-wireframe-open app-notification-center {
+  display: none;
+}
+
 img,
 svg,
 video,

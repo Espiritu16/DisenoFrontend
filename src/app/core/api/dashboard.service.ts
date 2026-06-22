@@ -11,4 +11,8 @@ export class DashboardService {
   kpis(): Observable<TableroKpi> {
     return this.http.get<ApiResponse<TableroKpi>>(`${environment.apiBaseUrl}/dashboard/kpis`).pipe(map((res) => res.data));
   }
+
+  exportarPdf(): Observable<Blob> {
+    return this.http.get(`${environment.apiBaseUrl}/dashboard/exportar-pdf`, { responseType: 'blob' });
+  }
 }

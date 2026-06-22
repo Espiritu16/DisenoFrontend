@@ -99,7 +99,7 @@
             <input type="checkbox" name="remember_me" />
             <span>Recordarme</span>
           </label>
-          <button type="button" class="auth-forgot">¿Olvidaste tu contraseña?</button>
+          <button type="button" class="auth-forgot" (click)="openView('recover')">¿Olvidaste tu contraseña?</button>
         </div>
 
         <button class="btn-primary auth-submit" type="submit" [disabled]="loginLoading">

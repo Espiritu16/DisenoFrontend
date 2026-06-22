@@ -32,7 +32,11 @@ import { AquaLogoComponent } from '../../shared/public/aqua-logo/aqua-logo.compo
             <span class="material-symbols-outlined">forum</span>
             <span>Reportes ciudadanos</span>
           </a>
-          <a routerLink="/administrador/gestion-usuarios" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
+          <a *ngIf="canManageServiceAlerts" routerLink="/administrador/estado-servicio" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
+            <span class="material-symbols-outlined">water_drop</span>
+            <span>Estado del servicio</span>
+          </a>
+          <a *ngIf="canManageUsers" routerLink="/administrador/gestion-usuarios" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
             <span class="material-symbols-outlined">group</span>
             <span>Gestión de usuarios</span>
           </a>
@@ -132,6 +136,14 @@ export class DashboardLayoutComponent {
   get userDisplayName(): string {
     const session = this.auth.session();
     return session?.nombre?.trim() || session?.correo || 'Administrador';
+  }
+
+  get canManageUsers(): boolean {
+    return this.auth.role === 'ADMIN';
+  }
+
+  get canManageServiceAlerts(): boolean {
+    return this.auth.role === 'ADMIN';
   }
 
   closeMenuOnMobile(): void {

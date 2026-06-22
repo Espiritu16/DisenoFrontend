@@ -63,6 +63,7 @@ export class AquaHeaderComponent implements OnInit, OnDestroy {
       { label: 'Inicio', href: '/inicio' },
       { label: 'Reportar', href: this.reportHref },
       { label: 'Mis Reportes', href: this.reportsHref },
+      { label: 'Estado del servicio', href: '/estado-servicio' },
       { label: 'Contacto', href: this.contactHref }
     ];
   }

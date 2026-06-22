@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { apiErrorMessage } from '../../../core/api/api-error';
-import { ApiReportStatus, ReporteResponse } from '../../../core/api/api-models';
+import { ApiReportStatus, DetalleTrazabilidadReporte, HistorialCambio, ReporteResponse } from '../../../core/api/api-models';
 import { ReportesService } from '../../../core/api/reportes.service';
 import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
 import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
@@ -24,6 +24,9 @@ export class MisReportesComponent implements OnInit, OnDestroy {
   error = '';
   reports: ReporteResponse[] = [];
   selectedReport?: ReporteResponse;
+  trazabilidad?: DetalleTrazabilidadReporte;
+  trazabilidadLoading = false;
+  trazabilidadError = '';
 
   constructor(private reportesService: ReportesService, private cdr: ChangeDetectorRef) {}
 
@@ -57,12 +60,16 @@ export class MisReportesComponent implements OnInit, OnDestroy {
       const id = String(report.id);
       return id === normalized || `rep-${id}` === this.consultedCode.toLowerCase();
     }) ?? this.reports[0];
+    if (this.selectedReport) {
+      this.loadTrazabilidad(this.selectedReport.id);
+    }
     this.focusReportsPanel();
   }
 
   selectReport(report: ReporteResponse): void {
     this.selectedReport = report;
     this.consultedCode = `REP-${report.id}`;
+    this.loadTrazabilidad(report.id);
   }
 
   trackReport(_index: number, report: ReporteResponse): number {
@@ -89,6 +96,12 @@ export class MisReportesComponent implements OnInit, OnDestroy {
     return new Intl.DateTimeFormat('es-PE', { day: '2-digit', month: 'short', year: 'numeric' }).format(date);
   }
 
+  historialCompleto(): HistorialCambio[] {
+    const reporte = this.trazabilidad?.historialReporte ?? [];
+    const caso = this.trazabilidad?.historialCaso ?? [];
+    return [...reporte, ...caso].sort((a, b) => new Date(b.fechaCambio).getTime() - new Date(a.fechaCambio).getTime());
+  }
+
   private loadReports(): void {
     this.loading = true;
     this.error = '';
@@ -99,6 +112,7 @@ export class MisReportesComponent implements OnInit, OnDestroy {
         this.selectedReport = reports[0];
         if (this.selectedReport) {
           this.consultedCode = `REP-${this.selectedReport.id}`;
+          this.loadTrazabilidad(this.selectedReport.id);
         }
         this.scheduleDetectChanges();
       },
@@ -107,6 +121,24 @@ export class MisReportesComponent implements OnInit, OnDestroy {
         this.error = apiErrorMessage(error);
         this.reports = [];
         this.selectedReport = undefined;
+        this.scheduleDetectChanges();
+      }
+    });
+  }
+
+  private loadTrazabilidad(reportId: number): void {
+    this.trazabilidadLoading = true;
+    this.trazabilidadError = '';
+    this.trazabilidad = undefined;
+    this.reportesService.trazabilidad(reportId).subscribe({
+      next: (trazabilidad) => {
+        this.trazabilidadLoading = false;
+        this.trazabilidad = trazabilidad;
+        this.scheduleDetectChanges();
+      },
+      error: (error: unknown) => {
+        this.trazabilidadLoading = false;
+        this.trazabilidadError = apiErrorMessage(error);
         this.scheduleDetectChanges();
       }
     });

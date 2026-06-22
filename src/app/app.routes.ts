@@ -21,6 +21,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/usuario/mis-reportes/mis-reportes.component').then((m) => m.MisReportesComponent)
   },
   {
+    path: 'estado-servicio',
+    loadComponent: () => import('./features/usuario/estado-servicio/estado-servicio.component').then((m) => m.EstadoServicioComponent)
+  },
+  {
     path: 'contacto',
     loadComponent: () => import('./features/usuario/contacto/contacto.component').then((m) => m.ContactoComponent)
   },
@@ -59,6 +63,7 @@ export const routes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./features/administrador/dashboard/dashboard.component').then((m) => m.DashboardComponent) },
       { path: 'atencion-casos', loadComponent: () => import('./features/administrador/atencion-casos/atencion-casos.component').then((m) => m.AtencionCasosComponent) },
       { path: 'reportes', loadComponent: () => import('./features/administrador/reportes-ciudadanos/reportes-ciudadanos.component').then((m) => m.ReportesCiudadanosComponent) },
+      { path: 'estado-servicio', loadComponent: () => import('./features/administrador/estado-servicio-admin/estado-servicio-admin.component').then((m) => m.EstadoServicioAdminComponent) },
       { path: 'reportar-incidencia', loadComponent: () => import('./features/usuario/reportar-incidencia/reportar-incidencia.component').then((m) => m.ReportarIncidenciaComponent) },
       { path: 'gestion-usuarios', loadComponent: () => import('./features/administrador/gestion-usuarios/gestion-usuarios.component').then((m) => m.GestionUsuariosComponent) },
     ]

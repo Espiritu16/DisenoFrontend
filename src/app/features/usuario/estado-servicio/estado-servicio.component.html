@@ -36,14 +36,21 @@
         <span class="section-title-line__line"></span>
       </div>
       <div class="alerts-grid">
+        <div *ngIf="loadingAlertas" class="card">Cargando alertas activas...</div>
+        <div *ngIf="!loadingAlertas && alertasError" class="card">{{ alertasError }}</div>
         <article class="alert-card" *ngFor="let alerta of alertas">
-          <p class="alert-badge" [class.alert-badge--risk]="alerta.type === 'riesgo'" [class.alert-badge--info]="alerta.type !== 'riesgo'">
-            {{ alerta.type === 'riesgo' ? 'RIESGO' : 'INFORMATIVA' }}
+          <p
+            class="alert-badge"
+            [class.alert-badge--risk]="severityClass(alerta.severidad) === 'risk'"
+            [class.alert-badge--info]="severityClass(alerta.severidad) === 'info'"
+          >
+            {{ alertaTipoLabel(alerta) }}
           </p>
-          <h3>{{ alerta.title }}</h3>
-          <p>{{ alerta.description }}</p>
-          <small>Zona: {{ alerta.zone }}</small>
+          <h3>{{ alerta.titulo }}</h3>
+          <p>{{ alerta.descripcion }}</p>
+          <small>Zona: {{ alerta.zona || 'Todas las zonas' }}</small>
         </article>
+        <div *ngIf="!loadingAlertas && !alertasError && !alertas.length" class="card">No hay alertas activas para mostrar.</div>
       </div>
     </section>
 

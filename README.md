@@ -1,6 +1,6 @@
 # AquaComunidad Frontend
 
-Frontend Angular de AquaComunidad para ciudadanos y personal operativo. Permite registrar incidencias de agua, consultar reportes, usar el asistente ciudadano y administrar reportes, casos y usuarios.
+Frontend Angular de AquaComunidad para ciudadanos, personal operativo y autoridades. Permite registrar incidencias de agua, consultar reportes, revisar trazabilidad, consultar estado del servicio, usar el asistente ciudadano y administrar reportes, casos, alertas y usuarios.
 
 ## Stack
 
@@ -31,6 +31,7 @@ src/app/
 │   │   ├── dashboard/
 │   │   ├── atencion-casos/
 │   │   ├── reportes-ciudadanos/
+│   │   ├── estado-servicio-admin/
 │   │   └── gestion-usuarios/
 │   ├── usuario/
 │   │   ├── inicio/
@@ -62,12 +63,26 @@ src/app/
 | `/inicio` | Inicio publico, autenticacion modal y acceso ciudadano |
 | `/reportar` | Reporte ciudadano publico |
 | `/mis-reportes` | Reportes del ciudadano autenticado |
+| `/estado-servicio` | Alertas activas del servicio y reportes recientes |
 | `/contacto` | Canales de contacto |
-| `/administrador/dashboard` | KPIs del panel administrativo |
+| `/administrador/dashboard` | KPIs operativos, tendencias, niveles IoT y exportacion PDF |
 | `/administrador/atencion-casos` | Gestion operativa de casos |
 | `/administrador/reportes` | Revision de reportes ciudadanos |
+| `/administrador/estado-servicio` | Publicacion de alertas del servicio para administradores |
 | `/administrador/reportar-incidencia` | Registro interno de incidencias |
 | `/administrador/gestion-usuarios` | Administracion de usuarios |
+
+## Funcionalidades MVP 1/2/3
+
+| Area | Funcionalidad |
+|---|---|
+| Ciudadano | Consulta de alertas reales del servicio en `/estado-servicio` |
+| Ciudadano | Trazabilidad real de reportes propios en `/mis-reportes` |
+| Administracion | Creacion de alertas del servicio desde `/administrador/estado-servicio` |
+| Administracion | Dashboard con casos resueltos, promedio de resolucion, tiempos por zona y zonas criticas |
+| Administracion | Descarga PDF del reporte operativo desde el dashboard |
+| Autoridad | Acceso de lectura a dashboard, reportes, trazabilidad, alertas y niveles IoT |
+| IoT | Visualizacion de niveles de agua recibidos desde el backend |
 
 ## Requisitos
 
@@ -140,6 +155,16 @@ Los environments usan rutas relativas:
 ```ts
 apiBaseUrl: '/api/v1'
 ```
+
+Contratos principales consumidos:
+
+| Servicio frontend | Backend |
+|---|---|
+| `EstadoServicioService` | `/api/v1/estado-servicio/alertas` |
+| `DashboardService` | `/api/v1/dashboard/kpis`, `/api/v1/dashboard/exportar-pdf` |
+| `ReportesService` | `/api/v1/reportes`, `/api/v1/reportes/{id}/trazabilidad` |
+| `CasosService` | `/api/v1/casos` |
+| `UsuariosService` | `/api/v1/usuarios` |
 
 Esto permite que el frontend funcione en distintos entornos sin recompilar URLs absolutas:
 

@@ -67,7 +67,8 @@ export class GestionUsuariosComponent implements OnInit {
     const roles: Record<ApiRole, string> = {
       ADMIN: 'role-admin',
       OPERADOR: 'role-operador',
-      CIUDADANO: 'role-ciudadano'
+      CIUDADANO: 'role-ciudadano',
+      AUTORIDAD: 'role-autoridad'
     };
     return roles[rol];
   }
@@ -80,7 +81,8 @@ export class GestionUsuariosComponent implements OnInit {
     const labels: Record<ApiRole, string> = {
       ADMIN: 'Administrador',
       OPERADOR: 'Operador',
-      CIUDADANO: 'Ciudadano'
+      CIUDADANO: 'Ciudadano',
+      AUTORIDAD: 'Autoridad'
     };
     return labels[rol];
   }

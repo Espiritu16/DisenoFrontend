@@ -386,6 +386,44 @@
   outline-offset: 4px;
 }
 
+.reports-trace {
+  margin-top: 1.2rem;
+  display: grid;
+  gap: .75rem;
+}
+
+.reports-trace h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.reports-trace ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: .75rem;
+}
+
+.reports-trace li {
+  border-left: 3px solid #2563eb;
+  padding: .2rem 0 .2rem .75rem;
+  display: grid;
+  gap: .25rem;
+}
+
+.reports-trace li strong,
+.reports-trace li span {
+  color: #0f172a;
+}
+
+.reports-trace li small,
+.reports-trace li p {
+  margin: 0;
+  color: #64748b;
+}
+
 @media (min-width: 1600px) {
   .reports-main {
     width: min(1540px, calc(100% - 160px));

@@ -6,7 +6,7 @@ export interface ApiResponse<T> {
   path: string;
 }
 
-export type ApiRole = 'CIUDADANO' | 'ADMIN' | 'OPERADOR';
+export type ApiRole = 'CIUDADANO' | 'ADMIN' | 'OPERADOR' | 'AUTORIDAD';
 export type ApiUserStatus = 'ACTIVO' | 'INACTIVO';
 export type ApiReportStatus = 'PENDIENTE' | 'EN_PROCESO' | 'RESUELTO' | 'DUPLICADO' | 'RECHAZADO' | 'ESCALADO';
 export type ApiCaseStatus = 'EN_PROCESO' | 'RESUELTO' | 'ESCALADO' | 'RECHAZADO';
@@ -91,8 +91,13 @@ export interface TableroKpi {
   reportesEnProceso: number;
   reportesResueltos: number;
   casosAbiertos: number;
+  casosResueltos: number;
+  promedioHorasResolucion: number;
   actividadSemanal: ActividadSemanalItem[];
   reportesPorZona: ReportePorZonaItem[];
+  tiemposPorZona: TiempoAtencionPorZonaItem[];
+  zonasCriticas: TendenciaZonaItem[];
+  nivelesAgua: NivelAguaResponse[];
 }
 
 export interface ActividadSemanalItem {
@@ -103,6 +108,64 @@ export interface ActividadSemanalItem {
 export interface ReportePorZonaItem {
   nombre: string;
   cantidad: number;
+}
+
+export type ApiAlertStatus = 'PROGRAMADA' | 'ACTIVA' | 'RESUELTA' | 'CANCELADA';
+export type ApiAlertSeverity = 'INFO' | 'MEDIA' | 'ALTA' | 'CRITICA';
+export type ApiServiceAlertType =
+  | 'CORTE_PROGRAMADO'
+  | 'CORTE_NO_PROGRAMADO'
+  | 'MANTENIMIENTO'
+  | 'RIESGO_DESABASTECIMIENTO'
+  | 'INFORMATIVA';
+
+export interface AlertaServicioResponse {
+  id: number;
+  zona?: string;
+  tipo: ApiServiceAlertType;
+  titulo: string;
+  descripcion: string;
+  severidad: ApiAlertSeverity;
+  estado: ApiAlertStatus;
+  iniciaEn?: string;
+  finalizaEn?: string;
+  creadoEn: string;
+}
+
+export interface AlertaServicioRequest {
+  zonaId?: number;
+  tipo: ApiServiceAlertType;
+  titulo: string;
+  descripcion: string;
+  severidad?: ApiAlertSeverity;
+  estado?: ApiAlertStatus;
+  iniciaEn?: string;
+  finalizaEn?: string;
+}
+
+export interface TiempoAtencionPorZonaItem {
+  zona: string;
+  promedioHoras: number;
+  casosResueltos: number;
+}
+
+export interface TendenciaZonaItem {
+  zona: string;
+  reportesUltimos30Dias: number;
+  reportes30DiasPrevios: number;
+  variacionPorcentual: number;
+}
+
+export interface NivelAguaResponse {
+  infraestructuraId: number;
+  nombre: string;
+  zona: string;
+  tipo: 'TANQUE' | 'RESERVORIO' | 'TUBERIA_PRINCIPAL';
+  nivelPorcentaje?: number;
+  bateriaPorcentaje?: number;
+  senalPorcentaje?: number;
+  estado: 'NORMAL' | 'BAJO' | 'CRITICO' | 'SIN_DATOS';
+  actualizadoEn?: string;
 }
 
 export interface ArchivoSubidoResponse {

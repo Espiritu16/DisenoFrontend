@@ -116,6 +116,22 @@
               <dd>{{ formatDate(selectedReport.fechaCreacion) }}</dd>
             </div>
           </dl>
+          <div class="reports-trace">
+            <h3>Trazabilidad</h3>
+            <p *ngIf="trazabilidadLoading">Cargando historial...</p>
+            <p *ngIf="!trazabilidadLoading && trazabilidadError">{{ trazabilidadError }}</p>
+            <div *ngIf="!trazabilidadLoading && !trazabilidadError && !historialCompleto().length">
+              Sin cambios registrados todavía.
+            </div>
+            <ol *ngIf="!trazabilidadLoading && historialCompleto().length">
+              <li *ngFor="let item of historialCompleto()">
+                <strong>{{ item.tipo }}</strong>
+                <span>{{ item.estadoAnterior || 'Inicio' }} → {{ item.estadoNuevo }}</span>
+                <small>{{ formatDate(item.fechaCambio) }}</small>
+                <p *ngIf="item.observacion">{{ item.observacion }}</p>
+              </li>
+            </ol>
+          </div>
         </ng-container>
         <ng-template #noReportSelected>
           <h2>Selecciona un reporte</h2>

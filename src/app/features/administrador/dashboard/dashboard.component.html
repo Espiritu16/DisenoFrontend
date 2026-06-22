@@ -4,6 +4,9 @@
   <section class="dashboard-header">
     <h1 class="dashboard-title">Resumen Operativo</h1>
     <p class="dashboard-subtitle">Monitoreo en tiempo real del sistema de AQUACOMUNIDAD</p>
+    <button class="btn-retry" type="button" (click)="exportarPdf()" [disabled]="exportLoading">
+      {{ exportLoading ? 'Generando PDF...' : 'Exportar PDF' }}
+    </button>
   </section>
 
   <div class="feedback error" *ngIf="error">
@@ -26,12 +29,7 @@
       <div class="kpi-content">
         <span class="kpi-label">Casos Activos</span>
         <p class="kpi-value">{{ kpis.casosActivos }}</p>
-        <div class="kpi-trend trend-down">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/>
-          </svg>
-          <span>-12%</span>
-        </div>
+        <div class="kpi-meta">{{ kpis.casosResueltos }} resueltos</div>
       </div>
     </div>
 
@@ -71,9 +69,9 @@
         </svg>
       </div>
       <div class="kpi-content">
-        <span class="kpi-label">Casos por Asignar</span>
-        <p class="kpi-value">{{ kpis.casosPorAsignar }}</p>
-        <div class="kpi-meta priority-tag">Prioridad</div>
+        <span class="kpi-label">Promedio resolución</span>
+        <p class="kpi-value">{{ kpis.promedioHorasResolucion }}</p>
+        <div class="kpi-meta priority-tag">Horas</div>
       </div>
     </div>
 
@@ -111,6 +109,26 @@
         </div>
       </section>
 
+      <section class="dashboard-card chart-card">
+        <div class="card-header">
+          <h2 class="card-title">Tiempo de atención por zona</h2>
+          <span class="data-source">Casos cerrados</span>
+        </div>
+
+        <div class="district-list" *ngIf="tiemposPorZona.length; else tiemposVacios">
+          <div class="district-item" *ngFor="let zona of tiemposPorZona">
+            <div class="district-header">
+              <span class="district-name">{{ zona.zona }}</span>
+              <span class="district-count">{{ zona.promedioHoras }} h</span>
+            </div>
+            <p class="kpi-meta">{{ zona.casosResueltos }} casos resueltos</p>
+          </div>
+        </div>
+        <ng-template #tiemposVacios>
+          <p class="empty-state">Todavía no hay casos resueltos para calcular tiempos.</p>
+        </ng-template>
+      </section>
+
     </main>
 
     <!-- RIGHT COLUMN: SIDEBAR -->
@@ -136,6 +154,49 @@
         </div>
         <ng-template #zonasVacias>
           <p class="empty-state">No hay zonas con reportes registrados.</p>
+        </ng-template>
+      </section>
+
+      <section class="dashboard-card">
+        <div class="card-header">
+          <h2 class="card-title">Zonas críticas</h2>
+          <span class="data-source">Últimos 30 días</span>
+        </div>
+
+        <div class="district-list" *ngIf="zonasCriticas.length; else criticasVacias">
+          <div class="district-item" *ngFor="let zona of zonasCriticas">
+            <div class="district-header">
+              <span class="district-name">{{ zona.zona }}</span>
+              <span class="district-count">{{ zona.reportesUltimos30Dias }}</span>
+            </div>
+            <p class="kpi-meta">{{ zona.variacionPorcentual }}% vs periodo previo</p>
+          </div>
+        </div>
+        <ng-template #criticasVacias>
+          <p class="empty-state">No hay tendencias por zona disponibles.</p>
+        </ng-template>
+      </section>
+
+      <section class="dashboard-card">
+        <div class="card-header">
+          <h2 class="card-title">Niveles de agua</h2>
+          <span class="data-source">IoT</span>
+        </div>
+
+        <div class="district-list" *ngIf="nivelesAgua.length; else nivelesVacios">
+          <div class="district-item" *ngFor="let nivel of nivelesAgua">
+            <div class="district-header">
+              <span class="district-name">{{ nivel.nombre }}</span>
+              <span class="district-count">{{ nivel.nivelPorcentaje ?? 0 }}%</span>
+            </div>
+            <div class="district-bar">
+              <div class="bar-progress" [style.width.%]="nivelBarra(nivel.nivelPorcentaje)"></div>
+            </div>
+            <p class="kpi-meta">{{ nivel.zona }} · {{ nivel.estado }}</p>
+          </div>
+        </div>
+        <ng-template #nivelesVacios>
+          <p class="empty-state">No hay infraestructura IoT activa registrada.</p>
         </ng-template>
       </section>
 

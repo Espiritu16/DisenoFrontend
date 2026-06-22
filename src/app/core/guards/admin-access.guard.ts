@@ -10,11 +10,15 @@ function hasAdminAccess(segments: UrlSegment[] = []): boolean {
   const auth = inject(AuthService);
   const router = inject(Router);
   const role = auth.role;
-  const autorizado = role === 'ADMIN' || role === 'OPERADOR';
+  const target = '/' + segments.map((s) => s.path).join('/');
+  if (role === 'AUTORIDAD' && (target.includes('gestion-usuarios') || target.includes('estado-servicio'))) {
+    void router.navigate(['/administrador/dashboard']);
+    return false;
+  }
+  const autorizado = role === 'ADMIN' || role === 'OPERADOR' || role === 'AUTORIDAD';
   if (autorizado) {
     return true;
   }
-  const target = '/' + segments.map((s) => s.path).join('/');
   void router.navigate(['/inicio'], { queryParams: { denied: target || '/administrador' } });
   return false;
 }

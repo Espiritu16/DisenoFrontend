@@ -13,6 +13,7 @@ import { AquaLogoComponent } from '../aqua-logo/aqua-logo.component';
 export class AquaFooterComponent {
   @Input() reportHref = '/reportar';
   @Input() reportsHref = '/mis-reportes';
+  @Input() serviceStatusHref = '/estado-servicio';
   @Input() contactHref = '/contacto';
 
   readonly partners = ['Sedapar', 'Sedalib', 'Sedacusco', 'Epsel', 'Emapa'];

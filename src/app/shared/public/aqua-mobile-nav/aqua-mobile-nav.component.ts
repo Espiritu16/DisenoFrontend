@@ -36,6 +36,11 @@ export class AquaMobileNavComponent {
       path: 'M6 4.5h12v15H6v-15Zm3 4h6M9 12h6M9 15.5h4'
     },
     {
+      label: 'Servicio',
+      href: '/estado-servicio',
+      path: 'M12 3.8c3.2 3.4 5 6.1 5 9a5 5 0 0 1-10 0c0-2.9 1.8-5.6 5-9Zm-3.2 9.5h6.4M10 16h4'
+    },
+    {
       label: 'Contacto',
       href: '/contacto',
       path: 'M5 6.5h14v9H9l-4 3v-12Zm4 4h6'

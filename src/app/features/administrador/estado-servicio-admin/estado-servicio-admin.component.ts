@@ -1,6 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import {
   AlertaServicioRequest,
@@ -10,10 +17,20 @@ import {
 } from '../../../core/api/api-models';
 import { EstadoServicioService } from '../../../core/api/estado-servicio.service';
 
+type AlertForm = FormGroup<{
+  tipo: FormControl<ApiServiceAlertType>;
+  severidad: FormControl<ApiAlertSeverity>;
+  estado: FormControl<'ACTIVA'>;
+  titulo: FormControl<string>;
+  descripcion: FormControl<string>;
+  iniciaEn: FormControl<string>;
+  finalizaEn: FormControl<string>;
+}>;
+
 @Component({
   selector: 'app-estado-servicio-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <section class="admin-status">
       <div class="admin-status__header">
@@ -27,34 +44,56 @@ import { EstadoServicioService } from '../../../core/api/estado-servicio.service
       <div class="feedback error" *ngIf="error">{{ error }}</div>
       <div class="feedback success" *ngIf="success">{{ success }}</div>
 
-      <form class="admin-status__form" (ngSubmit)="crearAlerta()">
+      <form class="admin-status__form" [formGroup]="alertForm" (ngSubmit)="crearAlerta()">
         <label>
           Tipo
-          <select name="tipo" [(ngModel)]="form.tipo" required>
+          <select formControlName="tipo" required>
             <option *ngFor="let tipo of tipos" [ngValue]="tipo.value">{{ tipo.label }}</option>
           </select>
         </label>
         <label>
           Severidad
-          <select name="severidad" [(ngModel)]="form.severidad">
+          <select formControlName="severidad">
             <option *ngFor="let severidad of severidades" [ngValue]="severidad.value">{{ severidad.label }}</option>
           </select>
         </label>
         <label>
           Título
-          <input name="titulo" [(ngModel)]="form.titulo" maxlength="160" required />
+          <input
+            formControlName="titulo"
+            maxlength="160"
+            required
+            [attr.aria-invalid]="campoInvalido('titulo')"
+            aria-describedby="alert-title-error"
+          />
+          <small id="alert-title-error" class="field-error" *ngIf="campoInvalido('titulo')">
+            Ingresa un título de hasta 160 caracteres.
+          </small>
         </label>
         <label>
           Descripción
-          <textarea name="descripcion" [(ngModel)]="form.descripcion" rows="4" maxlength="800" required></textarea>
+          <textarea
+            formControlName="descripcion"
+            rows="4"
+            maxlength="800"
+            required
+            [attr.aria-invalid]="campoInvalido('descripcion')"
+            aria-describedby="alert-description-error"
+          ></textarea>
+          <small id="alert-description-error" class="field-error" *ngIf="campoInvalido('descripcion')">
+            Ingresa una descripción de hasta 800 caracteres.
+          </small>
         </label>
         <label>
           Inicio
-          <input name="iniciaEn" type="datetime-local" [(ngModel)]="form.iniciaEn" />
+          <input formControlName="iniciaEn" type="datetime-local" [attr.aria-invalid]="alertForm.hasError('dateRange')" />
         </label>
         <label>
           Fin
-          <input name="finalizaEn" type="datetime-local" [(ngModel)]="form.finalizaEn" />
+          <input formControlName="finalizaEn" type="datetime-local" [attr.aria-invalid]="alertForm.hasError('dateRange')" />
+          <small class="field-error" *ngIf="alertForm.hasError('dateRange') && (alertForm.touched || alertForm.dirty)">
+            La fecha de fin no puede ser anterior al inicio.
+          </small>
         </label>
         <button class="btn-primary" type="submit" [disabled]="submitting">
           {{ submitting ? 'Publicando...' : 'Publicar alerta' }}
@@ -83,7 +122,9 @@ import { EstadoServicioService } from '../../../core/api/estado-servicio.service
     .admin-status__form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
     .admin-status__form label { display: grid; gap: .35rem; color: #334155; font-weight: 800; }
     .admin-status__form input, .admin-status__form select, .admin-status__form textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: .45rem; padding: .65rem .75rem; color: #0f172a; }
+    .admin-status__form input[aria-invalid="true"], .admin-status__form textarea[aria-invalid="true"] { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, .12); }
     .admin-status__form textarea, .admin-status__form button { grid-column: 1 / -1; }
+    .field-error { color: #b91c1c; font-size: .8rem; font-weight: 800; }
     .btn-primary { min-height: 44px; border: 0; border-radius: .5rem; background: #2563eb; color: #fff; font-weight: 900; cursor: pointer; }
     .btn-primary:disabled { opacity: .65; cursor: progress; }
     .feedback { border-radius: .5rem; padding: .8rem 1rem; font-weight: 800; }
@@ -112,13 +153,15 @@ export class EstadoServicioAdminComponent implements OnInit {
     { value: 'CRITICA', label: 'Crítica' }
   ];
 
-  form: AlertaServicioRequest = {
-    tipo: 'INFORMATIVA',
-    severidad: 'INFO',
-    estado: 'ACTIVA',
-    titulo: '',
-    descripcion: ''
-  };
+  readonly alertForm: AlertForm = new FormGroup({
+    tipo: new FormControl<ApiServiceAlertType>('INFORMATIVA', { nonNullable: true, validators: [Validators.required] }),
+    severidad: new FormControl<ApiAlertSeverity>('INFO', { nonNullable: true }),
+    estado: new FormControl<'ACTIVA'>('ACTIVA', { nonNullable: true }),
+    titulo: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
+    descripcion: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(800)] }),
+    iniciaEn: new FormControl('', { nonNullable: true }),
+    finalizaEn: new FormControl('', { nonNullable: true })
+  }, { validators: [rangoFechasValido] });
   alertas: AlertaServicioResponse[] = [];
   loading = false;
   submitting = false;
@@ -134,18 +177,39 @@ export class EstadoServicioAdminComponent implements OnInit {
   crearAlerta(): void {
     this.error = '';
     this.success = '';
-    const titulo = this.form.titulo.trim();
-    const descripcion = this.form.descripcion.trim();
-    if (!titulo || !descripcion) {
-      this.error = 'Completa título y descripción.';
+    this.alertForm.markAllAsTouched();
+    if (this.alertForm.invalid) {
+      this.error = this.alertForm.hasError('dateRange')
+        ? 'La fecha de fin no puede ser anterior al inicio.'
+        : 'Completa los campos obligatorios antes de publicar.';
       return;
     }
+    const values = this.alertForm.getRawValue();
+    const titulo = values.titulo.trim();
+    const descripcion = values.descripcion.trim();
+    const payload: AlertaServicioRequest = {
+      tipo: values.tipo,
+      severidad: values.severidad,
+      estado: values.estado,
+      titulo,
+      descripcion,
+      iniciaEn: values.iniciaEn || undefined,
+      finalizaEn: values.finalizaEn || undefined
+    };
     this.submitting = true;
-    this.estadoServicio.crearAlerta({ ...this.form, titulo, descripcion }).subscribe({
+    this.estadoServicio.crearAlerta(payload).subscribe({
       next: () => {
         this.submitting = false;
         this.success = 'Alerta publicada correctamente.';
-        this.form = { tipo: 'INFORMATIVA', severidad: 'INFO', estado: 'ACTIVA', titulo: '', descripcion: '' };
+        this.alertForm.reset({
+          tipo: 'INFORMATIVA',
+          severidad: 'INFO',
+          estado: 'ACTIVA',
+          titulo: '',
+          descripcion: '',
+          iniciaEn: '',
+          finalizaEn: ''
+        });
         this.cargarAlertas();
       },
       error: (error: unknown) => {
@@ -175,4 +239,18 @@ export class EstadoServicioAdminComponent implements OnInit {
   private scheduleDetectChanges(): void {
     queueMicrotask(() => this.cdr.detectChanges());
   }
+
+  campoInvalido(nombre: 'titulo' | 'descripcion'): boolean {
+    const control = this.alertForm.controls[nombre];
+    return control.invalid && (control.dirty || control.touched);
+  }
+}
+
+function rangoFechasValido(control: AbstractControl): ValidationErrors | null {
+  const iniciaEn = control.get('iniciaEn')?.value;
+  const finalizaEn = control.get('finalizaEn')?.value;
+  if (!iniciaEn || !finalizaEn) {
+    return null;
+  }
+  return new Date(finalizaEn).getTime() < new Date(iniciaEn).getTime() ? { dateRange: true } : null;
 }

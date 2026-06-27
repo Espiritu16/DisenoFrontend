@@ -7,11 +7,14 @@ import { AuthService } from '../../../core/api/auth.service';
 import { EstadoServicioService } from '../../../core/api/estado-servicio.service';
 import { ReportesService } from '../../../core/api/reportes.service';
 import { reportStatusLabel } from '../../../core/api/api-mappers';
+import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
+import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
+import { AquaMobileNavComponent } from '../../../shared/public/aqua-mobile-nav/aqua-mobile-nav.component';
 
 @Component({
   selector: 'app-estado-servicio',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AquaHeaderComponent, AquaFooterComponent, AquaMobileNavComponent],
   templateUrl: './estado-servicio.component.html',
   styleUrl: './estado-servicio.component.css'
 })

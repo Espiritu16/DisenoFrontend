@@ -11,7 +11,7 @@
     z-index: 1000;
     min-height: 68px;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     align-items: center;
     gap: 4px;
     border: 1px solid rgba(219, 228, 239, 0.9);
@@ -68,5 +68,16 @@
     left: 10px;
     min-height: 66px;
     border-radius: 22px;
+  }
+
+  .aqua-mobile-nav__item {
+    min-height: 52px;
+    border-radius: 16px;
+    font-size: 10px;
+  }
+
+  .aqua-mobile-nav__item svg {
+    width: 20px;
+    height: 20px;
   }
 }

@@ -2,6 +2,11 @@
 
 .status-design {
   background: var(--color-bg-main);
+  min-height: 100vh;
+}
+
+.status-main {
+  padding-top: 76px;
 }
 
 .status-hero {
@@ -196,6 +201,14 @@
 }
 
 @media (max-width: 640px) {
+  .status-design {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+
+  .status-main {
+    padding-top: 64px;
+  }
+
   .status-hero__grid {
     text-align: center;
     justify-items: center;

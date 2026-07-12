@@ -7,11 +7,49 @@
         Indicadores descriptivos y predictivos sobre reportes ciudadanos, zonas críticas y atención operativa.
       </p>
     </div>
-    <button class="btn-primary" type="button" (click)="exportarPdf()" [disabled]="exportLoading">
-      <span class="material-symbols-outlined" aria-hidden="true">picture_as_pdf</span>
-      {{ exportLoading ? 'Generando...' : 'Exportar PDF' }}
-    </button>
   </section>
+
+  <form class="filter-panel" [formGroup]="filtroForm" (ngSubmit)="aplicarFiltros()">
+    <div class="filter-summary">
+      <span class="dashboard-kicker">Periodo</span>
+      <strong>{{ filtroAplicado }}</strong>
+    </div>
+
+    <div class="filter-tabs" role="group" aria-label="Tipo de filtro">
+      <button type="button" [class.active]="modoFiltro === 'all'" (click)="cambiarModo('all')">Todo</button>
+      <button type="button" [class.active]="modoFiltro === 'month'" (click)="cambiarModo('month')">Mes</button>
+      <button type="button" [class.active]="modoFiltro === 'day'" (click)="cambiarModo('day')">Día</button>
+      <button type="button" [class.active]="modoFiltro === 'range'" (click)="cambiarModo('range')">Rango</button>
+    </div>
+
+    <div class="filter-fields">
+      <label *ngIf="modoFiltro === 'month'">
+        <span>Mes</span>
+        <input type="month" formControlName="month" />
+      </label>
+
+      <label *ngIf="modoFiltro === 'day'">
+        <span>Día específico</span>
+        <input type="date" formControlName="day" />
+      </label>
+
+      <ng-container *ngIf="modoFiltro === 'range'">
+        <label>
+          <span>Desde</span>
+          <input type="date" formControlName="from" />
+        </label>
+        <label>
+          <span>Hasta</span>
+          <input type="date" formControlName="to" />
+        </label>
+      </ng-container>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-secondary neutral" type="button" (click)="limpiarFiltros()">Limpiar</button>
+      <button class="btn-primary" type="submit" [disabled]="!puedeAplicarFiltro || loading">Aplicar</button>
+    </div>
+  </form>
 
   <div class="feedback error" *ngIf="error">
     <span>{{ error }}</span>
@@ -56,14 +94,6 @@
         <p>Proyección próximos meses</p>
       </div>
     </article>
-  </section>
-
-  <section class="section-heading">
-    <div>
-      <span>Julio - Septiembre</span>
-      <h2>Indicadores descriptivos</h2>
-    </div>
-    <p>Resumen del comportamiento histórico de incidencias registradas por ciudadanos.</p>
   </section>
 
   <section class="dashboard-grid descriptive-grid">
@@ -182,14 +212,6 @@
         <p class="empty-state">Todavía no hay casos resueltos para calcular tiempos.</p>
       </ng-template>
     </article>
-  </section>
-
-  <section class="section-heading">
-    <div>
-      <span>Octubre - Diciembre</span>
-      <h2>Indicadores predictivos</h2>
-    </div>
-    <p>Estimación simple basada en tendencia para anticipar demanda operativa.</p>
   </section>
 
   <section class="dashboard-grid predictive-grid">

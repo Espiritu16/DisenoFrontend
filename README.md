@@ -65,7 +65,7 @@ src/app/
 | `/mis-reportes` | Reportes del ciudadano autenticado |
 | `/estado-servicio` | Alertas activas del servicio y reportes recientes |
 | `/contacto` | Canales de contacto |
-| `/administrador/dashboard` | KPIs operativos, tendencias, niveles IoT y exportacion PDF |
+| `/administrador/dashboard` | Dashboard descriptivo y predictivo con reportes, categorias, estados, zonas, proyeccion, niveles IoT y exportacion PDF |
 | `/administrador/atencion-casos` | Gestion operativa de casos |
 | `/administrador/reportes` | Revision de reportes ciudadanos |
 | `/administrador/estado-servicio` | Publicacion de alertas del servicio para administradores |
@@ -79,7 +79,7 @@ src/app/
 | Ciudadano | Consulta de alertas reales del servicio en `/estado-servicio` |
 | Ciudadano | Trazabilidad real de reportes propios en `/mis-reportes` |
 | Administracion | Creacion de alertas del servicio desde `/administrador/estado-servicio` |
-| Administracion | Dashboard con casos resueltos, promedio de resolucion, tiempos por zona y zonas criticas |
+| Administracion | Dashboard con indicadores descriptivos, prediccion simple, casos resueltos, promedio de resolucion, tiempos por zona y zonas criticas |
 | Administracion | Descarga PDF del reporte operativo desde el dashboard |
 | Autoridad | Acceso de lectura a dashboard, reportes, trazabilidad, alertas y niveles IoT |
 | IoT | Visualizacion de niveles de agua recibidos desde el backend |

@@ -22,7 +22,7 @@ import { AquaLogoComponent } from '../../shared/public/aqua-logo/aqua-logo.compo
         <nav class="nav-links">
           <a routerLink="/administrador/dashboard" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
             <span class="material-symbols-outlined">space_dashboard</span>
-            <span>Resumen</span>
+            <span>Dashboard</span>
           </a>
           <a routerLink="/administrador/atencion-casos" routerLinkActive="active-link" (click)="closeMenuOnMobile()">
             <span class="material-symbols-outlined">assignment</span>

@@ -1,4 +1,6 @@
+import '@angular/compiler';
 import { of, throwError } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardService } from '../../../core/api/dashboard.service';
 
@@ -20,17 +22,45 @@ describe('DashboardComponent', () => {
 
   it('debe cargar kpis desde backend', () => {
     vi.mocked((dashboardService as any).kpis).mockReturnValue(of({
+      totalReportes: 120,
       reportesPendientes: 11,
       reportesEnProceso: 7,
       reportesResueltos: 20,
       casosAbiertos: 4,
+      casosResueltos: 18,
+      promedioHorasResolucion: 14.5,
+      incrementoEstimadoPorcentaje: 18,
+      recomendacionAutomatica: 'Priorizar cuadrillas en Ate.',
       actividadSemanal: [
         { dia: 'Lun', valor: 2 },
         { dia: 'Hoy', valor: 5 }
       ],
+      reportesPorMes: [
+        { mes: 'Jul', cantidad: 30 },
+        { mes: 'Ago', cantidad: 40 }
+      ],
+      reportesPorCategoria: [
+        { categoria: 'Fuga de agua', cantidad: 25 }
+      ],
+      reportesPorEstado: [
+        { estado: 'Pendientes', cantidad: 11 },
+        { estado: 'Resueltos', cantidad: 20 }
+      ],
       reportesPorZona: [
         { nombre: 'Cercado de Lima', cantidad: 3 }
-      ]
+      ],
+      tiemposPorZona: [],
+      zonasCriticas: [],
+      proyeccionMensual: [
+        { mes: 'Oct', estimado: 47 }
+      ],
+      categoriasConCrecimiento: [
+        { categoria: 'Fuga de agua', baseActual: 20, estimadoSiguienteMes: 25, crecimientoPorcentual: 25 }
+      ],
+      zonasRiesgo: [
+        { zona: 'Ate', reportes: 18, nivelRiesgo: 'Alto' }
+      ],
+      nivelesAgua: []
     }));
 
     const component = createComponent();
@@ -38,13 +68,24 @@ describe('DashboardComponent', () => {
 
     expect(component.loading).toBe(false);
     expect(component.error).toBe('');
+    expect(component.kpis.totalReportes).toBe(120);
     expect(component.kpis.casosActivos).toBe(4);
     expect(component.kpis.reportesNuevos).toBe(11);
     expect(component.kpis.casosEnEspera).toBe(7);
+    expect(component.kpis.incrementoEstimadoPorcentaje).toBe(18);
     expect(component.actividadSemanal).toHaveLength(2);
+    expect(component.reportesPorMes).toHaveLength(2);
+    expect(component.reportesPorCategoria[0].categoria).toBe('Fuga de agua');
+    expect(component.reportesPorEstado[0].estado).toBe('Pendientes');
+    expect(component.proyeccionMensual[0].estimado).toBe(47);
+    expect(component.zonasRiesgo[0].nivelRiesgo).toBe('Alto');
     expect(component.reportesPorZona[0].nombre).toBe('Cercado de Lima');
     expect(component.alturaActividad(5)).toBe(100);
     expect(component.anchoZona(3)).toBe(100);
+    expect(component.alturaMes(40)).toBe(100);
+    expect(component.anchoCategoria(25)).toBe(100);
+    expect(component.anchoEstado(11)).toBe(35);
+    expect(component.riesgoClass('Alto')).toBe('risk-alto');
   });
 
   it('debe manejar error de kpis', () => {

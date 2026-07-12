@@ -1,207 +1,297 @@
 <div class="dashboard-container">
-
-  <!-- HEADER TITLE -->
   <section class="dashboard-header">
-    <h1 class="dashboard-title">Resumen Operativo</h1>
-    <p class="dashboard-subtitle">Monitoreo en tiempo real del sistema de AQUACOMUNIDAD</p>
-    <button class="btn-retry" type="button" (click)="exportarPdf()" [disabled]="exportLoading">
-      {{ exportLoading ? 'Generando PDF...' : 'Exportar PDF' }}
+    <div>
+      <span class="dashboard-kicker">Panel administrativo</span>
+      <h1 class="dashboard-title">Dashboard</h1>
+      <p class="dashboard-subtitle">
+        Indicadores descriptivos y predictivos sobre reportes ciudadanos, zonas críticas y atención operativa.
+      </p>
+    </div>
+    <button class="btn-primary" type="button" (click)="exportarPdf()" [disabled]="exportLoading">
+      <span class="material-symbols-outlined" aria-hidden="true">picture_as_pdf</span>
+      {{ exportLoading ? 'Generando...' : 'Exportar PDF' }}
     </button>
   </section>
 
   <div class="feedback error" *ngIf="error">
-    {{ error }}
-    <button class="btn-retry" (click)="cargarKpis()">Reintentar</button>
+    <span>{{ error }}</span>
+    <button class="btn-secondary" type="button" (click)="cargarKpis()">Reintentar</button>
   </div>
 
-  <div class="loading-box" *ngIf="loading">Cargando KPIs del backend...</div>
+  <div class="loading-box" *ngIf="loading">Cargando indicadores del backend...</div>
 
-  <!-- KPI METRICS -->
-  <section class="kpi-metrics-grid">
+  <section class="kpi-grid" aria-label="Indicadores principales">
+    <article class="kpi-card">
+      <span class="material-symbols-outlined" aria-hidden="true">summarize</span>
+      <div>
+        <small>Total reportes</small>
+        <strong>{{ kpis.totalReportes }}</strong>
+        <p>Base ciudadana registrada</p>
+      </div>
+    </article>
 
-    <!-- KPI 1: Casos Activos -->
-    <div class="kpi-card kpi-red">
-      <div class="kpi-icon-box icon-red">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-        </svg>
+    <article class="kpi-card">
+      <span class="material-symbols-outlined" aria-hidden="true">pending_actions</span>
+      <div>
+        <small>Pendientes</small>
+        <strong>{{ kpis.reportesNuevos }}</strong>
+        <p>Requieren evaluación inicial</p>
       </div>
-      <div class="kpi-content">
-        <span class="kpi-label">Casos Activos</span>
-        <p class="kpi-value">{{ kpis.casosActivos }}</p>
-        <div class="kpi-meta">{{ kpis.casosResueltos }} resueltos</div>
-      </div>
-    </div>
+    </article>
 
-    <!-- KPI 2: Reportes Nuevos -->
-    <div class="kpi-card kpi-blue">
-      <div class="kpi-icon-box icon-blue">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z"/>
-        </svg>
+    <article class="kpi-card">
+      <span class="material-symbols-outlined" aria-hidden="true">task_alt</span>
+      <div>
+        <small>Resueltos</small>
+        <strong>{{ kpis.reportesResueltos }}</strong>
+        <p>{{ kpis.casosResueltos }} casos cerrados</p>
       </div>
-      <div class="kpi-content">
-        <span class="kpi-label">Reportes Nuevos</span>
-        <p class="kpi-value">{{ kpis.reportesNuevos }}</p>
-        <div class="kpi-meta">Pendientes</div>
-      </div>
-    </div>
+    </article>
 
-    <!-- KPI 3: Casos en Espera -->
-    <div class="kpi-card kpi-gray">
-      <div class="kpi-icon-box icon-gray">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-        </svg>
+    <article class="kpi-card forecast-card">
+      <span class="material-symbols-outlined" aria-hidden="true">trending_up</span>
+      <div>
+        <small>Incremento estimado</small>
+        <strong>{{ kpis.incrementoEstimadoPorcentaje }}%</strong>
+        <p>Proyección próximos meses</p>
       </div>
-      <div class="kpi-content">
-        <span class="kpi-label">Casos en Espera</span>
-        <p class="kpi-value">{{ kpis.casosEnEspera }}</p>
-        <div class="kpi-meta">Reportes en proceso</div>
-      </div>
-    </div>
-
-    <!-- KPI 4: Casos por Asignar -->
-    <div class="kpi-card kpi-danger">
-      <div class="kpi-icon-box icon-danger">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-        </svg>
-      </div>
-      <div class="kpi-content">
-        <span class="kpi-label">Promedio resolución</span>
-        <p class="kpi-value">{{ kpis.promedioHorasResolucion }}</p>
-        <div class="kpi-meta priority-tag">Horas</div>
-      </div>
-    </div>
-
+    </article>
   </section>
 
-  <!-- MAIN CONTENT GRID -->
-  <div class="dashboard-content-grid">
+  <section class="section-heading">
+    <div>
+      <span>Julio - Septiembre</span>
+      <h2>Indicadores descriptivos</h2>
+    </div>
+    <p>Resumen del comportamiento histórico de incidencias registradas por ciudadanos.</p>
+  </section>
 
-    <!-- LEFT COLUMN: CHARTS -->
-    <main class="dashboard-main-area">
-
-      <!-- CHART 1: Actividad Reciente -->
-      <section class="dashboard-card chart-card">
-        <div class="card-header">
-          <h2 class="card-title">Actividad Reciente de Reportes</h2>
-          <span class="data-source">Datos backend</span>
+  <section class="dashboard-grid descriptive-grid">
+    <article class="dashboard-card wide-card">
+      <div class="card-header">
+        <div>
+          <h3>Reportes por mes</h3>
+          <p>Evolución mensual de incidencias</p>
         </div>
+        <span class="data-pill">Histórico</span>
+      </div>
 
-        <div class="chart-container">
-          <div class="bar-chart" *ngIf="actividadSemanal.length; else actividadVacia">
-            <div class="bar-wrapper" *ngFor="let item of actividadSemanal">
-              <span class="bar-value">{{ item.valor }}</span>
-              <div
-                class="bar"
-                [class.bar-highlight]="item.dia === 'Hoy'"
-                [style.height.%]="alturaActividad(item.valor)"
-                [attr.aria-label]="item.dia + ': ' + item.valor + ' reportes'"
-              ></div>
-              <span class="bar-label">{{ item.dia }}</span>
-            </div>
+      <div class="vertical-chart" *ngIf="reportesPorMes.length; else mesesVacios">
+        <div class="vertical-item" *ngFor="let item of reportesPorMes">
+          <span class="bar-value">{{ item.cantidad }}</span>
+          <div class="vertical-track">
+            <div class="vertical-bar" [style.height.%]="alturaMes(item.cantidad)"></div>
           </div>
-          <ng-template #actividadVacia>
-            <p class="empty-state">No hay reportes registrados en los últimos 7 días.</p>
-          </ng-template>
+          <span class="bar-label">{{ item.mes }}</span>
         </div>
-      </section>
+      </div>
+      <ng-template #mesesVacios>
+        <p class="empty-state">No hay reportes mensuales disponibles.</p>
+      </ng-template>
+    </article>
 
-      <section class="dashboard-card chart-card">
-        <div class="card-header">
-          <h2 class="card-title">Tiempo de atención por zona</h2>
-          <span class="data-source">Casos cerrados</span>
+    <article class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Distribución por estado</h3>
+          <p>Pendientes, proceso y cierre</p>
         </div>
+      </div>
 
-        <div class="district-list" *ngIf="tiemposPorZona.length; else tiemposVacios">
-          <div class="district-item" *ngFor="let zona of tiemposPorZona">
-            <div class="district-header">
-              <span class="district-name">{{ zona.zona }}</span>
-              <span class="district-count">{{ zona.promedioHoras }} h</span>
-            </div>
-            <p class="kpi-meta">{{ zona.casosResueltos }} casos resueltos</p>
+      <div class="stacked-status" *ngIf="reportesPorEstado.length; else estadosVacios">
+        <div class="status-row" *ngFor="let estado of reportesPorEstado">
+          <div class="row-label">
+            <span>{{ estado.estado }}</span>
+            <strong>{{ estado.cantidad }}</strong>
           </div>
-        </div>
-        <ng-template #tiemposVacios>
-          <p class="empty-state">Todavía no hay casos resueltos para calcular tiempos.</p>
-        </ng-template>
-      </section>
-
-    </main>
-
-    <!-- RIGHT COLUMN: SIDEBAR -->
-    <aside class="dashboard-sidebar">
-
-      <!-- REPORTES POR DISTRITO -->
-      <section class="dashboard-card">
-        <div class="card-header">
-          <h2 class="card-title">Reportes por zona</h2>
-          <span class="data-source">Datos backend</span>
-        </div>
-
-        <div class="district-list" *ngIf="reportesPorZona.length; else zonasVacias">
-          <div class="district-item" *ngFor="let zona of reportesPorZona">
-            <div class="district-header">
-              <span class="district-name">{{ zona.nombre }}</span>
-              <span class="district-count">{{ zona.cantidad }}</span>
-            </div>
-            <div class="district-bar">
-              <div class="bar-progress" [style.width.%]="anchoZona(zona.cantidad)"></div>
-            </div>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="anchoEstado(estado.cantidad)"></div>
           </div>
         </div>
-        <ng-template #zonasVacias>
-          <p class="empty-state">No hay zonas con reportes registrados.</p>
-        </ng-template>
-      </section>
+      </div>
+      <ng-template #estadosVacios>
+        <p class="empty-state">No hay estados registrados.</p>
+      </ng-template>
+    </article>
 
-      <section class="dashboard-card">
-        <div class="card-header">
-          <h2 class="card-title">Zonas críticas</h2>
-          <span class="data-source">Últimos 30 días</span>
+    <article class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Incidencias por categoría</h3>
+          <p>Tipos de reporte más frecuentes</p>
         </div>
+      </div>
 
-        <div class="district-list" *ngIf="zonasCriticas.length; else criticasVacias">
-          <div class="district-item" *ngFor="let zona of zonasCriticas">
-            <div class="district-header">
-              <span class="district-name">{{ zona.zona }}</span>
-              <span class="district-count">{{ zona.reportesUltimos30Dias }}</span>
-            </div>
-            <p class="kpi-meta">{{ zona.variacionPorcentual }}% vs periodo previo</p>
+      <div class="rank-list" *ngIf="reportesPorCategoria.length; else categoriasVacias">
+        <div class="rank-item" *ngFor="let categoria of reportesPorCategoria">
+          <div class="row-label">
+            <span>{{ categoria.categoria }}</span>
+            <strong>{{ categoria.cantidad }}</strong>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill blue" [style.width.%]="anchoCategoria(categoria.cantidad)"></div>
           </div>
         </div>
-        <ng-template #criticasVacias>
-          <p class="empty-state">No hay tendencias por zona disponibles.</p>
-        </ng-template>
-      </section>
+      </div>
+      <ng-template #categoriasVacias>
+        <p class="empty-state">No hay categorías registradas.</p>
+      </ng-template>
+    </article>
 
-      <section class="dashboard-card">
-        <div class="card-header">
-          <h2 class="card-title">Niveles de agua</h2>
-          <span class="data-source">IoT</span>
+    <article class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Reportes por zona</h3>
+          <p>Concentración territorial</p>
         </div>
+      </div>
 
-        <div class="district-list" *ngIf="nivelesAgua.length; else nivelesVacios">
-          <div class="district-item" *ngFor="let nivel of nivelesAgua">
-            <div class="district-header">
-              <span class="district-name">{{ nivel.nombre }}</span>
-              <span class="district-count">{{ nivel.nivelPorcentaje ?? 0 }}%</span>
-            </div>
-            <div class="district-bar">
-              <div class="bar-progress" [style.width.%]="nivelBarra(nivel.nivelPorcentaje)"></div>
-            </div>
-            <p class="kpi-meta">{{ nivel.zona }} · {{ nivel.estado }}</p>
+      <div class="rank-list" *ngIf="reportesPorZona.length; else zonasVacias">
+        <div class="rank-item" *ngFor="let zona of reportesPorZona">
+          <div class="row-label">
+            <span>{{ zona.nombre }}</span>
+            <strong>{{ zona.cantidad }}</strong>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill teal" [style.width.%]="anchoZona(zona.cantidad)"></div>
           </div>
         </div>
-        <ng-template #nivelesVacios>
-          <p class="empty-state">No hay infraestructura IoT activa registrada.</p>
-        </ng-template>
-      </section>
+      </div>
+      <ng-template #zonasVacias>
+        <p class="empty-state">No hay zonas con reportes registrados.</p>
+      </ng-template>
+    </article>
 
-    </aside>
+    <article class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Tiempo de atención</h3>
+          <p>Promedio por zona</p>
+        </div>
+        <span class="data-pill">{{ kpis.promedioHorasResolucion }} h global</span>
+      </div>
 
-  </div>
+      <div class="compact-list" *ngIf="tiemposPorZona.length; else tiemposVacios">
+        <div class="compact-item" *ngFor="let zona of tiemposPorZona">
+          <span>{{ zona.zona }}</span>
+          <strong>{{ zona.promedioHoras }} h</strong>
+          <small>{{ zona.casosResueltos }} resueltos</small>
+        </div>
+      </div>
+      <ng-template #tiemposVacios>
+        <p class="empty-state">Todavía no hay casos resueltos para calcular tiempos.</p>
+      </ng-template>
+    </article>
+  </section>
 
+  <section class="section-heading">
+    <div>
+      <span>Octubre - Diciembre</span>
+      <h2>Indicadores predictivos</h2>
+    </div>
+    <p>Estimación simple basada en tendencia para anticipar demanda operativa.</p>
+  </section>
+
+  <section class="dashboard-grid predictive-grid">
+    <article class="dashboard-card wide-card">
+      <div class="card-header">
+        <div>
+          <h3>Proyección de reportes</h3>
+          <p>Estimado para los próximos 3 meses</p>
+        </div>
+        <span class="data-pill">Tendencia</span>
+      </div>
+
+      <div class="vertical-chart forecast-chart" *ngIf="proyeccionMensual.length; else proyeccionVacia">
+        <div class="vertical-item" *ngFor="let item of proyeccionMensual">
+          <span class="bar-value">{{ item.estimado }}</span>
+          <div class="vertical-track">
+            <div class="vertical-bar forecast" [style.height.%]="alturaProyeccion(item.estimado)"></div>
+          </div>
+          <span class="bar-label">{{ item.mes }}</span>
+        </div>
+      </div>
+      <ng-template #proyeccionVacia>
+        <p class="empty-state">No hay datos suficientes para proyectar.</p>
+      </ng-template>
+    </article>
+
+    <article class="dashboard-card recommendation-card">
+      <div class="card-header">
+        <div>
+          <h3>Recomendación automática</h3>
+          <p>Lectura operativa del tablero</p>
+        </div>
+        <span class="material-symbols-outlined" aria-hidden="true">tips_and_updates</span>
+      </div>
+      <p>{{ kpis.recomendacionAutomatica || 'Aún no hay suficiente información para generar una recomendación.' }}</p>
+    </article>
+
+    <article class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Zonas con mayor riesgo</h3>
+          <p>Priorización territorial</p>
+        </div>
+      </div>
+
+      <div class="risk-list" *ngIf="zonasRiesgo.length; else riesgoVacio">
+        <div class="risk-item" *ngFor="let zona of zonasRiesgo">
+          <div>
+            <strong>{{ zona.zona }}</strong>
+            <small>{{ zona.reportes }} reportes</small>
+          </div>
+          <span class="risk-pill" [ngClass]="riesgoClass(zona.nivelRiesgo)">{{ zona.nivelRiesgo }}</span>
+        </div>
+      </div>
+      <ng-template #riesgoVacio>
+        <p class="empty-state">No hay zonas de riesgo calculadas.</p>
+      </ng-template>
+    </article>
+
+    <article class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Categorías con crecimiento</h3>
+          <p>Tipos a monitorear</p>
+        </div>
+      </div>
+
+      <div class="compact-list" *ngIf="categoriasConCrecimiento.length; else crecimientoVacio">
+        <div class="compact-item" *ngFor="let categoria of categoriasConCrecimiento">
+          <span>{{ categoria.categoria }}</span>
+          <strong>{{ categoria.estimadoSiguienteMes }}</strong>
+          <small>{{ categoria.crecimientoPorcentual }}% esperado</small>
+        </div>
+      </div>
+      <ng-template #crecimientoVacio>
+        <p class="empty-state">No hay categorías suficientes para comparar tendencia.</p>
+      </ng-template>
+    </article>
+
+    <article class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Niveles de agua</h3>
+          <p>Lecturas IoT vinculadas al servicio</p>
+        </div>
+      </div>
+
+      <div class="rank-list" *ngIf="nivelesAgua.length; else nivelesVacios">
+        <div class="rank-item" *ngFor="let nivel of nivelesAgua">
+          <div class="row-label">
+            <span>{{ nivel.nombre }}</span>
+            <strong>{{ nivel.nivelPorcentaje ?? 0 }}%</strong>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill water" [style.width.%]="nivelBarra(nivel.nivelPorcentaje)"></div>
+          </div>
+          <small>{{ nivel.zona }} · {{ nivel.estado }}</small>
+        </div>
+      </div>
+      <ng-template #nivelesVacios>
+        <p class="empty-state">No hay infraestructura IoT activa registrada.</p>
+      </ng-template>
+    </article>
+  </section>
 </div>

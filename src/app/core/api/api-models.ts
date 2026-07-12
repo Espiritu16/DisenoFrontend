@@ -87,16 +87,25 @@ export interface DetalleTrazabilidadReporte {
 }
 
 export interface TableroKpi {
+  totalReportes: number;
   reportesPendientes: number;
   reportesEnProceso: number;
   reportesResueltos: number;
   casosAbiertos: number;
   casosResueltos: number;
   promedioHorasResolucion: number;
+  incrementoEstimadoPorcentaje: number;
+  recomendacionAutomatica: string;
   actividadSemanal: ActividadSemanalItem[];
+  reportesPorMes: ReportePorMesItem[];
+  reportesPorCategoria: ReportePorCategoriaItem[];
+  reportesPorEstado: ReportePorEstadoItem[];
   reportesPorZona: ReportePorZonaItem[];
   tiemposPorZona: TiempoAtencionPorZonaItem[];
   zonasCriticas: TendenciaZonaItem[];
+  proyeccionMensual: ProyeccionMensualItem[];
+  categoriasConCrecimiento: CategoriaCrecimientoItem[];
+  zonasRiesgo: ZonaRiesgoItem[];
   nivelesAgua: NivelAguaResponse[];
 }
 
@@ -108,6 +117,39 @@ export interface ActividadSemanalItem {
 export interface ReportePorZonaItem {
   nombre: string;
   cantidad: number;
+}
+
+export interface ReportePorMesItem {
+  mes: string;
+  cantidad: number;
+}
+
+export interface ReportePorCategoriaItem {
+  categoria: string;
+  cantidad: number;
+}
+
+export interface ReportePorEstadoItem {
+  estado: string;
+  cantidad: number;
+}
+
+export interface ProyeccionMensualItem {
+  mes: string;
+  estimado: number;
+}
+
+export interface CategoriaCrecimientoItem {
+  categoria: string;
+  baseActual: number;
+  estimadoSiguienteMes: number;
+  crecimientoPorcentual: number;
+}
+
+export interface ZonaRiesgoItem {
+  zona: string;
+  reportes: number;
+  nivelRiesgo: string;
 }
 
 export type ApiAlertStatus = 'PROGRAMADA' | 'ACTIVA' | 'RESUELTA' | 'CANCELADA';

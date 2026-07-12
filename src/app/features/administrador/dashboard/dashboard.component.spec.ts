@@ -66,6 +66,7 @@ describe('DashboardComponent', () => {
     const component = createComponent();
     component.ngOnInit();
 
+    expect((dashboardService as any).kpis).toHaveBeenCalledWith({});
     expect(component.loading).toBe(false);
     expect(component.error).toBe('');
     expect(component.kpis.totalReportes).toBe(120);
@@ -98,5 +99,42 @@ describe('DashboardComponent', () => {
 
     expect(component.loading).toBe(false);
     expect(component.error.length).toBeGreaterThan(0);
+  });
+
+  it('debe enviar filtros de mes al recargar indicadores', () => {
+    vi.mocked((dashboardService as any).kpis).mockReturnValue(of({
+      totalReportes: 3,
+      reportesPendientes: 1,
+      reportesEnProceso: 0,
+      reportesResueltos: 2,
+      casosAbiertos: 0,
+      casosResueltos: 2,
+      promedioHorasResolucion: 8,
+      incrementoEstimadoPorcentaje: 0,
+      recomendacionAutomatica: '',
+      actividadSemanal: [],
+      reportesPorMes: [{ mes: 'Sep', cantidad: 3 }],
+      reportesPorCategoria: [],
+      reportesPorEstado: [],
+      reportesPorZona: [],
+      tiemposPorZona: [],
+      zonasCriticas: [],
+      proyeccionMensual: [],
+      categoriasConCrecimiento: [],
+      zonasRiesgo: [],
+      nivelesAgua: []
+    }));
+
+    const component = createComponent();
+    component.cambiarModo('month');
+    component.filtroForm.controls.month.setValue('2026-09');
+    component.aplicarFiltros();
+
+    expect((dashboardService as any).kpis).toHaveBeenCalledWith({
+      fechaDesde: '2026-09-01',
+      fechaHasta: '2026-09-30'
+    });
+    expect(component.filtroAplicado).toContain('2026');
+    expect(component.kpis.totalReportes).toBe(3);
   });
 });

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { DashboardService } from '../../../core/api/dashboard.service';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { DashboardFiltros, DashboardService } from '../../../core/api/dashboard.service';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import {
   ActividadSemanalItem,
@@ -16,10 +17,12 @@ import {
   ZonaRiesgoItem
 } from '../../../core/api/api-models';
 
+type DashboardFilterMode = 'all' | 'month' | 'day' | 'range';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -51,7 +54,14 @@ export class DashboardComponent implements OnInit {
   categoriasConCrecimiento: CategoriaCrecimientoItem[] = [];
   zonasRiesgo: ZonaRiesgoItem[] = [];
   nivelesAgua: NivelAguaResponse[] = [];
-  exportLoading = false;
+  filtroAplicado = 'Todos los registros';
+  filtroForm = new FormGroup({
+    mode: new FormControl<DashboardFilterMode>('all', { nonNullable: true }),
+    month: new FormControl('', { nonNullable: true }),
+    day: new FormControl('', { nonNullable: true }),
+    from: new FormControl('', { nonNullable: true }),
+    to: new FormControl('', { nonNullable: true })
+  });
 
   constructor(private dashboardService: DashboardService, private cdr: ChangeDetectorRef) {}
 
@@ -62,7 +72,7 @@ export class DashboardComponent implements OnInit {
   cargarKpis(): void {
     this.loading = true;
     this.error = '';
-    this.dashboardService.kpis().subscribe({
+    this.dashboardService.kpis(this.filtrosActuales()).subscribe({
       next: (kpi) => {
         this.kpis = {
           totalReportes: kpi.totalReportes ?? 0,
@@ -98,25 +108,43 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  exportarPdf(): void {
-    this.exportLoading = true;
-    this.dashboardService.exportarPdf().subscribe({
-      next: (blob) => {
-        this.exportLoading = false;
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'reporte-operativo.pdf';
-        link.click();
-        URL.revokeObjectURL(url);
-        this.scheduleChangeDetection();
-      },
-      error: (error: unknown) => {
-        this.exportLoading = false;
-        this.error = apiErrorMessage(error);
-        this.scheduleChangeDetection();
-      }
+  cambiarModo(mode: DashboardFilterMode): void {
+    this.filtroForm.controls.mode.setValue(mode);
+  }
+
+  aplicarFiltros(): void {
+    this.filtroAplicado = this.etiquetaFiltro();
+    this.cargarKpis();
+  }
+
+  limpiarFiltros(): void {
+    this.filtroForm.reset({
+      mode: 'all',
+      month: '',
+      day: '',
+      from: '',
+      to: ''
     });
+    this.filtroAplicado = 'Todos los registros';
+    this.cargarKpis();
+  }
+
+  get modoFiltro(): DashboardFilterMode {
+    return this.filtroForm.controls.mode.value;
+  }
+
+  get puedeAplicarFiltro(): boolean {
+    const valores = this.filtroForm.getRawValue();
+    if (valores.mode === 'all') {
+      return true;
+    }
+    if (valores.mode === 'month') {
+      return Boolean(valores.month);
+    }
+    if (valores.mode === 'day') {
+      return Boolean(valores.day);
+    }
+    return Boolean(valores.from || valores.to);
   }
 
   get actividadMaxima(): number {
@@ -194,6 +222,61 @@ export class DashboardComponent implements OnInit {
 
   riesgoClass(nivel: string): string {
     return `risk-${nivel.toLowerCase()}`;
+  }
+
+  private filtrosActuales(): DashboardFiltros {
+    const valores = this.filtroForm.getRawValue();
+    if (valores.mode === 'month' && valores.month) {
+      return {
+        fechaDesde: `${valores.month}-01`,
+        fechaHasta: this.ultimoDiaDelMes(valores.month)
+      };
+    }
+    if (valores.mode === 'day' && valores.day) {
+      return {
+        fechaDesde: valores.day,
+        fechaHasta: valores.day
+      };
+    }
+    if (valores.mode === 'range') {
+      return {
+        fechaDesde: valores.from || undefined,
+        fechaHasta: valores.to || undefined
+      };
+    }
+    return {};
+  }
+
+  private etiquetaFiltro(): string {
+    const valores = this.filtroForm.getRawValue();
+    if (valores.mode === 'month' && valores.month) {
+      const [year, month] = valores.month.split('-').map(Number);
+      return new Date(year, month - 1, 1).toLocaleDateString('es-PE', { month: 'long', year: 'numeric' });
+    }
+    if (valores.mode === 'day' && valores.day) {
+      return this.formatearFecha(valores.day);
+    }
+    if (valores.mode === 'range') {
+      const desde = valores.from ? this.formatearFecha(valores.from) : 'inicio';
+      const hasta = valores.to ? this.formatearFecha(valores.to) : 'hoy';
+      return `${desde} - ${hasta}`;
+    }
+    return 'Todos los registros';
+  }
+
+  private ultimoDiaDelMes(monthValue: string): string {
+    const [year, month] = monthValue.split('-').map(Number);
+    const ultimoDia = new Date(year, month, 0).getDate();
+    return `${monthValue}-${String(ultimoDia).padStart(2, '0')}`;
+  }
+
+  private formatearFecha(fecha: string): string {
+    const [year, month, day] = fecha.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString('es-PE', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
   }
 
   private scheduleChangeDetection(): void {

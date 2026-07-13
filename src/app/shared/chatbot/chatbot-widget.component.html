@@ -1,4 +1,9 @@
-<section class="chatbot-widget" [class.chatbot-widget--open]="isOpen()" aria-label="Chat de ayuda AquaComunidad">
+<section
+  class="chatbot-widget"
+  *ngIf="!estaEnVistaAdministrativa()"
+  [class.chatbot-widget--open]="isOpen()"
+  aria-label="Chat de ayuda AquaComunidad"
+>
   <article class="chatbot-panel" *ngIf="isOpen()" role="dialog" aria-modal="false" aria-label="Asistente AquaComunidad">
     <header class="chatbot-panel__header">
       <div class="chatbot-panel__brand">

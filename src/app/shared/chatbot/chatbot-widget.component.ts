@@ -125,6 +125,10 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
     this.desactivarClickExterior();
   }
 
+  estaEnVistaAdministrativa(): boolean {
+    return this.router.url.startsWith('/administrador');
+  }
+
   sendMessage(): void {
     const text = this.draft.trim();
     if (!text || this.isSending()) {

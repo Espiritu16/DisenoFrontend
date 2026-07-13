@@ -26,6 +26,7 @@ describe('DashboardComponent', () => {
       reportesPendientes: 11,
       reportesEnProceso: 7,
       reportesResueltos: 20,
+      totalCiudadanosReportantes: 42,
       casosAbiertos: 4,
       casosResueltos: 18,
       promedioHorasResolucion: 14.5,
@@ -38,6 +39,10 @@ describe('DashboardComponent', () => {
       reportesPorMes: [
         { mes: 'Jul', cantidad: 30 },
         { mes: 'Ago', cantidad: 40 }
+      ],
+      usuariosReportantesPorMes: [
+        { mes: 'Jul', cantidad: 12 },
+        { mes: 'Ago', cantidad: 18 }
       ],
       reportesPorCategoria: [
         { categoria: 'Fuga de agua', cantidad: 25 }
@@ -66,16 +71,22 @@ describe('DashboardComponent', () => {
     const component = createComponent();
     component.ngOnInit();
 
-    expect((dashboardService as any).kpis).toHaveBeenCalledWith({});
+    expect((dashboardService as any).kpis).toHaveBeenCalledWith({
+      fechaDesde: `${component.anioActual}-01-01`,
+      fechaHasta: `${component.anioActual}-12-31`
+    });
     expect(component.loading).toBe(false);
     expect(component.error).toBe('');
     expect(component.kpis.totalReportes).toBe(120);
     expect(component.kpis.casosActivos).toBe(4);
     expect(component.kpis.reportesNuevos).toBe(11);
     expect(component.kpis.casosEnEspera).toBe(7);
+    expect(component.kpis.totalCiudadanosReportantes).toBe(42);
     expect(component.kpis.incrementoEstimadoPorcentaje).toBe(18);
     expect(component.actividadSemanal).toHaveLength(2);
     expect(component.reportesPorMes).toHaveLength(2);
+    expect(component.usuariosReportantesPorMes).toHaveLength(2);
+    expect(component.usuariosReportantesPorMes[0].cantidad).toBe(12);
     expect(component.reportesPorCategoria[0].categoria).toBe('Fuga de agua');
     expect(component.reportesPorEstado[0].estado).toBe('Pendientes');
     expect(component.proyeccionMensual[0].estimado).toBe(47);
@@ -101,12 +112,13 @@ describe('DashboardComponent', () => {
     expect(component.error.length).toBeGreaterThan(0);
   });
 
-  it('debe enviar filtros de mes al recargar indicadores', () => {
+  it('debe aplicar filtros de mes automaticamente', () => {
     vi.mocked((dashboardService as any).kpis).mockReturnValue(of({
       totalReportes: 3,
       reportesPendientes: 1,
       reportesEnProceso: 0,
       reportesResueltos: 2,
+      totalCiudadanosReportantes: 2,
       casosAbiertos: 0,
       casosResueltos: 2,
       promedioHorasResolucion: 8,
@@ -114,6 +126,7 @@ describe('DashboardComponent', () => {
       recomendacionAutomatica: '',
       actividadSemanal: [],
       reportesPorMes: [{ mes: 'Sep', cantidad: 3 }],
+      usuariosReportantesPorMes: [{ mes: 'Sep', cantidad: 2 }],
       reportesPorCategoria: [],
       reportesPorEstado: [],
       reportesPorZona: [],
@@ -126,15 +139,17 @@ describe('DashboardComponent', () => {
     }));
 
     const component = createComponent();
-    component.cambiarModo('month');
-    component.filtroForm.controls.month.setValue('2026-09');
-    component.aplicarFiltros();
+    component.ngOnInit();
+    vi.mocked((dashboardService as any).kpis).mockClear();
+
+    component.filtroForm.controls.year.setValue(component.anioActual);
+    component.filtroForm.controls.month.setValue('09');
 
     expect((dashboardService as any).kpis).toHaveBeenCalledWith({
-      fechaDesde: '2026-09-01',
-      fechaHasta: '2026-09-30'
+      fechaDesde: `${component.anioActual}-09-01`,
+      fechaHasta: `${component.anioActual}-09-30`
     });
-    expect(component.filtroAplicado).toContain('2026');
+    expect(component.filtroAplicado).toContain(component.anioActual);
     expect(component.kpis.totalReportes).toBe(3);
   });
 });

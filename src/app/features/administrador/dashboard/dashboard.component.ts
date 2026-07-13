@@ -1,6 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { Chart, ChartConfiguration, ChartOptions, registerables } from 'chart.js';
 import { DashboardFiltros, DashboardService } from '../../../core/api/dashboard.service';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import {
@@ -14,10 +25,11 @@ import {
   ReportePorZonaItem,
   TendenciaZonaItem,
   TiempoAtencionPorZonaItem,
+  UsuarioReportantePorMesItem,
   ZonaRiesgoItem
 } from '../../../core/api/api-models';
 
-type DashboardFilterMode = 'all' | 'month' | 'day' | 'range';
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
@@ -26,7 +38,9 @@ type DashboardFilterMode = 'all' | 'month' | 'day' | 'range';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChildren('dashboardChart') private chartCanvases?: QueryList<ElementRef<HTMLCanvasElement>>;
+
   loading = false;
   error = '';
 
@@ -38,6 +52,7 @@ export class DashboardComponent implements OnInit {
     casosPorAsignar: 0,
     casosResueltos: 0,
     reportesResueltos: 0,
+    totalCiudadanosReportantes: 0,
     promedioHorasResolucion: 0,
     incrementoEstimadoPorcentaje: 0,
     recomendacionAutomatica: ''
@@ -45,6 +60,7 @@ export class DashboardComponent implements OnInit {
 
   actividadSemanal: ActividadSemanalItem[] = [];
   reportesPorMes: ReportePorMesItem[] = [];
+  usuariosReportantesPorMes: UsuarioReportantePorMesItem[] = [];
   reportesPorCategoria: ReportePorCategoriaItem[] = [];
   reportesPorEstado: ReportePorEstadoItem[] = [];
   reportesPorZona: ReportePorZonaItem[] = [];
@@ -54,19 +70,48 @@ export class DashboardComponent implements OnInit {
   categoriasConCrecimiento: CategoriaCrecimientoItem[] = [];
   zonasRiesgo: ZonaRiesgoItem[] = [];
   nivelesAgua: NivelAguaResponse[] = [];
-  filtroAplicado = 'Todos los registros';
+  readonly anioActual = String(new Date().getFullYear());
+  filtroAplicado = this.anioActual;
+  readonly aniosDisponibles = [this.anioActual];
+  readonly mesesDisponibles = [
+    { value: '01', label: 'Enero' },
+    { value: '02', label: 'Febrero' },
+    { value: '03', label: 'Marzo' },
+    { value: '04', label: 'Abril' },
+    { value: '05', label: 'Mayo' },
+    { value: '06', label: 'Junio' },
+    { value: '07', label: 'Julio' },
+    { value: '08', label: 'Agosto' },
+    { value: '09', label: 'Septiembre' },
+    { value: '10', label: 'Octubre' },
+    { value: '11', label: 'Noviembre' },
+    { value: '12', label: 'Diciembre' }
+  ];
   filtroForm = new FormGroup({
-    mode: new FormControl<DashboardFilterMode>('all', { nonNullable: true }),
+    year: new FormControl(this.anioActual, { nonNullable: true }),
     month: new FormControl('', { nonNullable: true }),
-    day: new FormControl('', { nonNullable: true }),
-    from: new FormControl('', { nonNullable: true }),
-    to: new FormControl('', { nonNullable: true })
+    day: new FormControl('', { nonNullable: true })
   });
+  private readonly charts = new Map<string, Chart>();
+  private chartCanvasChanges?: Subscription;
+  private viewReady = false;
 
   constructor(private dashboardService: DashboardService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    this.configurarFiltrosAutomaticos();
     this.cargarKpis();
+  }
+
+  ngAfterViewInit(): void {
+    this.viewReady = true;
+    this.chartCanvasChanges = this.chartCanvases?.changes.subscribe(() => this.renderChartsWhenReady());
+    this.renderChartsWhenReady();
+  }
+
+  ngOnDestroy(): void {
+    this.chartCanvasChanges?.unsubscribe();
+    this.destroyCharts();
   }
 
   cargarKpis(): void {
@@ -82,12 +127,14 @@ export class DashboardComponent implements OnInit {
           casosPorAsignar: kpi.reportesPendientes,
           casosResueltos: kpi.casosResueltos,
           reportesResueltos: kpi.reportesResueltos,
+          totalCiudadanosReportantes: kpi.totalCiudadanosReportantes ?? 0,
           promedioHorasResolucion: kpi.promedioHorasResolucion,
           incrementoEstimadoPorcentaje: kpi.incrementoEstimadoPorcentaje ?? 0,
           recomendacionAutomatica: kpi.recomendacionAutomatica ?? ''
         };
         this.actividadSemanal = kpi.actividadSemanal ?? [];
         this.reportesPorMes = kpi.reportesPorMes ?? [];
+        this.usuariosReportantesPorMes = kpi.usuariosReportantesPorMes ?? [];
         this.reportesPorCategoria = kpi.reportesPorCategoria ?? [];
         this.reportesPorEstado = kpi.reportesPorEstado ?? [];
         this.reportesPorZona = kpi.reportesPorZona ?? [];
@@ -99,6 +146,7 @@ export class DashboardComponent implements OnInit {
         this.nivelesAgua = kpi.nivelesAgua ?? [];
         this.loading = false;
         this.scheduleChangeDetection();
+        this.renderChartsWhenReady();
       },
       error: (error: unknown) => {
         this.loading = false;
@@ -108,10 +156,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  cambiarModo(mode: DashboardFilterMode): void {
-    this.filtroForm.controls.mode.setValue(mode);
-  }
-
   aplicarFiltros(): void {
     this.filtroAplicado = this.etiquetaFiltro();
     this.cargarKpis();
@@ -119,32 +163,98 @@ export class DashboardComponent implements OnInit {
 
   limpiarFiltros(): void {
     this.filtroForm.reset({
-      mode: 'all',
+      year: this.anioActual,
       month: '',
-      day: '',
-      from: '',
-      to: ''
-    });
-    this.filtroAplicado = 'Todos los registros';
+      day: ''
+    }, { emitEvent: false });
+    this.filtroAplicado = this.anioActual;
     this.cargarKpis();
   }
 
-  get modoFiltro(): DashboardFilterMode {
-    return this.filtroForm.controls.mode.value;
+  get anioSeleccionado(): string {
+    return this.filtroForm.controls.year.value;
   }
 
-  get puedeAplicarFiltro(): boolean {
+  get mesSeleccionado(): string {
+    return this.filtroForm.controls.month.value;
+  }
+
+  get diasDisponibles(): string[] {
+    if (!this.anioSeleccionado || !this.mesSeleccionado) {
+      return [];
+    }
+    const totalDias = new Date(Number(this.anioSeleccionado), Number(this.mesSeleccionado), 0).getDate();
+    return Array.from({ length: totalDias }, (_, index) => String(index + 1).padStart(2, '0'));
+  }
+
+  get mesDeshabilitado(): boolean {
+    return !this.anioSeleccionado;
+  }
+
+  get diaDeshabilitado(): boolean {
+    return !this.anioSeleccionado || !this.mesSeleccionado;
+  }
+
+  cambioAnio(): void {
+    this.filtroForm.patchValue({ month: '', day: '' }, { emitEvent: false });
+    this.aplicarFiltros();
+  }
+
+  cambioMes(): void {
+    this.filtroForm.patchValue({ day: '' }, { emitEvent: false });
+    this.aplicarFiltros();
+  }
+
+  cambioDia(): void {
+    this.aplicarFiltros();
+  }
+
+  etiquetaMes(value: string): string {
+    return this.mesesDisponibles.find((mes) => mes.value === value)?.label ?? value;
+  }
+
+  trackByValue(_index: number, value: string): string {
+    return value;
+  }
+
+  trackByMes(_index: number, mes: { value: string; label: string }): string {
+    return mes.value;
+  }
+
+  trackByAnio(_index: number, anio: string): string {
+    return anio;
+  }
+
+  private configurarFiltrosAutomaticos(): void {
+    const { year, month, day } = this.filtroForm.controls;
+    year.valueChanges.subscribe(() => this.cambioAnio());
+    month.valueChanges.subscribe(() => this.cambioMes());
+    day.valueChanges.subscribe(() => this.cambioDia());
+  }
+
+  private filtrosActuales(): DashboardFiltros {
     const valores = this.filtroForm.getRawValue();
-    if (valores.mode === 'all') {
-      return true;
+    if (!valores.year) {
+      return {};
     }
-    if (valores.mode === 'month') {
-      return Boolean(valores.month);
+    if (valores.month && valores.day) {
+      const fecha = `${valores.year}-${valores.month}-${valores.day}`;
+      return {
+        fechaDesde: fecha,
+        fechaHasta: fecha
+      };
     }
-    if (valores.mode === 'day') {
-      return Boolean(valores.day);
+    if (valores.month) {
+      const monthValue = `${valores.year}-${valores.month}`;
+      return {
+        fechaDesde: `${monthValue}-01`,
+        fechaHasta: this.ultimoDiaDelMes(monthValue)
+      };
     }
-    return Boolean(valores.from || valores.to);
+    return {
+      fechaDesde: `${valores.year}-01-01`,
+      fechaHasta: `${valores.year}-12-31`
+    };
   }
 
   get actividadMaxima(): number {
@@ -224,44 +334,18 @@ export class DashboardComponent implements OnInit {
     return `risk-${nivel.toLowerCase()}`;
   }
 
-  private filtrosActuales(): DashboardFiltros {
-    const valores = this.filtroForm.getRawValue();
-    if (valores.mode === 'month' && valores.month) {
-      return {
-        fechaDesde: `${valores.month}-01`,
-        fechaHasta: this.ultimoDiaDelMes(valores.month)
-      };
-    }
-    if (valores.mode === 'day' && valores.day) {
-      return {
-        fechaDesde: valores.day,
-        fechaHasta: valores.day
-      };
-    }
-    if (valores.mode === 'range') {
-      return {
-        fechaDesde: valores.from || undefined,
-        fechaHasta: valores.to || undefined
-      };
-    }
-    return {};
-  }
-
   private etiquetaFiltro(): string {
     const valores = this.filtroForm.getRawValue();
-    if (valores.mode === 'month' && valores.month) {
-      const [year, month] = valores.month.split('-').map(Number);
-      return new Date(year, month - 1, 1).toLocaleDateString('es-PE', { month: 'long', year: 'numeric' });
+    if (!valores.year) {
+      return 'Todos los registros';
     }
-    if (valores.mode === 'day' && valores.day) {
-      return this.formatearFecha(valores.day);
+    if (valores.month && valores.day) {
+      return this.formatearFecha(`${valores.year}-${valores.month}-${valores.day}`);
     }
-    if (valores.mode === 'range') {
-      const desde = valores.from ? this.formatearFecha(valores.from) : 'inicio';
-      const hasta = valores.to ? this.formatearFecha(valores.to) : 'hoy';
-      return `${desde} - ${hasta}`;
+    if (valores.month) {
+      return `${this.etiquetaMes(valores.month)} ${valores.year}`;
     }
-    return 'Todos los registros';
+    return valores.year;
   }
 
   private ultimoDiaDelMes(monthValue: string): string {
@@ -281,5 +365,230 @@ export class DashboardComponent implements OnInit {
 
   private scheduleChangeDetection(): void {
     queueMicrotask(() => this.cdr.detectChanges());
+  }
+
+  private renderChartsWhenReady(): void {
+    if (!this.viewReady || !this.chartCanvases) {
+      return;
+    }
+    queueMicrotask(() => this.renderCharts());
+  }
+
+  private renderCharts(): void {
+    if (!this.chartCanvases) {
+      return;
+    }
+
+    const activeChartIds = new Set<string>();
+    this.chartCanvases.forEach((chartRef) => {
+      const canvas = chartRef.nativeElement;
+      const chartId = canvas.dataset['chartId'];
+      if (!chartId) {
+        return;
+      }
+      activeChartIds.add(chartId);
+      const config = this.chartConfig(chartId);
+      if (config) {
+        this.upsertChart(chartId, canvas, config);
+      }
+    });
+    this.destroyMissingCharts(activeChartIds);
+  }
+
+  private chartConfig(chartId: string): ChartConfiguration | null {
+    switch (chartId) {
+      case 'reportes-mes':
+        return this.barChart(
+          this.reportesPorMes.map((item) => item.mes),
+          this.reportesPorMes.map((item) => item.cantidad),
+          'Reportes',
+          '#2563eb'
+        );
+      case 'tendencia-reportes':
+        return this.lineChart(
+          this.reportesPorMes.map((item) => item.mes),
+          this.reportesPorMes.map((item) => item.cantidad),
+          'Tendencia'
+        );
+      case 'reportes-estado':
+        return this.doughnutChart(
+          this.estadosVisiblesEnGrafico.map((item) => item.estado),
+          this.estadosVisiblesEnGrafico.map((item) => item.cantidad)
+        );
+      case 'reportes-categoria':
+        return this.doughnutChart(
+          this.reportesPorCategoria.map((item) => item.categoria),
+          this.reportesPorCategoria.map((item) => item.cantidad)
+        );
+      case 'usuarios-reportantes-mes':
+        return this.barChart(
+          this.usuariosReportantesPorMes.map((item) => item.mes),
+          this.usuariosReportantesPorMes.map((item) => item.cantidad),
+          'Usuarios',
+          '#f59e0b'
+        );
+      case 'reportes-zona':
+        return this.horizontalBarChart(
+          this.reportesPorZona.map((item) => item.nombre),
+          this.reportesPorZona.map((item) => item.cantidad),
+          'Reportes',
+          '#0f766e'
+        );
+      default:
+        return null;
+    }
+  }
+
+  private get estadosVisiblesEnGrafico(): ReportePorEstadoItem[] {
+    return this.reportesPorEstado.filter((item) => item.estado.toLowerCase() !== 'duplicados');
+  }
+
+  private barChart(labels: string[], data: number[], label: string, color: string): ChartConfiguration<'bar'> {
+    return {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data,
+          backgroundColor: color,
+          borderRadius: 8,
+          maxBarThickness: 42
+        }]
+      },
+      options: this.axisChartOptions<'bar'>()
+    };
+  }
+
+  private horizontalBarChart(labels: string[], data: number[], label: string, color: string): ChartConfiguration<'bar'> {
+    return {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data,
+          backgroundColor: color,
+          borderRadius: 8,
+          maxBarThickness: 28
+        }]
+      },
+      options: {
+        ...this.axisChartOptions<'bar'>(),
+        indexAxis: 'y'
+      }
+    };
+  }
+
+  private lineChart(labels: string[], data: number[], label: string): ChartConfiguration<'line'> {
+    return {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data,
+          borderColor: '#0f766e',
+          backgroundColor: '#0f766e',
+          borderWidth: 3,
+          fill: false,
+          pointBackgroundColor: '#0f766e',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 5,
+          showLine: true,
+          tension: 0
+        }]
+      },
+      options: this.axisChartOptions<'line'>()
+    };
+  }
+
+  private doughnutChart(labels: string[], data: number[]): ChartConfiguration<'doughnut'> {
+    return {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: ['#2563eb', '#0f766e', '#f59e0b', '#dc2626', '#7c3aed', '#0891b2'],
+          borderColor: '#ffffff',
+          borderWidth: 3,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              boxWidth: 10,
+              color: '#475569',
+              font: { size: 11, weight: 700 }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.label}: ${context.parsed}`
+            }
+          }
+        }
+      }
+    };
+  }
+
+  private axisChartOptions<T extends 'bar' | 'line'>(): ChartOptions<T> {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          titleFont: { weight: 800 },
+          bodyFont: { weight: 700 }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: '#64748b', font: { size: 11, weight: 700 } }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: '#e2e8f0' },
+          ticks: { precision: 0, color: '#64748b', font: { size: 11, weight: 700 } }
+        }
+      }
+    } as unknown as ChartOptions<T>;
+  }
+
+  private upsertChart(chartId: string, canvas: HTMLCanvasElement, config: ChartConfiguration): void {
+    const context = canvas.getContext('2d');
+    if (!context) {
+      return;
+    }
+    this.charts.get(chartId)?.destroy();
+    this.charts.set(chartId, new Chart(context, config));
+  }
+
+  private destroyMissingCharts(activeChartIds: Set<string>): void {
+    Array.from(this.charts.keys()).forEach((chartId) => {
+      if (!activeChartIds.has(chartId)) {
+        this.charts.get(chartId)?.destroy();
+        this.charts.delete(chartId);
+      }
+    });
+  }
+
+  private destroyCharts(): void {
+    this.charts.forEach((chart) => chart.destroy());
+    this.charts.clear();
   }
 }

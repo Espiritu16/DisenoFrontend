@@ -1,10 +1,26 @@
 <div class="dashboard-container">
   <header class="dashboard-heading">
     <div>
-      <span class="dashboard-kicker">Dashboard</span>
-      <h2>Tablero de control</h2>
+      <h2>{{ tituloDashboard }}</h2>
     </div>
   </header>
+
+  <div class="analysis-switch" aria-label="Tipo de análisis del dashboard">
+    <button
+      type="button"
+      [class.active]="tipoAnalisis === 'descriptivo'"
+      [attr.aria-pressed]="tipoAnalisis === 'descriptivo'"
+      (click)="cambiarTipoAnalisis('descriptivo')">
+      Descriptivo
+    </button>
+    <button
+      type="button"
+      [class.active]="tipoAnalisis === 'predictivo'"
+      [attr.aria-pressed]="tipoAnalisis === 'predictivo'"
+      (click)="cambiarTipoAnalisis('predictivo')">
+      Predictivo
+    </button>
+  </div>
 
   <form class="filter-panel" [formGroup]="filtroForm">
     <div class="filter-summary">
@@ -49,7 +65,7 @@
 
   <div class="loading-box" *ngIf="loading">Cargando indicadores del backend...</div>
 
-  <section class="dashboard-grid descriptive-grid">
+  <section class="dashboard-grid descriptive-grid" *ngIf="tipoAnalisis === 'descriptivo'; else dashboardPredictivo">
     <article class="dashboard-card">
       <div class="card-header">
         <div>
@@ -57,7 +73,7 @@
         </div>
       </div>
 
-      <div class="chart-shell" *ngIf="reportesPorMes.length; else mesesVacios">
+      <div class="chart-shell" *ngIf="hayReportesDescriptivos; else mesesVacios">
         <canvas #dashboardChart data-chart-id="reportes-mes" aria-label="Gráfico de barras de reportes por mes"></canvas>
       </div>
       <ng-template #mesesVacios>
@@ -72,7 +88,7 @@
         </div>
       </div>
 
-      <div class="chart-shell" *ngIf="reportesPorMes.length; else tendenciaVacia">
+      <div class="chart-shell" *ngIf="hayReportesDescriptivos; else tendenciaVacia">
         <canvas #dashboardChart data-chart-id="tendencia-reportes" aria-label="Gráfico de línea de tendencia de reportes"></canvas>
       </div>
       <ng-template #tendenciaVacia>
@@ -102,7 +118,7 @@
         </div>
       </div>
 
-      <div class="chart-shell" *ngIf="usuariosReportantesPorMes.length; else usuariosMesVacios">
+      <div class="chart-shell" *ngIf="hayUsuariosReportantesDescriptivos; else usuariosMesVacios">
         <canvas #dashboardChart data-chart-id="usuarios-reportantes-mes" aria-label="Gráfico de barras de usuarios reportantes por mes"></canvas>
       </div>
       <ng-template #usuariosMesVacios>
@@ -140,5 +156,99 @@
       </ng-template>
     </article>
   </section>
+
+  <ng-template #dashboardPredictivo>
+    <section class="dashboard-grid predictive-grid">
+      <article class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Proyección octubre - diciembre</h3>
+          </div>
+        </div>
+
+        <div class="chart-shell" *ngIf="hayProyeccionPredictiva; else proyeccionVacia">
+          <canvas #dashboardChart data-chart-id="proyeccion-reportes" aria-label="Gráfico de barras de reportes proyectados"></canvas>
+        </div>
+        <ng-template #proyeccionVacia>
+          <p class="empty-state">No hay datos suficientes para proyectar reportes.</p>
+        </ng-template>
+      </article>
+
+      <article class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Tendencia proyectada</h3>
+          </div>
+        </div>
+
+        <div class="chart-shell" *ngIf="hayProyeccionPredictiva; else tendenciaProyectadaVacia">
+          <canvas #dashboardChart data-chart-id="tendencia-proyectada" aria-label="Gráfico de línea de tendencia proyectada"></canvas>
+        </div>
+        <ng-template #tendenciaProyectadaVacia>
+          <p class="empty-state">No hay tendencia predictiva disponible.</p>
+        </ng-template>
+      </article>
+
+      <article class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Riesgo operativo</h3>
+          </div>
+        </div>
+
+        <div class="chart-shell" *ngIf="zonasRiesgo.length; else riesgoOperativoVacio">
+          <canvas #dashboardChart data-chart-id="riesgo-operativo" aria-label="Gráfico circular de riesgo operativo"></canvas>
+        </div>
+        <ng-template #riesgoOperativoVacio>
+          <p class="empty-state">No hay niveles de riesgo calculados.</p>
+        </ng-template>
+      </article>
+
+      <article class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Comparación histórico vs proyectado</h3>
+          </div>
+        </div>
+
+        <div class="chart-shell" *ngIf="reportesPorMes.length || proyeccionMensual.length; else comparacionVacia">
+          <canvas #dashboardChart data-chart-id="historico-vs-proyectado" aria-label="Gráfico comparativo de reportes históricos y proyectados"></canvas>
+        </div>
+        <ng-template #comparacionVacia>
+          <p class="empty-state">No hay datos históricos ni proyectados para comparar.</p>
+        </ng-template>
+      </article>
+
+      <article class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Zonas con mayor riesgo</h3>
+          </div>
+        </div>
+
+        <div class="chart-shell" *ngIf="zonasRiesgo.length; else zonasRiesgoVacias">
+          <canvas #dashboardChart data-chart-id="riesgo-zonas" aria-label="Gráfico de barras horizontales de zonas con mayor riesgo"></canvas>
+        </div>
+        <ng-template #zonasRiesgoVacias>
+          <p class="empty-state">No hay zonas de riesgo proyectadas.</p>
+        </ng-template>
+      </article>
+
+      <article class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Categorías con crecimiento esperado</h3>
+          </div>
+        </div>
+
+        <div class="chart-shell" *ngIf="categoriasConCrecimiento.length; else categoriasCrecimientoVacias">
+          <canvas #dashboardChart data-chart-id="crecimiento-categorias" aria-label="Gráfico de categorías con crecimiento esperado"></canvas>
+        </div>
+        <ng-template #categoriasCrecimientoVacias>
+          <p class="empty-state">No hay categorías con crecimiento calculado.</p>
+        </ng-template>
+      </article>
+    </section>
+  </ng-template>
 
 </div>

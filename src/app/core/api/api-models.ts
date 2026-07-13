@@ -91,6 +91,7 @@ export interface TableroKpi {
   reportesPendientes: number;
   reportesEnProceso: number;
   reportesResueltos: number;
+  totalCiudadanosReportantes: number;
   casosAbiertos: number;
   casosResueltos: number;
   promedioHorasResolucion: number;
@@ -98,6 +99,7 @@ export interface TableroKpi {
   recomendacionAutomatica: string;
   actividadSemanal: ActividadSemanalItem[];
   reportesPorMes: ReportePorMesItem[];
+  usuariosReportantesPorMes: UsuarioReportantePorMesItem[];
   reportesPorCategoria: ReportePorCategoriaItem[];
   reportesPorEstado: ReportePorEstadoItem[];
   reportesPorZona: ReportePorZonaItem[];
@@ -120,6 +122,11 @@ export interface ReportePorZonaItem {
 }
 
 export interface ReportePorMesItem {
+  mes: string;
+  cantidad: number;
+}
+
+export interface UsuarioReportantePorMesItem {
   mes: string;
   cantidad: number;
 }

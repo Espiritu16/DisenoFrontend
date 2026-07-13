@@ -22,6 +22,7 @@ describe('ChatbotWidgetComponent', () => {
   } as AuthService;
 
   const router = {
+    url: '/inicio',
     navigateByUrl: vi.fn()
   } as unknown as Router;
 

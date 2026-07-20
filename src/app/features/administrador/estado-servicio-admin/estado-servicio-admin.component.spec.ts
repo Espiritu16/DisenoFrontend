@@ -7,6 +7,9 @@ import { EstadoServicioAdminComponent } from './estado-servicio-admin.component'
 describe('EstadoServicioAdminComponent', () => {
   const estadoServicio = {
     listarAlertas: vi.fn(() => of([])),
+    listarZonas: vi.fn(() => of([
+      { id: 2, nombre: 'San Miguel', codigo: 'SAN-MIGUEL' }
+    ])),
     crearAlerta: vi.fn(() => of({
       id: 1,
       tipo: 'INFORMATIVA',
@@ -29,6 +32,7 @@ describe('EstadoServicioAdminComponent', () => {
   it('bloquea publicacion cuando la fecha de fin es anterior al inicio', () => {
     const component = new EstadoServicioAdminComponent(estadoServicio, cdr);
     component.alertForm.setValue({
+      zonaId: null,
       tipo: 'CORTE_PROGRAMADO',
       severidad: 'MEDIA',
       estado: 'ACTIVA',
@@ -49,6 +53,7 @@ describe('EstadoServicioAdminComponent', () => {
     const component = new EstadoServicioAdminComponent(estadoServicio, cdr);
     component.alertForm.patchValue({
       tipo: 'INFORMATIVA',
+      zonaId: null,
       severidad: 'INFO',
       estado: 'ACTIVA',
       titulo: 'Prueba',
@@ -73,6 +78,7 @@ describe('EstadoServicioAdminComponent', () => {
       creadoEn: '2026-06-27T00:00:00'
     }];
     component.alertForm.setValue({
+      zonaId: 2,
       tipo: 'RIESGO_DESABASTECIMIENTO',
       severidad: 'ALTA',
       estado: 'ACTIVA',
@@ -96,6 +102,7 @@ describe('EstadoServicioAdminComponent', () => {
     component.crearAlerta();
 
     expect(vi.mocked((estadoServicio as any).crearAlerta)).toHaveBeenCalledWith({
+      zonaId: 2,
       tipo: 'RIESGO_DESABASTECIMIENTO',
       severidad: 'ALTA',
       estado: 'ACTIVA',
@@ -106,5 +113,16 @@ describe('EstadoServicioAdminComponent', () => {
     });
     expect(component.alertas[0].id).toBe(9);
     expect(component.success).toBe('Alerta publicada correctamente.');
+  });
+
+  it('carga zonas activas para seleccionar distrito', () => {
+    const component = new EstadoServicioAdminComponent(estadoServicio, cdr);
+
+    component.ngOnInit();
+
+    expect(vi.mocked((estadoServicio as any).listarZonas)).toHaveBeenCalledOnce();
+    expect(component.zonas).toEqual([
+      { id: 2, nombre: 'San Miguel', codigo: 'SAN-MIGUEL' }
+    ]);
   });
 });

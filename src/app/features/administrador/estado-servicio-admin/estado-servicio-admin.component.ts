@@ -13,11 +13,13 @@ import {
   AlertaServicioRequest,
   AlertaServicioResponse,
   ApiAlertSeverity,
-  ApiServiceAlertType
+  ApiServiceAlertType,
+  ZonaServicioResponse
 } from '../../../core/api/api-models';
 import { EstadoServicioService } from '../../../core/api/estado-servicio.service';
 
 type AlertForm = FormGroup<{
+  zonaId: FormControl<number | null>;
   tipo: FormControl<ApiServiceAlertType>;
   severidad: FormControl<ApiAlertSeverity>;
   estado: FormControl<'ACTIVA'>;
@@ -45,6 +47,14 @@ type AlertForm = FormGroup<{
       <div class="feedback success" *ngIf="success">{{ success }}</div>
 
       <form class="admin-status__form" [formGroup]="alertForm" (ngSubmit)="crearAlerta()">
+        <label>
+          Distrito / zona
+          <select formControlName="zonaId">
+            <option [ngValue]="null">Todas las zonas</option>
+            <option *ngFor="let zona of zonas" [ngValue]="zona.id">{{ zona.nombre }}</option>
+          </select>
+          <small class="field-hint">Usa "Todas las zonas" para una alerta general.</small>
+        </label>
         <label>
           Tipo
           <select formControlName="tipo" required>
@@ -146,6 +156,7 @@ type AlertForm = FormGroup<{
     .admin-status__form input[aria-invalid="true"], .admin-status__form textarea[aria-invalid="true"] { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, .12); }
     .admin-status__form textarea, .admin-status__form button { grid-column: 1 / -1; }
     .field-error { color: #b91c1c; font-size: .8rem; font-weight: 800; }
+    .field-hint { color: #64748b; font-size: .78rem; font-weight: 700; }
     .btn-primary { min-height: 44px; border: 0; border-radius: .5rem; background: #2563eb; color: #fff; font-weight: 900; cursor: pointer; }
     .btn-primary:disabled { opacity: .65; cursor: progress; }
     .feedback { border-radius: .5rem; padding: .8rem 1rem; font-weight: 800; }
@@ -176,6 +187,7 @@ export class EstadoServicioAdminComponent implements OnInit {
   ];
 
   readonly alertForm: AlertForm = new FormGroup({
+    zonaId: new FormControl<number | null>(null),
     tipo: new FormControl<ApiServiceAlertType>('INFORMATIVA', { nonNullable: true, validators: [Validators.required] }),
     severidad: new FormControl<ApiAlertSeverity>('INFO', { nonNullable: true }),
     estado: new FormControl<'ACTIVA'>('ACTIVA', { nonNullable: true }),
@@ -185,6 +197,7 @@ export class EstadoServicioAdminComponent implements OnInit {
     finalizaEn: new FormControl('', { nonNullable: true, validators: [Validators.required] })
   }, { validators: [rangoFechasValido] });
   alertas: AlertaServicioResponse[] = [];
+  zonas: ZonaServicioResponse[] = [];
   loading = false;
   submitting = false;
   error = '';
@@ -193,6 +206,7 @@ export class EstadoServicioAdminComponent implements OnInit {
   constructor(private estadoServicio: EstadoServicioService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    this.cargarZonas();
     this.cargarAlertas();
   }
 
@@ -218,6 +232,9 @@ export class EstadoServicioAdminComponent implements OnInit {
       iniciaEn: values.iniciaEn || undefined,
       finalizaEn: values.finalizaEn || undefined
     };
+    if (values.zonaId !== null) {
+      payload.zonaId = values.zonaId;
+    }
     this.submitting = true;
     this.estadoServicio.crearAlerta(payload).subscribe({
       next: (alertaCreada) => {
@@ -225,6 +242,7 @@ export class EstadoServicioAdminComponent implements OnInit {
         this.success = 'Alerta publicada correctamente.';
         this.alertas = [alertaCreada, ...this.alertas.filter((alerta) => alerta.id !== alertaCreada.id)];
         this.alertForm.reset({
+          zonaId: null,
           tipo: 'INFORMATIVA',
           severidad: 'INFO',
           estado: 'ACTIVA',
@@ -254,6 +272,20 @@ export class EstadoServicioAdminComponent implements OnInit {
       error: (error: unknown) => {
         this.loading = false;
         this.error = apiErrorMessage(error);
+        this.scheduleDetectChanges();
+      }
+    });
+  }
+
+  private cargarZonas(): void {
+    this.estadoServicio.listarZonas().subscribe({
+      next: (zonas) => {
+        this.zonas = zonas;
+        this.scheduleDetectChanges();
+      },
+      error: () => {
+        this.zonas = [];
+        this.error = 'No se pudieron cargar los distritos disponibles.';
         this.scheduleDetectChanges();
       }
     });

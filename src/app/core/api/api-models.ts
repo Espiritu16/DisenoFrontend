@@ -181,6 +181,12 @@ export interface AlertaServicioResponse {
   creadoEn: string;
 }
 
+export interface ZonaServicioResponse {
+  id: number;
+  nombre: string;
+  codigo: string;
+}
+
 export interface AlertaServicioRequest {
   zonaId?: number;
   tipo: ApiServiceAlertType;

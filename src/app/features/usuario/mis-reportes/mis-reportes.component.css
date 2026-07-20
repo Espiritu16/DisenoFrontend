@@ -9,6 +9,14 @@
   --aqua-ink: #0b1226;
   --aqua-line: #dce4ef;
   --aqua-scribble: #acd1fb;
+  --aqua-warning: #c2410c;
+  --aqua-warning-soft: #fff7ed;
+  --aqua-success: #166534;
+  --aqua-success-soft: #f0fdf4;
+  --aqua-danger: #b91c1c;
+  --aqua-danger-soft: #fef2f2;
+  --aqua-escalated: #6d28d9;
+  --aqua-escalated-soft: #f5f3ff;
 
   min-height: 100vh;
   overflow: hidden;
@@ -265,9 +273,34 @@
   font-weight: 850;
 }
 
-.reports-stat--process strong,
+.reports-stat--pending {
+  border-color: #fed7aa;
+  background: var(--aqua-warning-soft);
+}
+
+.reports-stat--pending span,
 .reports-stat--pending strong {
+  color: var(--aqua-warning);
+}
+
+.reports-stat--process {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.reports-stat--process span,
+.reports-stat--process strong {
   color: var(--aqua-blue);
+}
+
+.reports-stat--done {
+  border-color: #bbf7d0;
+  background: var(--aqua-success-soft);
+}
+
+.reports-stat--done span,
+.reports-stat--done strong {
+  color: var(--aqua-success);
 }
 
 .reports-link {
@@ -319,14 +352,49 @@
   margin: 0;
 }
 
-.reports-card > strong {
+.reports-status {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
   border-radius: 999px;
   padding: 8px 12px;
   color: var(--aqua-blue);
   background: #eff6ff;
   font-size: 12px;
   font-weight: 850;
+  white-space: nowrap;
+}
+
+.reports-status--pendiente {
+  color: var(--aqua-warning);
+  background: var(--aqua-warning-soft);
+}
+
+.reports-status--en-proceso {
+  color: var(--aqua-blue);
+  background: #eff6ff;
+}
+
+.reports-status--resuelto {
+  color: var(--aqua-success);
+  background: var(--aqua-success-soft);
+}
+
+.reports-status--escalado {
+  color: var(--aqua-escalated);
+  background: var(--aqua-escalated-soft);
+}
+
+.reports-status--rechazado {
+  color: var(--aqua-danger);
+  background: var(--aqua-danger-soft);
+}
+
+.reports-status--duplicado {
+  color: #475569;
+  background: #f1f5f9;
 }
 
 .reports-card--active {

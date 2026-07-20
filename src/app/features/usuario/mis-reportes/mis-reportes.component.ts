@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { apiErrorMessage } from '../../../core/api/api-error';
+import { reportStatusClass } from '../../../core/api/api-mappers';
 import { ApiReportStatus, DetalleTrazabilidadReporte, HistorialCambio, ReporteResponse } from '../../../core/api/api-models';
 import { ReportesService } from '../../../core/api/reportes.service';
 import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
@@ -86,6 +87,10 @@ export class MisReportesComponent implements OnInit, OnDestroy {
       ESCALADO: 'Escalado'
     };
     return labels[status];
+  }
+
+  statusClass(status: ApiReportStatus): string {
+    return reportStatusClass(status);
   }
 
   formatDate(value: string): string {

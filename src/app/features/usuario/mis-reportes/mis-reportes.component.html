@@ -88,7 +88,9 @@
               <h3>{{ report.tipo }}</h3>
               <p>{{ report.zona }} · {{ formatDate(report.fechaCreacion) }}</p>
             </div>
-            <strong>{{ statusLabel(report.estado) }}</strong>
+            <strong class="reports-status" [ngClass]="'reports-status--' + statusClass(report.estado)">
+              {{ statusLabel(report.estado) }}
+            </strong>
           </button>
         </div>
       </section>
@@ -101,7 +103,11 @@
           <dl class="reports-detail__grid">
             <div>
               <dt>Estado</dt>
-              <dd>{{ statusLabel(selectedReport.estado) }}</dd>
+              <dd>
+                <span class="reports-status" [ngClass]="'reports-status--' + statusClass(selectedReport.estado)">
+                  {{ statusLabel(selectedReport.estado) }}
+                </span>
+              </dd>
             </div>
             <div>
               <dt>Distrito</dt>

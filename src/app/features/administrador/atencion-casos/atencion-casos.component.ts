@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ApiCaseStatus, CasoResponse } from '../../../core/api/api-models';
+import { ApiCasePriority, ApiCaseStatus, CasoResponse } from '../../../core/api/api-models';
 import { CasosService } from '../../../core/api/casos.service';
 import { UploadService } from '../../../core/api/upload.service';
 import { apiErrorMessage } from '../../../core/api/api-error';
@@ -23,6 +23,12 @@ export class AtencionCasosComponent implements OnInit {
   message = '';
   loading = false;
   saving = false;
+  searchTerm = '';
+  estadoFilter: '' | ApiCaseStatus = '';
+  prioridadFilter: '' | ApiCasePriority = '';
+  mesFilter = '';
+  fechaDesde = '';
+  fechaHasta = '';
 
   constructor(
     private casosService: CasosService,
@@ -39,9 +45,15 @@ export class AtencionCasosComponent implements OnInit {
     this.casosService.listar().subscribe({
       next: (casos) => {
         this.casos = this.ordenarCasosRecientes(casos);
-        if (!this.selectedCaso && this.casos.length) this.onSelectCaso(this.casos[0]);
+        const visibles = this.casosFiltrados;
+        const seleccionadoVigente = this.selectedCaso
+          ? visibles.find((caso) => caso.id === this.selectedCaso!.id)
+          : null;
+        this.selectedCaso = seleccionadoVigente ?? visibles[0] ?? null;
         if (this.selectedCaso) {
-          this.selectedCaso = this.casos.find((caso) => caso.id === this.selectedCaso!.id) ?? this.selectedCaso;
+          this.estado = this.selectedCaso.estado;
+          this.observaciones = this.selectedCaso.observaciones ?? '';
+          this.evidenciaFiles = [];
         }
         this.loading = false;
         this.scheduleDetectChanges();
@@ -54,12 +66,78 @@ export class AtencionCasosComponent implements OnInit {
     });
   }
 
+  get casosFiltrados(): CasoResponse[] {
+    const term = this.normalizar(this.searchTerm);
+    const desde = this.fechaDesde ? new Date(`${this.fechaDesde}T00:00:00`).getTime() : null;
+    const hasta = this.fechaHasta ? new Date(`${this.fechaHasta}T23:59:59`).getTime() : null;
+
+    return this.casos.filter((caso) => {
+      const fecha = this.fechaReferenciaMs(caso);
+      const texto = this.normalizar([
+        caso.id,
+        `REP-${caso.reporteId}`,
+        caso.reporteTipo,
+        caso.reporteZona,
+        caso.reporteDescripcion,
+        caso.responsableId,
+        this.statusLabel(caso.estado),
+        caso.prioridad
+      ].filter(Boolean).join(' '));
+
+      return (!term || texto.includes(term))
+        && (!this.estadoFilter || caso.estado === this.estadoFilter)
+        && (!this.prioridadFilter || caso.prioridad === this.prioridadFilter)
+        && (!this.mesFilter || this.mesClave(caso) === this.mesFilter)
+        && (desde === null || fecha >= desde)
+        && (hasta === null || fecha <= hasta);
+    });
+  }
+
+  get mesesDisponibles(): { value: string; label: string }[] {
+    const meses = new Map<string, string>();
+    this.casos.forEach((caso) => {
+      const fecha = this.fechaReferencia(caso);
+      if (!fecha) return;
+      const value = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+      const label = new Intl.DateTimeFormat('es-PE', { month: 'long', year: 'numeric' }).format(fecha);
+      meses.set(value, this.capitalize(label));
+    });
+    return [...meses.entries()]
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([value, label]) => ({ value, label }));
+  }
+
   onSelectCaso(caso: CasoResponse) {
     this.selectedCaso = caso;
     this.estado = caso.estado;
     this.observaciones = caso.observaciones ?? '';
     this.evidenciaFiles = [];
     this.scheduleDetectChanges();
+  }
+
+  onFiltrosChange(): void {
+    const filtrados = this.casosFiltrados;
+    if (this.selectedCaso && filtrados.some((caso) => caso.id === this.selectedCaso!.id)) {
+      this.scheduleDetectChanges();
+      return;
+    }
+    this.selectedCaso = filtrados[0] ?? null;
+    if (this.selectedCaso) {
+      this.estado = this.selectedCaso.estado;
+      this.observaciones = this.selectedCaso.observaciones ?? '';
+      this.evidenciaFiles = [];
+    }
+    this.scheduleDetectChanges();
+  }
+
+  onLimpiarFiltros(): void {
+    this.searchTerm = '';
+    this.estadoFilter = '';
+    this.prioridadFilter = '';
+    this.mesFilter = '';
+    this.fechaDesde = '';
+    this.fechaHasta = '';
+    this.onFiltrosChange();
   }
 
   onFileChange(event: Event): void {
@@ -118,11 +196,43 @@ export class AtencionCasosComponent implements OnInit {
   }
 
   private ordenarCasosRecientes(casos: CasoResponse[]): CasoResponse[] {
-    return [...casos].sort((a, b) => this.fechaMs(b.fechaAsignacion) - this.fechaMs(a.fechaAsignacion));
+    return [...casos].sort((a, b) => {
+      const fechaDiff = this.fechaReferenciaMs(b) - this.fechaReferenciaMs(a);
+      return fechaDiff || b.id - a.id;
+    });
   }
 
   private fechaMs(fecha: string | undefined): number {
     return fecha ? new Date(fecha).getTime() : 0;
+  }
+
+  private fechaReferencia(caso: CasoResponse): Date | null {
+    const fecha = caso.reporteFechaCreacion || caso.fechaAsignacion;
+    if (!fecha) return null;
+    const date = new Date(fecha);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  private fechaReferenciaMs(caso: CasoResponse): number {
+    return this.fechaReferencia(caso)?.getTime() ?? 0;
+  }
+
+  private mesClave(caso: CasoResponse): string {
+    const fecha = this.fechaReferencia(caso);
+    if (!fecha) return '';
+    return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  private normalizar(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  private capitalize(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
   onCerrarCaso() {

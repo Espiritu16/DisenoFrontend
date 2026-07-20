@@ -60,6 +60,10 @@ export interface ReporteRequest {
 export interface CasoResponse {
   id: number;
   reporteId: number;
+  reporteTipo?: string;
+  reporteZona?: string;
+  reporteDescripcion?: string;
+  reporteFechaCreacion?: string;
   responsableId: number;
   prioridad: ApiCasePriority;
   estado: ApiCaseStatus;

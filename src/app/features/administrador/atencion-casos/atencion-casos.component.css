@@ -117,7 +117,7 @@
 .casos-table-section {
   min-width: 0;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto auto minmax(0, 1fr);
   max-height: calc(100vh - 10.5rem);
   padding: 1rem;
 }
@@ -154,6 +154,68 @@
   font-weight: 900;
 }
 
+.casos-filters {
+  display: grid;
+  grid-template-columns: minmax(15rem, 1.6fr) repeat(3, minmax(8.5rem, 1fr)) repeat(2, minmax(9.5rem, 1fr)) auto;
+  gap: .75rem;
+  align-items: end;
+  padding-bottom: .9rem;
+}
+
+.filter-field {
+  display: grid;
+  gap: .35rem;
+  min-width: 0;
+}
+
+.filter-field span {
+  color: #607087;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.filter-field input,
+.filter-field select {
+  width: 100%;
+  min-height: 2.55rem;
+  border: 1px solid var(--admin-line);
+  border-radius: .55rem;
+  background: #ffffff;
+  color: var(--admin-ink);
+  padding: .5rem .7rem;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 750;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+  outline: none;
+  border-color: #9fc0ff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+
+.btn-clear {
+  min-height: 2.55rem;
+  border: 1px solid var(--admin-line);
+  border-radius: .55rem;
+  background: #ffffff;
+  color: var(--admin-muted);
+  padding: .5rem .85rem;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.btn-clear:hover {
+  border-color: #bcd3ff;
+  background: var(--admin-soft);
+  color: var(--admin-blue);
+}
+
 .feedback-info {
   margin: 0 0 .8rem;
   padding: .85rem 1rem;
@@ -174,7 +236,7 @@
 
 .casos-table {
   width: 100%;
-  min-width: 720px;
+  min-width: 860px;
   border-collapse: collapse;
 }
 
@@ -217,6 +279,14 @@
 .caso-row td {
   color: var(--admin-ink);
   font-size: .88rem;
+}
+
+.table-muted {
+  display: block;
+  margin-top: .2rem;
+  color: var(--admin-muted);
+  font-size: .78rem;
+  font-weight: 800;
 }
 
 .col-id {
@@ -369,6 +439,10 @@
     grid-template-columns: 1fr;
   }
 
+  .casos-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .casos-detail-section {
     max-height: none;
   }
@@ -392,6 +466,10 @@
   }
 
   .action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .casos-filters {
     grid-template-columns: 1fr;
   }
 }

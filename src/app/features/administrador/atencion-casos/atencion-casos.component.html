@@ -13,30 +13,89 @@
     <main class="casos-table-section">
       <div class="bandeja-header">
         <h2 class="bandeja-title">Bandeja de Entrada</h2>
-        <span class="casos-count">{{ casos.length }} Activos</span>
+        <span class="casos-count">{{ casosFiltrados.length }} de {{ casos.length }} casos</span>
       </div>
+
+      <section class="casos-filters" aria-label="Filtros de casos">
+        <label class="filter-field filter-field--search">
+          <span>Buscar</span>
+          <input
+            type="search"
+            placeholder="REP, zona, tipo, responsable..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onFiltrosChange()"
+          />
+        </label>
+
+        <label class="filter-field">
+          <span>Estado</span>
+          <select [(ngModel)]="estadoFilter" (ngModelChange)="onFiltrosChange()">
+            <option value="">Todos</option>
+            <option value="EN_PROCESO">En proceso</option>
+            <option value="RESUELTO">Resuelto</option>
+            <option value="ESCALADO">Escalado</option>
+            <option value="RECHAZADO">Rechazado</option>
+          </select>
+        </label>
+
+        <label class="filter-field">
+          <span>Prioridad</span>
+          <select [(ngModel)]="prioridadFilter" (ngModelChange)="onFiltrosChange()">
+            <option value="">Todas</option>
+            <option value="ALTA">Alta</option>
+            <option value="MEDIA">Media</option>
+            <option value="BAJA">Baja</option>
+          </select>
+        </label>
+
+        <label class="filter-field">
+          <span>Mes</span>
+          <select [(ngModel)]="mesFilter" (ngModelChange)="onFiltrosChange()">
+            <option value="">Todos</option>
+            <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
+          </select>
+        </label>
+
+        <label class="filter-field">
+          <span>Desde</span>
+          <input type="date" [(ngModel)]="fechaDesde" (ngModelChange)="onFiltrosChange()" />
+        </label>
+
+        <label class="filter-field">
+          <span>Hasta</span>
+          <input type="date" [(ngModel)]="fechaHasta" (ngModelChange)="onFiltrosChange()" />
+        </label>
+
+        <button class="btn-clear" type="button" (click)="onLimpiarFiltros()">Limpiar</button>
+      </section>
 
       <div class="feedback-info" *ngIf="loading">Cargando casos...</div>
       <div class="feedback-info" *ngIf="!loading && !casos.length">No hay casos operativos registrados.</div>
+      <div class="feedback-info" *ngIf="!loading && casos.length && !casosFiltrados.length">No hay casos que coincidan con los filtros.</div>
 
-      <div class="table-wrapper">
+      <div class="table-wrapper" *ngIf="casosFiltrados.length">
         <table class="casos-table">
           <thead>
             <tr class="table-header">
               <th class="col-id">ID</th>
               <th class="col-zona">REPORTE</th>
+              <th class="col-zona">TIPO / ZONA</th>
               <th class="col-estado">ESTADO</th>
               <th class="col-prioridad">PRIORIDAD</th>
-              <th class="col-fecha">ASIGNACIÓN</th>
+              <th class="col-fecha">FECHA REPORTE</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="caso-row" *ngFor="let caso of casos" [class.row-active]="selectedCaso?.id === caso.id" (click)="onSelectCaso(caso)">
+            <tr class="caso-row" *ngFor="let caso of casosFiltrados" [class.row-active]="selectedCaso?.id === caso.id" (click)="onSelectCaso(caso)">
               <td class="col-id"><strong>#{{ caso.id }}</strong></td>
               <td class="col-zona">REP-{{ caso.reporteId }}</td>
+              <td class="col-zona">
+                <strong>{{ caso.reporteTipo || 'Incidencia' }}</strong>
+                <span class="table-muted">{{ caso.reporteZona || 'Zona no registrada' }}</span>
+              </td>
               <td class="col-estado"><span class="estado-badge" [ngClass]="'estado-' + statusClass(caso.estado)">{{ statusLabel(caso.estado) }}</span></td>
               <td class="col-prioridad"><span class="prioridad-badge" [ngClass]="'prioridad-' + priorityClass(caso.prioridad)">{{ caso.prioridad }}</span></td>
-              <td class="col-fecha">{{ caso.fechaAsignacion | date:'short' }}</td>
+              <td class="col-fecha">{{ (caso.reporteFechaCreacion || caso.fechaAsignacion) | date:'short' }}</td>
             </tr>
           </tbody>
         </table>
@@ -53,7 +112,11 @@
       <div class="case-info-block">
         <div class="info-row">
           <span class="info-label">Reporte origen:</span>
-          <p class="info-value">REP-{{ selectedCaso.reporteId }}</p>
+          <p class="info-value">REP-{{ selectedCaso.reporteId }} · {{ selectedCaso.reporteTipo || 'Incidencia' }}</p>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Zona:</span>
+          <p class="info-value">{{ selectedCaso.reporteZona || 'No registrada' }}</p>
         </div>
         <div class="info-row">
           <span class="info-label">Responsable:</span>

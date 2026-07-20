@@ -8,6 +8,9 @@ describe('EstadoServicioComponent', () => {
   const estadoServicioService = {
     listarAlertas: vi.fn()
   } as unknown as EstadoServicioService;
+  const cdr = {
+    detectChanges: vi.fn()
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -15,7 +18,7 @@ describe('EstadoServicioComponent', () => {
 
   it('consulta alertas publicas aunque no exista sesion activa', () => {
     vi.mocked((estadoServicioService as any).listarAlertas).mockReturnValue(of([]));
-    const component = new EstadoServicioComponent(estadoServicioService);
+    const component = new EstadoServicioComponent(estadoServicioService, cdr as any);
 
     component.ngOnInit();
 
@@ -25,7 +28,7 @@ describe('EstadoServicioComponent', () => {
   });
 
   it('formatea el inicio y fin de una alerta para mostrarlo al ciudadano', () => {
-    const component = new EstadoServicioComponent(estadoServicioService);
+    const component = new EstadoServicioComponent(estadoServicioService, cdr as any);
 
     const rango = component.rangoAlerta({
       id: 1,

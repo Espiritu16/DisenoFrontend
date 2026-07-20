@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import { AlertaServicioResponse, ApiAlertSeverity } from '../../../core/api/api-models';
@@ -23,7 +23,7 @@ export class EstadoServicioComponent implements OnInit {
   loadingAlertas = false;
   alertasError = '';
 
-  constructor(private estadoServicioService: EstadoServicioService) {}
+  constructor(private estadoServicioService: EstadoServicioService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.cargarAlertas();
@@ -69,12 +69,14 @@ export class EstadoServicioComponent implements OnInit {
         this.loadingAlertas = false;
         this.alertas = alertas;
         this.actualizarMetricasAlertas();
+        this.scheduleChangeDetection();
       },
       error: (error: unknown) => {
         this.loadingAlertas = false;
         this.alertas = [];
         this.alertasError = apiErrorMessage(error);
         this.actualizarMetricasAlertas();
+        this.scheduleChangeDetection();
       }
     });
   }
@@ -93,5 +95,9 @@ export class EstadoServicioComponent implements OnInit {
       hour: 'numeric',
       minute: '2-digit'
     }).format(new Date(value));
+  }
+
+  private scheduleChangeDetection(): void {
+    queueMicrotask(() => this.cdr.detectChanges());
   }
 }

@@ -42,12 +42,7 @@ interface ValidationResult {
 })
 export class ReportarComponent implements AfterViewInit, OnDestroy {
   @ViewChild('districtMenu') districtMenu?: ElementRef<HTMLElement>;
-  @ViewChild('reportWorkspace') reportWorkspace?: ElementRef<HTMLElement>;
-  @ViewChild('districtTrigger') districtTrigger?: ElementRef<HTMLButtonElement>;
-  @ViewChild('mapOpenButton') mapOpenButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('direccionInput') direccionInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('descriptionInput') descriptionInput?: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('evidenceArea') evidenceArea?: ElementRef<HTMLElement>;
   @ViewChild('mapPanel') mapPanel?: ElementRef<HTMLElement>;
 
   distrito = '';
@@ -91,7 +86,6 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
   private limaGeometry?: GeoJSON.Polygon | GeoJSON.MultiPolygon;
   private lastValid = { lat: this.lat, lng: this.lng };
   private reverseRequestId = 0;
-  private scrollTimeoutId?: ReturnType<typeof setTimeout>;
   private readonly mapId = 'report-map';
 
   private readonly handleDocumentWheel = (event: WheelEvent): void => {
@@ -137,9 +131,6 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
     document.removeEventListener('wheel', this.handleDocumentWheel, {
       capture: true
     });
-    if (this.scrollTimeoutId) {
-      clearTimeout(this.scrollTimeoutId);
-    }
     this.mapPanel?.nativeElement.removeEventListener('wheel', this.handleMapPanelWheel);
     this.actualizarClaseMapaAbierto(false);
     this.revokeEvidenceUrls();
@@ -166,7 +157,6 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
   toggleDistrictDropdown(event: MouseEvent): void {
     event.stopPropagation();
     this.districtDropdownOpen = !this.districtDropdownOpen;
-    this.ensureElementVisible(this.districtTrigger?.nativeElement);
   }
 
   selectDistrict(district: string, event: MouseEvent): void {
@@ -189,31 +179,10 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
 
   confirmMapLocation(): void {
     this.closeMapSelector();
-    window.setTimeout(() => {
-      this.direccionInput?.nativeElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    }, 120);
   }
 
   focusReportWorkspace(): void {
-    if (this.scrollTimeoutId) {
-      clearTimeout(this.scrollTimeoutId);
-    }
-
-    this.scrollTimeoutId = setTimeout(() => {
-      const workspace = this.reportWorkspace?.nativeElement;
-      if (typeof workspace?.scrollIntoView !== 'function') {
-        return;
-      }
-
-      const esMovil = typeof window !== 'undefined' && window.innerWidth <= 760;
-      workspace.scrollIntoView({
-        behavior: 'smooth',
-        block: esMovil ? 'start' : 'center'
-      });
-    });
+    return;
   }
 
   onEvidenceChange(event: Event): void {
@@ -254,10 +223,6 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
     this.clearValidationIfResolved('description');
   }
 
-  ensureControlVisible(event: FocusEvent): void {
-    this.ensureElementVisible(event.target as HTMLElement);
-  }
-
   openEvidencePreview(image: EvidenceImage): void {
     this.previewImage = image;
   }
@@ -271,7 +236,6 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
     this.submitMessage = validation.message;
     this.validationTarget = validation.target;
     if (validation.message) {
-      this.focusValidationTarget(validation.target);
       return;
     }
     this.validationTarget = undefined;
@@ -292,7 +256,6 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
     if (!this.auth.token) {
       this.submitMessage = 'Inicia sesión para enviar el reporte y hacer seguimiento.';
       this.validationTarget = undefined;
-      this.focusReportWorkspace();
       return;
     }
 
@@ -302,7 +265,6 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
     if (validation.message) {
       this.reportStep = 'form';
       this.scheduleDetectChanges();
-      window.setTimeout(() => this.focusValidationTarget(validation.target));
       return;
     }
 
@@ -429,63 +391,6 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
 
   private scheduleDetectChanges(): void {
     queueMicrotask(() => this.cdr.detectChanges());
-  }
-
-  private focusValidationTarget(target?: ValidationTarget): void {
-    const targetElement = this.elementForValidationTarget(target);
-    if (!targetElement) {
-      this.focusReportWorkspace();
-      return;
-    }
-
-    this.ensureElementVisible(targetElement);
-    window.setTimeout(() => {
-      if (targetElement instanceof HTMLButtonElement || targetElement instanceof HTMLTextAreaElement) {
-        targetElement.focus({ preventScroll: true });
-      }
-      this.ensureElementVisible(targetElement, 0);
-    }, 260);
-  }
-
-  private elementForValidationTarget(target?: ValidationTarget): HTMLElement | undefined {
-    switch (target) {
-      case 'district':
-        return this.districtTrigger?.nativeElement;
-      case 'location':
-        return this.mapOpenButton?.nativeElement ?? this.direccionInput?.nativeElement;
-      case 'description':
-        return this.descriptionInput?.nativeElement;
-      case 'evidence':
-        return this.evidenceArea?.nativeElement;
-      default:
-        return undefined;
-    }
-  }
-
-  private ensureElementVisible(element?: HTMLElement, customDelay?: number): void {
-    if (!element) {
-      return;
-    }
-
-    const delay = customDelay ?? (this.isMobileViewport() ? 320 : 0);
-    window.setTimeout(() => {
-      if (this.isMobileViewport()) {
-        const top = element.getBoundingClientRect().top + window.scrollY - 118;
-        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-        return;
-      }
-
-      if (typeof element.scrollIntoView === 'function') {
-        element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-      }
-    }, delay);
-  }
-
-  private isMobileViewport(): boolean {
-    return typeof window !== 'undefined' && window.innerWidth <= 760;
   }
 
   private actualizarClaseMapaAbierto(abierto: boolean): void {

@@ -42,7 +42,6 @@
                 aria-controls="report-district-list"
                 [attr.aria-invalid]="fieldHasError('district')"
                 (click)="toggleDistrictDropdown($event)"
-                (focus)="ensureControlVisible($event)"
               >
                 <span [class.report-select__placeholder]="!distrito">
                   {{ distrito || 'Selecciona distrito' }}
@@ -106,7 +105,6 @@
               class="report-map-open"
               [attr.aria-invalid]="fieldHasError('location')"
               (click)="openMapSelector()"
-              (focus)="ensureControlVisible($event)"
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 21s6-5.2 6-11a6 6 0 0 0-12 0c0 5.8 6 11 6 11Z" />
@@ -143,7 +141,6 @@
               type="text"
               [(ngModel)]="referencia"
               placeholder="Ej: frente al parque central"
-              (focus)="ensureControlVisible($event)"
             />
           </div>
 
@@ -165,7 +162,6 @@
               rows="5"
               placeholder="Describe lo que está ocurriendo..."
               [attr.aria-invalid]="fieldHasError('description')"
-              (focus)="ensureControlVisible($event)"
               (ngModelChange)="onDescriptionInput()"
             ></textarea>
           </div>

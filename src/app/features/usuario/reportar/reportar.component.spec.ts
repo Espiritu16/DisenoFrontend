@@ -106,7 +106,7 @@ describe('ReportarComponent', () => {
     expect(document.body.classList.contains('aqua-map-open')).toBe(false);
   });
 
-  it('confirma ubicacion y vuelve a la direccion detectada sin abrir teclado', () => {
+  it('confirma ubicacion sin desplazar la pagina ni abrir teclado', () => {
     vi.useFakeTimers();
     try {
       const fixture = TestBed.createComponent(ReportarComponent);
@@ -129,7 +129,7 @@ describe('ReportarComponent', () => {
       expect(component.mapSheetOpen).toBe(false);
       expect(document.body.classList.contains('aqua-map-open')).toBe(false);
       expect(focusSpy).not.toHaveBeenCalled();
-      expect(scrollSpy).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
+      expect(scrollSpy).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }
@@ -224,7 +224,7 @@ describe('ReportarComponent', () => {
     expect(compiled.textContent).toContain('Las fotos aparecerán aquí.');
   });
 
-  it('envia la validacion al campo exacto con problema', () => {
+  it('muestra la validacion sin desplazar ni enfocar el campo con problema', () => {
     vi.useFakeTimers();
     try {
       const fixture = TestBed.createComponent(ReportarComponent);
@@ -244,8 +244,8 @@ describe('ReportarComponent', () => {
       vi.runAllTimers();
 
       expect(fixture.componentInstance.submitMessage).toBe('Selecciona el distrito donde ocurre la incidencia.');
-      expect(scrollSpy).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
-      expect(focusSpy).toHaveBeenCalledWith(expect.objectContaining({ preventScroll: true }));
+      expect(scrollSpy).not.toHaveBeenCalled();
+      expect(focusSpy).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }
@@ -273,7 +273,7 @@ describe('ReportarComponent', () => {
     expect(validDistrictField?.classList.contains('report-field--valid')).toBe(true);
   });
 
-  it('envia cada validacion pendiente a su control correspondiente', () => {
+  it('muestra cada validacion pendiente sin mover automaticamente la vista', () => {
     vi.useFakeTimers();
     try {
       const locationFixture = TestBed.createComponent(ReportarComponent);
@@ -289,8 +289,8 @@ describe('ReportarComponent', () => {
       vi.runAllTimers();
 
       expect(locationComponent.submitMessage).toBe('Selecciona el punto exacto en el mapa.');
-      expect(mapScrollSpy).toHaveBeenCalled();
-      expect(mapFocusSpy).toHaveBeenCalledWith(expect.objectContaining({ preventScroll: true }));
+      expect(mapScrollSpy).not.toHaveBeenCalled();
+      expect(mapFocusSpy).not.toHaveBeenCalled();
 
       const descriptionFixture = TestBed.createComponent(ReportarComponent);
       const descriptionComponent = descriptionFixture.componentInstance;
@@ -306,8 +306,8 @@ describe('ReportarComponent', () => {
       vi.runAllTimers();
 
       expect(descriptionComponent.submitMessage).toBe('Describe brevemente el problema observado.');
-      expect(descriptionScrollSpy).toHaveBeenCalled();
-      expect(descriptionFocusSpy).toHaveBeenCalledWith(expect.objectContaining({ preventScroll: true }));
+      expect(descriptionScrollSpy).not.toHaveBeenCalled();
+      expect(descriptionFocusSpy).not.toHaveBeenCalled();
 
       const evidenceFixture = TestBed.createComponent(ReportarComponent);
       const evidenceComponent = evidenceFixture.componentInstance;
@@ -323,7 +323,7 @@ describe('ReportarComponent', () => {
       vi.runAllTimers();
 
       expect(evidenceComponent.submitMessage).toBe('Adjunta al menos una foto de evidencia.');
-      expect(evidenceScrollSpy).toHaveBeenCalled();
+      expect(evidenceScrollSpy).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }

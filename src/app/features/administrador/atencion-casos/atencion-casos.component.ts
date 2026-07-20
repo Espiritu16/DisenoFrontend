@@ -155,11 +155,6 @@ export class AtencionCasosComponent implements OnInit {
       this.scheduleDetectChanges();
       return;
     }
-    if (this.estado === 'RESUELTO' && !this.evidenciaFiles.length && !this.selectedCaso.evidenciaCierre) {
-      this.message = 'Debes adjuntar evidencia para cerrar como Resuelto.';
-      this.scheduleDetectChanges();
-      return;
-    }
     this.saving = true;
     this.message = '';
     const guardar = (urls: string[]) => {

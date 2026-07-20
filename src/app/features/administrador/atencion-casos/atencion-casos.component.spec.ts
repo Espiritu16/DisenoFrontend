@@ -7,7 +7,8 @@ import { AtencionCasosComponent } from './atencion-casos.component';
 
 describe('AtencionCasosComponent', () => {
   const casosService = {
-    listar: vi.fn()
+    listar: vi.fn(),
+    actualizarEstado: vi.fn()
   } as unknown as CasosService;
   const uploadService = {
     subirCasos: vi.fn()
@@ -61,6 +62,30 @@ describe('AtencionCasosComponent', () => {
 
     expect(fecha).toContain('/2026');
     expect(fecha).toContain('10:00');
+  });
+
+  it('permite guardar estado resuelto sin adjuntar evidencia', () => {
+    vi.mocked((casosService as any).listar).mockReturnValue(of([caso(8, '2026-09-15T10:00:00', 'Ate', 'Baja presión')]));
+    vi.mocked((casosService as any).actualizarEstado).mockReturnValue(of({
+      ...caso(8, '2026-09-15T10:00:00', 'Ate', 'Baja presión'),
+      estado: 'RESUELTO'
+    }));
+
+    const component = createComponent();
+    component.ngOnInit();
+    component.estado = 'RESUELTO';
+    component.observaciones = 'Atendido por equipo tecnico.';
+
+    component.onGuardarCambios();
+
+    expect((casosService as any).actualizarEstado).toHaveBeenCalledWith(
+      8,
+      'RESUELTO',
+      'Atendido por equipo tecnico.',
+      undefined,
+      []
+    );
+    expect(component.message).toBe('Caso #8 actualizado.');
   });
 
   function caso(id: number, reporteFechaCreacion: string, reporteZona: string, reporteTipo: string) {

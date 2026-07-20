@@ -86,16 +86,34 @@ type AlertForm = FormGroup<{
         </label>
         <label>
           Inicio
-          <input formControlName="iniciaEn" type="datetime-local" [attr.aria-invalid]="alertForm.hasError('dateRange')" />
+          <input
+            formControlName="iniciaEn"
+            type="datetime-local"
+            required
+            [attr.aria-invalid]="campoInvalido('iniciaEn') || alertForm.hasError('dateRange')"
+            aria-describedby="alert-start-error"
+          />
+          <small id="alert-start-error" class="field-error" *ngIf="campoInvalido('iniciaEn')">
+            Selecciona la fecha y hora de inicio.
+          </small>
         </label>
         <label>
           Fin
-          <input formControlName="finalizaEn" type="datetime-local" [attr.aria-invalid]="alertForm.hasError('dateRange')" />
+          <input
+            formControlName="finalizaEn"
+            type="datetime-local"
+            required
+            [attr.aria-invalid]="campoInvalido('finalizaEn') || alertForm.hasError('dateRange')"
+            aria-describedby="alert-end-error"
+          />
+          <small id="alert-end-error" class="field-error" *ngIf="campoInvalido('finalizaEn')">
+            Selecciona la fecha y hora de fin.
+          </small>
           <small class="field-error" *ngIf="alertForm.hasError('dateRange') && (alertForm.touched || alertForm.dirty)">
             La fecha de fin no puede ser anterior al inicio.
           </small>
         </label>
-        <button class="btn-primary" type="submit" [disabled]="submitting">
+        <button class="btn-primary" type="submit" [disabled]="submitting || alertForm.invalid">
           {{ submitting ? 'Publicando...' : 'Publicar alerta' }}
         </button>
       </form>
@@ -163,8 +181,8 @@ export class EstadoServicioAdminComponent implements OnInit {
     estado: new FormControl<'ACTIVA'>('ACTIVA', { nonNullable: true }),
     titulo: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
     descripcion: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(800)] }),
-    iniciaEn: new FormControl('', { nonNullable: true }),
-    finalizaEn: new FormControl('', { nonNullable: true })
+    iniciaEn: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    finalizaEn: new FormControl('', { nonNullable: true, validators: [Validators.required] })
   }, { validators: [rangoFechasValido] });
   alertas: AlertaServicioResponse[] = [];
   loading = false;
@@ -202,9 +220,10 @@ export class EstadoServicioAdminComponent implements OnInit {
     };
     this.submitting = true;
     this.estadoServicio.crearAlerta(payload).subscribe({
-      next: () => {
+      next: (alertaCreada) => {
         this.submitting = false;
         this.success = 'Alerta publicada correctamente.';
+        this.alertas = [alertaCreada, ...this.alertas.filter((alerta) => alerta.id !== alertaCreada.id)];
         this.alertForm.reset({
           tipo: 'INFORMATIVA',
           severidad: 'INFO',
@@ -214,7 +233,7 @@ export class EstadoServicioAdminComponent implements OnInit {
           iniciaEn: '',
           finalizaEn: ''
         });
-        this.cargarAlertas();
+        this.scheduleDetectChanges();
       },
       error: (error: unknown) => {
         this.submitting = false;
@@ -244,7 +263,10 @@ export class EstadoServicioAdminComponent implements OnInit {
     queueMicrotask(() => this.cdr.detectChanges());
   }
 
-  campoInvalido(nombre: 'titulo' | 'descripcion'): boolean {
+  campoInvalido(nombre: 'titulo' | 'descripcion'): boolean;
+  campoInvalido(nombre: 'iniciaEn' | 'finalizaEn'): boolean;
+
+  campoInvalido(nombre: 'titulo' | 'descripcion' | 'iniciaEn' | 'finalizaEn'): boolean {
     const control = this.alertForm.controls[nombre];
     return control.invalid && (control.dirty || control.touched);
   }

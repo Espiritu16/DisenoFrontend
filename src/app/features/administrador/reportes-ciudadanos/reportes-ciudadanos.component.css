@@ -186,7 +186,8 @@
 }
 
 .table-wrapper {
-  overflow-x: auto;
+  max-height: calc(100vh - 17rem);
+  overflow: auto;
 }
 
 .reportes-table {
@@ -207,6 +208,10 @@
 }
 
 .table-header th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fbff;
   color: #607087;
   font-size: .72rem;
   font-weight: 900;
@@ -413,6 +418,7 @@
   .filters-section,
   .table-wrapper,
   .reportes-detail-column {
+    max-height: none;
     border-radius: .65rem;
   }
 

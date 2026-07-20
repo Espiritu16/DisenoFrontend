@@ -38,7 +38,7 @@ export class GestionUsuariosComponent implements OnInit {
     this.error = '';
     this.usuariosService.listar().subscribe({
       next: (usuarios) => {
-        this.usuarios = usuarios.map((usuario) => this.toVista(usuario));
+        this.usuarios = this.ordenarUsuariosRecientes(usuarios).map((usuario) => this.toVista(usuario));
         this.loading = false;
         this.scheduleChangeDetection();
       },
@@ -122,6 +122,10 @@ export class GestionUsuariosComponent implements OnInit {
       estado: usuario.estado,
       avatar: this.avatar(usuario.nombre)
     };
+  }
+
+  private ordenarUsuariosRecientes(usuarios: UsuarioResponse[]): UsuarioResponse[] {
+    return [...usuarios].sort((a, b) => b.id - a.id);
   }
 
   private avatar(nombre: string): string {

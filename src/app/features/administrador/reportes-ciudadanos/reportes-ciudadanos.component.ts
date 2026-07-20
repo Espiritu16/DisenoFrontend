@@ -92,7 +92,7 @@ export class ReportesCiudadanosComponent implements OnInit {
       fechaHasta: this.toIsoDateBoundary(this.fechaHasta, false) || undefined
     }).subscribe({
       next: (data) => {
-        this.reportes = data.map((r) => this.toVista(r));
+        this.reportes = this.ordenarReportesRecientes(data).map((r) => this.toVista(r));
         this.empty = this.reportes.length === 0;
         if (!this.empty) {
           const keep = this.selectedReporte
@@ -179,6 +179,14 @@ export class ReportesCiudadanosComponent implements OnInit {
 
   private scheduleDetectChanges(): void {
     queueMicrotask(() => this.cdr.detectChanges());
+  }
+
+  private ordenarReportesRecientes(reportes: ReporteResponse[]): ReporteResponse[] {
+    return [...reportes].sort((a, b) => this.fechaMs(b.fechaCreacion) - this.fechaMs(a.fechaCreacion));
+  }
+
+  private fechaMs(fecha: string | undefined): number {
+    return fecha ? new Date(fecha).getTime() : 0;
   }
 
   statusClass(estado: ApiReportStatus): string {

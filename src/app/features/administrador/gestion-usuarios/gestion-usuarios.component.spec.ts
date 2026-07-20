@@ -1,4 +1,6 @@
+import '@angular/compiler';
 import { of, throwError } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GestionUsuariosComponent } from './gestion-usuarios.component';
 import { UsuariosService } from '../../../core/api/usuarios.service';
 
@@ -19,7 +21,7 @@ describe('GestionUsuariosComponent', () => {
     vi.clearAllMocks();
   });
 
-  it('debe renderizar usuarios recibidos del backend', async () => {
+  it('debe renderizar usuarios recientes primero', async () => {
     vi.mocked((usuariosService as any).listar).mockReturnValue(of([
       { id: 5, nombre: 'Admin Prueba', correo: 'admin@test.local', rol: 'ADMIN', estado: 'ACTIVO' },
       { id: 6, nombre: 'Operador Prueba', correo: 'operador@test.local', rol: 'OPERADOR', estado: 'ACTIVO' }
@@ -31,7 +33,7 @@ describe('GestionUsuariosComponent', () => {
     expect(component.loading).toBe(false);
     expect(component.error).toBe('');
     expect(component.usuariosFiltrados).toHaveLength(2);
-    expect(component.usuariosFiltrados[0].nombre).toBe('Admin Prueba');
+    expect(component.usuariosFiltrados[0].nombre).toBe('Operador Prueba');
     await Promise.resolve();
     expect(cdr.detectChanges).toHaveBeenCalled();
   });

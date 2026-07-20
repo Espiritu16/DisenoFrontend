@@ -116,6 +116,9 @@
 
 .casos-table-section {
   min-width: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  max-height: calc(100vh - 10.5rem);
   padding: 1rem;
 }
 
@@ -163,7 +166,8 @@
 }
 
 .table-wrapper {
-  overflow-x: auto;
+  min-height: 0;
+  overflow: auto;
   border: 1px solid var(--admin-line);
   border-radius: .7rem;
 }
@@ -186,6 +190,10 @@
 }
 
 .table-header th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fbff;
   color: #607087;
   font-size: .72rem;
   font-weight: 900;
@@ -362,6 +370,10 @@
   }
 
   .casos-detail-section {
+    max-height: none;
+  }
+
+  .casos-table-section {
     max-height: none;
   }
 }

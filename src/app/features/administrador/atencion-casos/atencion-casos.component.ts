@@ -38,10 +38,10 @@ export class AtencionCasosComponent implements OnInit {
     this.loading = true;
     this.casosService.listar().subscribe({
       next: (casos) => {
-        this.casos = casos;
-        if (!this.selectedCaso && casos.length) this.onSelectCaso(casos[0]);
+        this.casos = this.ordenarCasosRecientes(casos);
+        if (!this.selectedCaso && this.casos.length) this.onSelectCaso(this.casos[0]);
         if (this.selectedCaso) {
-          this.selectedCaso = casos.find((caso) => caso.id === this.selectedCaso!.id) ?? this.selectedCaso;
+          this.selectedCaso = this.casos.find((caso) => caso.id === this.selectedCaso!.id) ?? this.selectedCaso;
         }
         this.loading = false;
         this.scheduleDetectChanges();
@@ -115,6 +115,14 @@ export class AtencionCasosComponent implements OnInit {
 
   private scheduleDetectChanges(): void {
     queueMicrotask(() => this.cdr.detectChanges());
+  }
+
+  private ordenarCasosRecientes(casos: CasoResponse[]): CasoResponse[] {
+    return [...casos].sort((a, b) => this.fechaMs(b.fechaAsignacion) - this.fechaMs(a.fechaAsignacion));
+  }
+
+  private fechaMs(fecha: string | undefined): number {
+    return fecha ? new Date(fecha).getTime() : 0;
   }
 
   onCerrarCaso() {

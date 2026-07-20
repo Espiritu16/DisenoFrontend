@@ -134,7 +134,8 @@
 }
 
 .table-container {
-  overflow: hidden;
+  max-height: calc(100vh - 17rem);
+  overflow: auto;
   border: 1px solid var(--admin-line);
   border-radius: .75rem;
   background: var(--admin-surface);
@@ -175,6 +176,10 @@
 }
 
 .table-header-row th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fbff;
   color: #607087;
   font-size: .72rem;
   font-weight: 900;
@@ -291,7 +296,7 @@
   }
 
   .table-container {
-    overflow-x: auto;
+    max-height: none;
   }
 }
 

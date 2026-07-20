@@ -1,4 +1,6 @@
+import '@angular/compiler';
 import { of, throwError } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReportesCiudadanosComponent } from './reportes-ciudadanos.component';
 import { ReportesService } from '../../../core/api/reportes.service';
 import { CasosService } from '../../../core/api/casos.service';
@@ -29,31 +31,50 @@ describe('ReportesCiudadanosComponent', () => {
     vi.clearAllMocks();
   });
 
-  it('debe cargar y mapear reportes desde backend', () => {
+  it('debe cargar y ordenar reportes recientes desde backend', () => {
     vi.mocked((usuariosService as any).listar).mockReturnValue(of([]));
-    vi.mocked((reportesService as any).listarTodos).mockReturnValue(of([{
-      id: 2,
-      usuarioId: 9,
-      tipo: 'Fuga',
-      descripcion: 'Rotura',
-      fotoUrl: 'https://x/f.jpg',
-      fotoUrls: [],
-      lat: -12,
-      lng: -77,
-      direccion: 'Av X',
-      zona: 'Surco',
-      posibleDuplicado: false,
-      estado: 'PENDIENTE',
-      fechaCreacion: '2026-05-25T10:00:00',
-      fechaActualizacion: '2026-05-25T10:00:00'
-    }]));
+    vi.mocked((reportesService as any).listarTodos).mockReturnValue(of([
+      {
+        id: 2,
+        usuarioId: 9,
+        tipo: 'Fuga',
+        descripcion: 'Rotura',
+        fotoUrl: 'https://x/f.jpg',
+        fotoUrls: [],
+        lat: -12,
+        lng: -77,
+        direccion: 'Av X',
+        zona: 'Surco',
+        posibleDuplicado: false,
+        estado: 'PENDIENTE',
+        fechaCreacion: '2026-05-25T10:00:00',
+        fechaActualizacion: '2026-05-25T10:00:00'
+      },
+      {
+        id: 3,
+        usuarioId: 10,
+        tipo: 'Corte',
+        descripcion: 'Corte',
+        fotoUrl: 'https://x/c.jpg',
+        fotoUrls: [],
+        lat: -12,
+        lng: -77,
+        direccion: 'Av Y',
+        zona: 'Ate',
+        posibleDuplicado: false,
+        estado: 'PENDIENTE',
+        fechaCreacion: '2026-05-26T10:00:00',
+        fechaActualizacion: '2026-05-26T10:00:00'
+      }
+    ]));
 
     const component = createComponent();
     component.ngOnInit();
 
     expect(component.loading).toBe(false);
-    expect(component.reportes.length).toBe(1);
-    expect(component.selectedReporte?.id).toBe(2);
+    expect(component.reportes.length).toBe(2);
+    expect(component.reportes[0].id).toBe(3);
+    expect(component.selectedReporte?.id).toBe(3);
     expect(component.empty).toBe(false);
   });
 

@@ -207,15 +207,15 @@
       <article class="dashboard-card">
         <div class="card-header">
           <div>
-            <h3>Comparación histórico vs proyectado</h3>
+            <h3>Estados proyectados</h3>
           </div>
         </div>
 
-        <div class="chart-shell" *ngIf="reportesPorMes.length || proyeccionMensual.length; else comparacionVacia">
-          <canvas #dashboardChart data-chart-id="historico-vs-proyectado" aria-label="Gráfico comparativo de reportes históricos y proyectados"></canvas>
+        <div class="chart-shell" *ngIf="estadosProyectados.length; else estadosProyectadosVacios">
+          <canvas #dashboardChart data-chart-id="estados-proyectados" aria-label="Gráfico circular de estados proyectados"></canvas>
         </div>
-        <ng-template #comparacionVacia>
-          <p class="empty-state">No hay datos históricos ni proyectados para comparar.</p>
+        <ng-template #estadosProyectadosVacios>
+          <p class="empty-state">No hay estados suficientes para proyectar.</p>
         </ng-template>
       </article>
 

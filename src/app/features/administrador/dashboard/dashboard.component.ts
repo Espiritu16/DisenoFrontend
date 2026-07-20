@@ -522,11 +522,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           '#b45309',
           this.zonesBarChartOptions()
         );
-      case 'historico-vs-proyectado':
-        return this.comparisonBarChart(
-          ['Histórico', 'Proyectado'],
-          [this.totalHistoricoMensual, this.totalProyectadoMensual],
-          'Reportes'
+      case 'estados-proyectados':
+        return this.doughnutChart(
+          this.estadosProyectados.map((item) => item.estado),
+          this.estadosProyectados.map((item) => item.cantidad)
         );
       case 'riesgo-operativo':
         return this.doughnutChart(
@@ -538,12 +537,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private get totalHistoricoMensual(): number {
-    return this.reportesPorMes.reduce((total, item) => total + item.cantidad, 0);
-  }
-
   private get totalProyectadoMensual(): number {
-    return this.proyeccionMensual.reduce((total, item) => total + item.estimado, 0);
+    return this.proyeccionMensualPredictiva.reduce((total, item) => total + item.estimado, 0);
   }
 
   private get distribucionRiesgo(): Array<{ nivel: string; cantidad: number }> {
@@ -557,6 +552,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private get estadosVisiblesEnGrafico(): ReportePorEstadoItem[] {
     return this.reportesPorEstado.filter((item) => item.estado.toLowerCase() !== 'duplicados');
+  }
+
+  get estadosProyectados(): ReportePorEstadoItem[] {
+    const totalProyectado = this.totalProyectadoMensual;
+    const estadosBase = this.estadosVisiblesEnGrafico.filter((item) => item.cantidad > 0);
+    const totalBase = estadosBase.reduce((total, item) => total + item.cantidad, 0);
+    if (totalProyectado <= 0 || totalBase <= 0) {
+      return [];
+    }
+
+    const proyectados = estadosBase.map((item) => ({
+      estado: item.estado,
+      cantidad: Math.round((item.cantidad / totalBase) * totalProyectado)
+    }));
+    const diferencia = totalProyectado - proyectados.reduce((total, item) => total + item.cantidad, 0);
+    if (proyectados.length > 0) {
+      proyectados[0].cantidad += diferencia;
+    }
+    return proyectados;
   }
 
   private get reportesPorMesDescriptivos(): ReportePorMesItem[] {
@@ -617,23 +631,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         ...options,
         indexAxis: 'y'
       }
-    };
-  }
-
-  private comparisonBarChart(labels: string[], data: number[], label: string): ChartConfiguration<'bar'> {
-    return {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          label,
-          data,
-          backgroundColor: ['#2563eb', '#7c3aed'],
-          borderRadius: 8,
-          maxBarThickness: 42
-        }]
-      },
-      options: this.verticalBarChartOptions()
     };
   }
 

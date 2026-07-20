@@ -213,6 +213,29 @@ describe('DashboardComponent', () => {
     expect(tendenciaProyectadaChart.data.labels).toEqual(['Oct', 'Nov', 'Dic']);
   });
 
+  it('debe proyectar estados sobre el total futuro sin comparar con historico', () => {
+    const component = createComponent();
+    component.proyeccionMensual = [
+      { mes: 'Oct', estimado: 34 },
+      { mes: 'Nov', estimado: 38 },
+      { mes: 'Dic', estimado: 42 }
+    ];
+    component.reportesPorEstado = [
+      { estado: 'Pendientes', cantidad: 30 },
+      { estado: 'En proceso', cantidad: 20 },
+      { estado: 'Resueltos', cantidad: 50 },
+      { estado: 'Duplicados', cantidad: 10 }
+    ];
+
+    const estadosProyectadosChart = (component as any).chartConfig('estados-proyectados');
+    const comparacionChart = (component as any).chartConfig('historico-vs-proyectado');
+
+    expect(estadosProyectadosChart.data.labels).toEqual(['Pendientes', 'En proceso', 'Resueltos']);
+    expect(estadosProyectadosChart.data.datasets[0].data.reduce((total: number, value: number) => total + value, 0))
+      .toBe(114);
+    expect(comparacionChart).toBeNull();
+  });
+
   it('debe usar escala de 5 en 5 hasta 50 en reportes por zona', () => {
     const component = createComponent();
     component.reportesPorZona = [{ nombre: 'Ate', cantidad: 14 }];

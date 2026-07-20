@@ -95,7 +95,7 @@
               </td>
               <td class="col-estado"><span class="estado-badge" [ngClass]="'estado-' + statusClass(caso.estado)">{{ statusLabel(caso.estado) }}</span></td>
               <td class="col-prioridad"><span class="prioridad-badge" [ngClass]="'prioridad-' + priorityClass(caso.prioridad)">{{ caso.prioridad }}</span></td>
-              <td class="col-fecha">{{ (caso.reporteFechaCreacion || caso.fechaAsignacion) | date:'short' }}</td>
+              <td class="col-fecha">{{ formatFecha(caso.reporteFechaCreacion || caso.fechaAsignacion) }}</td>
             </tr>
           </tbody>
         </table>

@@ -54,6 +54,15 @@ describe('AtencionCasosComponent', () => {
     expect(component.selectedCaso?.id).toBe(8);
   });
 
+  it('formatea fecha de reporte con anio completo y hora', () => {
+    const component = createComponent();
+
+    const fecha = component.formatFecha('2026-09-15T10:00:00');
+
+    expect(fecha).toContain('/2026');
+    expect(fecha).toContain('10:00');
+  });
+
   function caso(id: number, reporteFechaCreacion: string, reporteZona: string, reporteTipo: string) {
     return {
       id,

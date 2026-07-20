@@ -11,6 +11,7 @@ import { UsuariosService } from '../../../core/api/usuarios.service';
 interface ReporteVista {
   id: number;
   fecha: string;
+  fechaCreacion: string;
   ciudadano: string;
   zona: string;
   tipo: string;
@@ -44,6 +45,7 @@ export class ReportesCiudadanosComponent implements OnInit {
   statusFilter: '' | ApiReportStatus = '';
   tipoFilter = '';
   zonaFilter = '';
+  mesFilter = '';
   fechaDesde = '';
   fechaHasta = '';
 
@@ -84,21 +86,15 @@ export class ReportesCiudadanosComponent implements OnInit {
     }
     this.empty = false;
 
-    this.reportesService.listarTodos({
-      estado: this.statusFilter || undefined,
-      tipo: this.tipoFilter || undefined,
-      zona: this.zonaFilter || undefined,
-      fechaDesde: this.toIsoDateBoundary(this.fechaDesde, true) || undefined,
-      fechaHasta: this.toIsoDateBoundary(this.fechaHasta, false) || undefined
-    }).subscribe({
+    this.reportesService.listarTodos().subscribe({
       next: (data) => {
         this.reportes = this.ordenarReportesRecientes(data).map((r) => this.toVista(r));
-        this.empty = this.reportes.length === 0;
+        this.empty = this.reportesFiltrados.length === 0;
         if (!this.empty) {
           const keep = this.selectedReporte
-            ? this.reportes.find((r) => r.id === this.selectedReporte!.id)
+            ? this.reportesFiltrados.find((r) => r.id === this.selectedReporte!.id)
             : null;
-          this.selectedReporte = keep ?? this.reportes[0];
+          this.selectedReporte = keep ?? this.reportesFiltrados[0];
         } else {
           this.selectedReporte = null;
         }
@@ -121,17 +117,56 @@ export class ReportesCiudadanosComponent implements OnInit {
     this.mostrarDerivar = false;
   }
 
-  onFiltrar() {
-    this.loadReportes();
+  onFiltrosChange() {
+    this.empty = this.reportesFiltrados.length === 0;
+    if (this.selectedReporte && this.reportesFiltrados.some((r) => r.id === this.selectedReporte!.id)) {
+      this.scheduleDetectChanges();
+      return;
+    }
+    this.selectedReporte = this.reportesFiltrados[0] ?? null;
+    this.mostrarDerivar = false;
+    this.scheduleDetectChanges();
   }
 
   onLimpiarFiltros() {
     this.statusFilter = '';
     this.tipoFilter = '';
     this.zonaFilter = '';
+    this.mesFilter = '';
     this.fechaDesde = '';
     this.fechaHasta = '';
-    this.loadReportes();
+    this.onFiltrosChange();
+  }
+
+  get reportesFiltrados(): ReporteVista[] {
+    const tipo = this.normalizar(this.tipoFilter);
+    const zona = this.normalizar(this.zonaFilter);
+    const desde = this.fechaDesde ? new Date(`${this.fechaDesde}T00:00:00`).getTime() : null;
+    const hasta = this.fechaHasta ? new Date(`${this.fechaHasta}T23:59:59`).getTime() : null;
+
+    return this.reportes.filter((reporte) => {
+      const fecha = this.fechaMs(reporte.fechaCreacion);
+      return (!this.statusFilter || reporte.estado === this.statusFilter)
+        && (!tipo || this.normalizar(reporte.tipo).includes(tipo))
+        && (!zona || this.normalizar(reporte.zona).includes(zona))
+        && (!this.mesFilter || this.mesClave(reporte.fechaCreacion) === this.mesFilter)
+        && (desde === null || fecha >= desde)
+        && (hasta === null || fecha <= hasta);
+    });
+  }
+
+  get mesesDisponibles(): { value: string; label: string }[] {
+    const meses = new Map<string, string>();
+    this.reportes.forEach((reporte) => {
+      const fecha = new Date(reporte.fechaCreacion);
+      if (Number.isNaN(fecha.getTime())) return;
+      const value = this.mesClave(reporte.fechaCreacion);
+      const label = new Intl.DateTimeFormat('es-PE', { month: 'long', year: 'numeric' }).format(fecha);
+      meses.set(value, this.capitalize(label));
+    });
+    return [...meses.entries()]
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([value, label]) => ({ value, label }));
   }
 
   onMostrarDerivar() {
@@ -165,7 +200,7 @@ export class ReportesCiudadanosComponent implements OnInit {
         this.mostrarDerivar = false;
         this.loadReportes({ clearFeedback: false });
         if (selectedId != null) {
-          this.selectedReporte = this.reportes.find((r) => r.id === selectedId) ?? this.selectedReporte;
+          this.selectedReporte = this.reportesFiltrados.find((r) => r.id === selectedId) ?? this.selectedReporte;
         }
         this.scheduleDetectChanges();
       },
@@ -197,6 +232,7 @@ export class ReportesCiudadanosComponent implements OnInit {
     return {
       id: r.id,
       fecha: formatDateTime(r.fechaCreacion),
+      fechaCreacion: r.fechaCreacion,
       ciudadano: `Usuario #${r.usuarioId}`,
       zona: r.zona,
       tipo: r.tipo,
@@ -209,9 +245,21 @@ export class ReportesCiudadanosComponent implements OnInit {
     };
   }
 
-  private toIsoDateBoundary(value: string, start: boolean): string | null {
-    if (!value) return null;
-    const suffix = start ? 'T00:00:00' : 'T23:59:59';
-    return `${value}${suffix}`;
+  private mesClave(value: string): string {
+    const fecha = new Date(value);
+    if (Number.isNaN(fecha.getTime())) return '';
+    return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  private normalizar(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  private capitalize(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
   }
 }

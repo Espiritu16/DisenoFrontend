@@ -78,6 +78,80 @@ describe('ReportesCiudadanosComponent', () => {
     expect(component.empty).toBe(false);
   });
 
+  it('debe filtrar reportes directamente por mes tipo y zona', () => {
+    vi.mocked((usuariosService as any).listar).mockReturnValue(of([]));
+    vi.mocked((reportesService as any).listarTodos).mockReturnValue(of([
+      {
+        id: 2,
+        usuarioId: 9,
+        tipo: 'Fuga de Agua',
+        descripcion: 'Rotura',
+        fotoUrl: '',
+        fotoUrls: [],
+        lat: -12,
+        lng: -77,
+        direccion: 'Av X',
+        zona: 'San Miguel',
+        posibleDuplicado: false,
+        estado: 'PENDIENTE',
+        fechaCreacion: '2026-07-25T10:00:00',
+        fechaActualizacion: '2026-07-25T10:00:00'
+      },
+      {
+        id: 3,
+        usuarioId: 10,
+        tipo: 'Baja presión',
+        descripcion: 'Presión baja',
+        fotoUrl: '',
+        fotoUrls: [],
+        lat: -12,
+        lng: -77,
+        direccion: 'Av Y',
+        zona: 'Ate',
+        posibleDuplicado: false,
+        estado: 'PENDIENTE',
+        fechaCreacion: '2026-09-26T10:00:00',
+        fechaActualizacion: '2026-09-26T10:00:00'
+      }
+    ]));
+
+    const component = createComponent();
+    component.ngOnInit();
+    component.tipoFilter = 'baja';
+    component.zonaFilter = 'ate';
+    component.mesFilter = '2026-09';
+    component.onFiltrosChange();
+
+    expect(component.reportesFiltrados.map((reporte) => reporte.id)).toEqual([3]);
+    expect(component.selectedReporte?.id).toBe(3);
+  });
+
+  it('debe mostrar fechas con dia mes anio completo y hora', () => {
+    vi.mocked((usuariosService as any).listar).mockReturnValue(of([]));
+    vi.mocked((reportesService as any).listarTodos).mockReturnValue(of([{
+      id: 5,
+      usuarioId: 9,
+      tipo: 'Fuga',
+      descripcion: 'Rotura',
+      fotoUrl: '',
+      fotoUrls: [],
+      lat: -12,
+      lng: -77,
+      direccion: 'Av X',
+      zona: 'Surco',
+      posibleDuplicado: false,
+      estado: 'PENDIENTE',
+      fechaCreacion: '2026-05-25T10:00:00',
+      fechaActualizacion: '2026-05-25T10:00:00'
+    }]));
+
+    const component = createComponent();
+    component.ngOnInit();
+
+    expect(component.reportes[0].fecha).toContain('/2026');
+    expect(component.reportes[0].fecha).toContain('10:00');
+  });
+
   it('debe mostrar estado vacio cuando no hay resultados', () => {
     vi.mocked((usuariosService as any).listar).mockReturnValue(of([]));
     vi.mocked((reportesService as any).listarTodos).mockReturnValue(of([]));

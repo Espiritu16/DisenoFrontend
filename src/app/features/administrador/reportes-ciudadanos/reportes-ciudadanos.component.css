@@ -52,7 +52,7 @@
 
 .filters-section {
   display: grid;
-  grid-template-columns: repeat(5, minmax(8.5rem, 1fr)) auto auto;
+  grid-template-columns: repeat(6, minmax(8.5rem, 1fr)) auto;
   gap: .75rem;
   align-items: end;
   padding: 1rem;

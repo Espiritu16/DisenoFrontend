@@ -5,7 +5,7 @@ import { ApiCasePriority, ApiCaseStatus, CasoResponse } from '../../../core/api/
 import { CasosService } from '../../../core/api/casos.service';
 import { UploadService } from '../../../core/api/upload.service';
 import { apiErrorMessage } from '../../../core/api/api-error';
-import { caseStatusClass, caseStatusLabel } from '../../../core/api/api-mappers';
+import { caseStatusClass, caseStatusLabel, formatDateTime } from '../../../core/api/api-mappers';
 
 @Component({
   selector: 'app-atencion-casos',
@@ -202,10 +202,6 @@ export class AtencionCasosComponent implements OnInit {
     });
   }
 
-  private fechaMs(fecha: string | undefined): number {
-    return fecha ? new Date(fecha).getTime() : 0;
-  }
-
   private fechaReferencia(caso: CasoResponse): Date | null {
     const fecha = caso.reporteFechaCreacion || caso.fechaAsignacion;
     if (!fecha) return null;
@@ -254,5 +250,9 @@ export class AtencionCasosComponent implements OnInit {
 
   priorityClass(prioridad: string): string {
     return prioridad.toLowerCase();
+  }
+
+  formatFecha(value?: string): string {
+    return formatDateTime(value);
   }
 }

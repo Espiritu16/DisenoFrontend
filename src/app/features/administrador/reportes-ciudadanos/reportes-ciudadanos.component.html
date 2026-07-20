@@ -8,7 +8,7 @@
     <section class="filters-section">
       <div class="filter-group">
         <label class="filter-label">Estado</label>
-        <select class="filter-select" [(ngModel)]="statusFilter">
+        <select class="filter-select" [(ngModel)]="statusFilter" (ngModelChange)="onFiltrosChange()">
           <option value="">Todos</option>
           <option value="PENDIENTE">Pendiente</option>
           <option value="EN_PROCESO">En proceso</option>
@@ -21,25 +21,32 @@
 
       <div class="filter-group">
         <label class="filter-label">Tipo</label>
-        <input class="filter-input-date" [(ngModel)]="tipoFilter" placeholder="Ej. Fuga" />
+        <input class="filter-input-date" [(ngModel)]="tipoFilter" (ngModelChange)="onFiltrosChange()" placeholder="Ej. Fuga" />
       </div>
 
       <div class="filter-group">
         <label class="filter-label">Zona</label>
-        <input class="filter-input-date" [(ngModel)]="zonaFilter" placeholder="Ej. San Isidro" />
+        <input class="filter-input-date" [(ngModel)]="zonaFilter" (ngModelChange)="onFiltrosChange()" placeholder="Ej. San Isidro" />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Mes</label>
+        <select class="filter-select" [(ngModel)]="mesFilter" (ngModelChange)="onFiltrosChange()">
+          <option value="">Todos</option>
+          <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
+        </select>
       </div>
 
       <div class="filter-group">
         <label class="filter-label">Fecha desde</label>
-        <input type="date" class="filter-input-date" [(ngModel)]="fechaDesde">
+        <input type="date" class="filter-input-date" [(ngModel)]="fechaDesde" (ngModelChange)="onFiltrosChange()">
       </div>
 
       <div class="filter-group">
         <label class="filter-label">Fecha hasta</label>
-        <input type="date" class="filter-input-date" [(ngModel)]="fechaHasta">
+        <input type="date" class="filter-input-date" [(ngModel)]="fechaHasta" (ngModelChange)="onFiltrosChange()">
       </div>
 
-      <button class="btn-filtrar" (click)="onFiltrar()">Filtrar</button>
       <button class="btn-limpiar" (click)="onLimpiarFiltros()">Limpiar</button>
     </section>
 
@@ -50,10 +57,10 @@
 
     <div class="empty-box" *ngIf="!loading && empty">
       No hay reportes con los filtros seleccionados.
-      <button class="btn-reintentar" (click)="onFiltrar()">Reintentar</button>
+      <button class="btn-reintentar" (click)="loadReportes()">Actualizar</button>
     </div>
 
-    <div class="reportes-content-grid" *ngIf="!loading && !empty && reportes.length > 0">
+    <div class="reportes-content-grid" *ngIf="!loading && !empty && reportesFiltrados.length > 0">
       <section class="reportes-table-column">
         <div class="table-wrapper">
           <table class="reportes-table">
@@ -69,7 +76,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let reporte of reportes"
+              <tr *ngFor="let reporte of reportesFiltrados"
                   class="table-row"
                   [ngClass]="{ 'row-active': selectedReporte?.id === reporte.id }"
                   (click)="onSelectReporte(reporte)">

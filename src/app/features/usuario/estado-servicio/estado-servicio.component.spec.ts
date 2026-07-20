@@ -1,19 +1,13 @@
 import '@angular/compiler';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AuthService } from '../../../core/api/auth.service';
 import { EstadoServicioService } from '../../../core/api/estado-servicio.service';
-import { ReportesService } from '../../../core/api/reportes.service';
 import { EstadoServicioComponent } from './estado-servicio.component';
 
 describe('EstadoServicioComponent', () => {
   const estadoServicioService = {
     listarAlertas: vi.fn()
   } as unknown as EstadoServicioService;
-  const reportesService = {
-    listarMisReportes: vi.fn(() => of([])),
-    listarTodos: vi.fn(() => of([]))
-  } as unknown as ReportesService;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -21,8 +15,7 @@ describe('EstadoServicioComponent', () => {
 
   it('consulta alertas publicas aunque no exista sesion activa', () => {
     vi.mocked((estadoServicioService as any).listarAlertas).mockReturnValue(of([]));
-    const auth = { token: '', role: null } as unknown as AuthService;
-    const component = new EstadoServicioComponent(auth, estadoServicioService, reportesService);
+    const component = new EstadoServicioComponent(estadoServicioService);
 
     component.ngOnInit();
 
@@ -32,8 +25,7 @@ describe('EstadoServicioComponent', () => {
   });
 
   it('formatea el inicio y fin de una alerta para mostrarlo al ciudadano', () => {
-    const auth = { token: '', role: null } as unknown as AuthService;
-    const component = new EstadoServicioComponent(auth, estadoServicioService, reportesService);
+    const component = new EstadoServicioComponent(estadoServicioService);
 
     const rango = component.rangoAlerta({
       id: 1,

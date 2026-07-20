@@ -2,11 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { apiErrorMessage } from '../../../core/api/api-error';
-import { AlertaServicioResponse, ApiAlertSeverity, ReporteResponse } from '../../../core/api/api-models';
-import { AuthService } from '../../../core/api/auth.service';
+import { AlertaServicioResponse, ApiAlertSeverity } from '../../../core/api/api-models';
 import { EstadoServicioService } from '../../../core/api/estado-servicio.service';
-import { ReportesService } from '../../../core/api/reportes.service';
-import { reportStatusLabel } from '../../../core/api/api-mappers';
 import { AquaFooterComponent } from '../../../shared/public/aqua-footer/aqua-footer.component';
 import { AquaHeaderComponent } from '../../../shared/public/aqua-header/aqua-header.component';
 import { AquaMobileNavComponent } from '../../../shared/public/aqua-mobile-nav/aqua-mobile-nav.component';
@@ -20,26 +17,17 @@ import { AquaMobileNavComponent } from '../../../shared/public/aqua-mobile-nav/a
 })
 export class EstadoServicioComponent implements OnInit {
   alertas: AlertaServicioResponse[] = [];
-  reportes: ReporteResponse[] = [];
   totalAlertas = 0;
   alertasRiesgo = 0;
   alertasInfo = 0;
-  message = '';
   loadingAlertas = false;
   alertasError = '';
 
-  constructor(
-    private auth: AuthService,
-    private estadoServicioService: EstadoServicioService,
-    private reportesService: ReportesService
-  ) {}
+  constructor(private estadoServicioService: EstadoServicioService) {}
 
   ngOnInit(): void {
     this.cargarAlertas();
-    this.cargarReportes();
   }
-
-  statusLabel = reportStatusLabel;
 
   alertaTipoLabel(alerta: AlertaServicioResponse): string {
     const labels: Record<AlertaServicioResponse['tipo'], string> = {
@@ -88,20 +76,6 @@ export class EstadoServicioComponent implements OnInit {
         this.alertasError = apiErrorMessage(error);
         this.actualizarMetricasAlertas();
       }
-    });
-  }
-
-  private cargarReportes(): void {
-    if (!this.auth.token) {
-      this.message = 'Inicia sesión para ver reportes reales de seguimiento.';
-      return;
-    }
-    const source = this.auth.role === 'CIUDADANO'
-      ? this.reportesService.listarMisReportes()
-      : this.reportesService.listarTodos();
-    source.subscribe({
-      next: (reportes) => { this.reportes = reportes.slice(0, 3); },
-      error: () => { this.message = 'No se pudieron cargar reportes reales con tu sesión actual.'; }
     });
   }
 

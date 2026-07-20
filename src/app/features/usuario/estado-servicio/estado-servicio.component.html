@@ -86,28 +86,6 @@
         </div>
       </section>
 
-      <aside class="service-detail" aria-label="Reportes recientes">
-        <span>Comunidad</span>
-        <h2>Reportes recientes</h2>
-        <p>Últimas incidencias registradas por vecinos y equipos operativos.</p>
-
-        <div class="service-report-list" *ngIf="reportes.length; else noRecentReports">
-          <article class="service-report" *ngFor="let r of reportes">
-            <div>
-              <span>REP-{{ r.id }}</span>
-              <h3>{{ r.tipo }}</h3>
-              <p>{{ r.zona }}</p>
-            </div>
-            <strong>{{ statusLabel(r.estado) }}</strong>
-          </article>
-        </div>
-
-        <ng-template #noRecentReports>
-          <div class="service-empty service-empty--compact">
-            {{ message || 'Sin reportes para mostrar.' }}
-          </div>
-        </ng-template>
-      </aside>
     </section>
   </main>
 

@@ -142,8 +142,8 @@
         </div>
 
         <div class="upload-section">
-          <input class="form-select" type="file" accept="image/*" multiple [disabled]="selectedCaseClosed || saving" (change)="onFileChange($event)" />
-          <p class="upload-formats">JPG, PNG, WEBP o GIF. Máximo 10MB por imagen.</p>
+          <input class="form-select" type="file" accept="image/jpeg,image/png,image/webp" multiple [disabled]="selectedCaseClosed || saving" (change)="onFileChange($event)" />
+          <p class="upload-formats">JPG, PNG o WEBP. Máximo 10MB por imagen.</p>
           <a *ngFor="let url of selectedCaso.evidenciaCierreUrls" [href]="url" target="_blank" rel="noopener noreferrer">Ver evidencia</a>
         </div>
         <div class="feedback-info" *ngIf="selectedCaseClosed">Caso cerrado. Los cambios quedan bloqueados para mantener la trazabilidad.</div>

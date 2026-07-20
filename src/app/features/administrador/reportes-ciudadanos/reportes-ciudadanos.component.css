@@ -386,6 +386,26 @@
   background: #f8fbff;
 }
 
+.evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: .65rem;
+}
+
+.evidence-image-link {
+  aspect-ratio: 4 / 3;
+  display: block;
+  overflow: hidden;
+  border: 1px solid #e4ebf5;
+  border-radius: .65rem;
+  background: #f8fbff;
+}
+
+.evidence-image-link:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .28);
+  outline-offset: 2px;
+}
+
 .evidence-img {
   width: 100%;
   height: 100%;

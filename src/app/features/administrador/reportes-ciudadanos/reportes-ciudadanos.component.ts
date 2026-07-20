@@ -21,6 +21,7 @@ interface ReporteVista {
   ubicacion: string;
   reportadoPor: string;
   evidencia?: string;
+  evidenciaUrls: string[];
 }
 
 @Component({
@@ -241,8 +242,15 @@ export class ReportesCiudadanosComponent implements OnInit {
       descripcion: r.descripcion,
       ubicacion: r.direccion,
       reportadoPor: `Usuario #${r.usuarioId}`,
-      evidencia: r.fotoUrl || r.fotoUrls?.[0]
+      evidencia: r.fotoUrl || r.fotoUrls?.[0],
+      evidenciaUrls: this.evidenciasReporte(r)
     };
+  }
+
+  private evidenciasReporte(reporte: ReporteResponse): string[] {
+    const urls = [...(reporte.fotoUrls ?? []), reporte.fotoUrl]
+      .filter((url): url is string => Boolean(url?.trim()));
+    return [...new Set(urls)];
   }
 
   private mesClave(value: string): string {

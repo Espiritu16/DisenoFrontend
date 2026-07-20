@@ -142,9 +142,22 @@ export class AtencionCasosComponent implements OnInit {
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.evidenciaFiles = Array.from(input.files ?? []);
+    const files = Array.from(input.files ?? []);
+    const invalid = files.find((file) => !this.isSupportedImage(file));
+    if (invalid) {
+      this.evidenciaFiles = [];
+      this.message = 'Solo se permiten imagenes JPG, PNG o WEBP.';
+      input.value = '';
+      this.scheduleDetectChanges();
+      return;
+    }
+    this.evidenciaFiles = files;
     this.message = '';
     this.scheduleDetectChanges();
+  }
+
+  private isSupportedImage(file: File): boolean {
+    return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type.toLowerCase());
   }
 
   onGuardarCambios() {

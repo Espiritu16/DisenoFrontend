@@ -152,6 +152,35 @@ describe('ReportesCiudadanosComponent', () => {
     expect(component.reportes[0].fecha).toContain('10:00');
   });
 
+  it('debe conservar todas las evidencias fotograficas del reporte', () => {
+    vi.mocked((usuariosService as any).listar).mockReturnValue(of([]));
+    vi.mocked((reportesService as any).listarTodos).mockReturnValue(of([{
+      id: 6,
+      usuarioId: 9,
+      tipo: 'Fuga de Agua',
+      descripcion: 'Rotura',
+      fotoUrl: '/uploads/reportes/a.webp',
+      fotoUrls: ['/uploads/reportes/a.webp', '/uploads/reportes/b.webp'],
+      lat: -12,
+      lng: -77,
+      direccion: 'Av X',
+      zona: 'Surco',
+      posibleDuplicado: false,
+      estado: 'PENDIENTE',
+      fechaCreacion: '2026-05-25T10:00:00',
+      fechaActualizacion: '2026-05-25T10:00:00'
+    }]));
+
+    const component = createComponent();
+    component.ngOnInit();
+
+    expect(component.selectedReporte?.evidencia).toBe('/uploads/reportes/a.webp');
+    expect(component.selectedReporte?.evidenciaUrls).toEqual([
+      '/uploads/reportes/a.webp',
+      '/uploads/reportes/b.webp'
+    ]);
+  });
+
   it('debe mostrar estado vacio cuando no hay resultados', () => {
     vi.mocked((usuariosService as any).listar).mockReturnValue(of([]));
     vi.mocked((reportesService as any).listarTodos).mockReturnValue(of([]));

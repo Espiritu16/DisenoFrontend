@@ -131,10 +131,23 @@
 
           <div class="detail-info-block">
             <h4 class="detail-sub-title">Evidencia fotográfica</h4>
-            <div class="evidence-image-placeholder">
-              <img [src]="detalle.evidencia" alt="Evidencia" class="evidence-img" *ngIf="detalle.evidencia">
-              <div class="no-evidence" *ngIf="!detalle.evidencia"><p>No hay evidencia disponible</p></div>
+            <div class="evidence-grid" *ngIf="detalle.evidenciaUrls.length; else sinEvidencia">
+              <a
+                *ngFor="let evidenciaUrl of detalle.evidenciaUrls; let index = index"
+                class="evidence-image-link"
+                [href]="evidenciaUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                [attr.aria-label]="'Abrir evidencia ' + (index + 1)"
+              >
+                <img [src]="evidenciaUrl" [alt]="'Evidencia ' + (index + 1)" class="evidence-img">
+              </a>
             </div>
+            <ng-template #sinEvidencia>
+              <div class="evidence-image-placeholder">
+                <div class="no-evidence"><p>No hay evidencia disponible</p></div>
+              </div>
+            </ng-template>
           </div>
 
           <button *ngIf="detalle.estado === 'PENDIENTE'; else reporteNoDerivable" class="btn-derivar" (click)="onMostrarDerivar()">Derivar a Atención de casos</button>

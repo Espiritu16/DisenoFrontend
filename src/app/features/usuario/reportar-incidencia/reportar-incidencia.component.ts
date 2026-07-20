@@ -148,8 +148,8 @@ export class ReportarIncidenciaComponent implements AfterViewInit, OnDestroy {
     if (!files.length) return;
 
     const validImages = files.filter((file) => {
-      if (!file.type.startsWith('image/')) {
-        this.message = 'Solo se permiten imágenes.';
+      if (!this.isSupportedImage(file)) {
+        this.message = 'Solo se permiten imagenes JPG, PNG o WEBP.';
         return false;
       }
       if (file.size > 10 * 1024 * 1024) {
@@ -179,6 +179,10 @@ export class ReportarIncidenciaComponent implements AfterViewInit, OnDestroy {
     URL.revokeObjectURL(image.previewUrl);
     this.selectedImages = this.selectedImages.filter((item) => item.id !== image.id);
     this.syncImageNames();
+  }
+
+  private isSupportedImage(file: File): boolean {
+    return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type.toLowerCase());
   }
 
   useCurrentLocation(): void {

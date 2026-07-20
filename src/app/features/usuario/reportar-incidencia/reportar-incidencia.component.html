@@ -96,14 +96,14 @@
                   #fileInput
                   class="evidence-dropzone__input"
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   multiple
                   (change)="onFileChange($event)"
                 />
                 <span class="evidence-dropzone__icon material-symbols-outlined" aria-hidden="true">add_a_photo</span>
                 <div>
                   <strong>{{ selectedImages.length ? selectedImages.length + ' imagen(es)' : 'Añadir fotos' }}</strong>
-                  <small>JPG, PNG, WEBP o GIF</small>
+                  <small>JPG, PNG o WEBP</small>
                 </div>
               </div>
             </div>

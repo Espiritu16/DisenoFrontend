@@ -175,7 +175,7 @@
             <label for="report-evidence">Evidencia</label>
             <div class="report-evidence-row">
               <label class="report-upload" for="report-evidence" tabindex="0" [attr.aria-invalid]="fieldHasError('evidence')">
-                <input id="report-evidence" type="file" accept="image/*" multiple (change)="onEvidenceChange($event)" />
+                <input id="report-evidence" type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="onEvidenceChange($event)" />
                 <span class="report-upload__icon" aria-hidden="true">
                   <svg viewBox="0 0 32 32">
                     <path d="M13.6 24.5H9.4a6.2 6.2 0 0 1-.8-12.3 7.8 7.8 0 0 1 14.7-2.4 5.5 5.5 0 0 1-.9 10.9h-3.9" />
@@ -184,7 +184,7 @@
                   </svg>
                 </span>
                 <span>Adjuntar fotos</span>
-                <small>JPG, PNG, WEBP o GIF</small>
+                <small>JPG, PNG o WEBP</small>
               </label>
 
               <div class="report-evidence-list" aria-label="Imágenes seleccionadas">

@@ -187,9 +187,11 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
 
   onEvidenceChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const files = Array.from(input.files ?? []).filter((file) => file.type.startsWith('image/'));
+    const files = Array.from(input.files ?? []).filter((file) => this.isSupportedImage(file));
 
     if (!files.length) {
+      this.submitMessage = 'Solo se permiten imagenes JPG, PNG o WEBP.';
+      input.value = '';
       return;
     }
 
@@ -205,6 +207,10 @@ export class ReportarComponent implements AfterViewInit, OnDestroy {
     ];
     input.value = '';
     this.clearValidationIfResolved('evidence');
+  }
+
+  private isSupportedImage(file: File): boolean {
+    return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type.toLowerCase());
   }
 
   removeEvidenceImage(imageId: string, event?: Event): void {

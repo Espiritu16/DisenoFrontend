@@ -351,6 +351,23 @@
   font-weight: 900;
 }
 
+.chart-total {
+  flex: 0 0 auto;
+  min-height: 1.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  background: var(--admin-soft);
+  color: var(--admin-blue-dark);
+  font-size: .72rem;
+  font-weight: 900;
+  line-height: 1;
+  padding: .22rem .5rem;
+  white-space: nowrap;
+}
+
 .data-pill,
 .risk-pill {
   width: fit-content;

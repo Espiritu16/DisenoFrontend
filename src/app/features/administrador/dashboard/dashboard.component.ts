@@ -224,6 +224,30 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.categoriasGraficoActual.length > 0;
   }
 
+  get totalReportesPorMesGrafico(): number {
+    return this.sumar(this.reportesPorMesActuales.map((item) => item.cantidad));
+  }
+
+  get totalTendenciaReportesGrafico(): number {
+    return this.totalReportesPorMesGrafico;
+  }
+
+  get totalEstadosGrafico(): number {
+    return this.sumar(this.estadosGraficoActual.map((item) => item.cantidad));
+  }
+
+  get totalUsuariosReportantesGrafico(): number {
+    return this.sumar(this.usuariosReportantesPorMesActuales.map((item) => item.cantidad));
+  }
+
+  get totalZonasGrafico(): number {
+    return this.sumar(this.zonasGraficoActual.map((item) => item.cantidad));
+  }
+
+  get totalCategoriasGrafico(): number {
+    return this.sumar(this.categoriasGraficoActual.map((item) => item.cantidad));
+  }
+
   get anioSeleccionado(): string {
     return this.filtroForm.controls.year.value;
   }
@@ -646,6 +670,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const factor = ajustes[index] ?? 0.88;
       return crearItem(item, Math.max(1, Math.round(getCantidad(item) * escala * factor)));
     });
+  }
+
+  private sumar(valores: number[]): number {
+    return valores.reduce((total, valor) => total + valor, 0);
   }
 
   private barChart(

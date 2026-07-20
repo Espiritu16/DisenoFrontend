@@ -257,6 +257,74 @@ describe('DashboardComponent', () => {
     expect(crecimientoChart).toBeNull();
   });
 
+  it('debe calcular totales visibles para cada grafico descriptivo', () => {
+    const component = createComponent();
+    component.reportesPorMes = [
+      { mes: 'Jun', cantidad: 2 },
+      { mes: 'Jul', cantidad: 59 },
+      { mes: 'Oct', cantidad: 10 }
+    ];
+    component.usuariosReportantesPorMes = [
+      { mes: 'Jun', cantidad: 2 },
+      { mes: 'Jul', cantidad: 50 },
+      { mes: 'Oct', cantidad: 9 }
+    ];
+    component.reportesPorEstado = [
+      { estado: 'Pendientes', cantidad: 36 },
+      { estado: 'Resueltos', cantidad: 36 },
+      { estado: 'Duplicados', cantidad: 4 }
+    ];
+    component.reportesPorZona = [
+      { nombre: 'Ate', cantidad: 14 },
+      { nombre: 'Callao', cantidad: 12 }
+    ];
+    component.reportesPorCategoria = [
+      { categoria: 'Fuga de Agua', cantidad: 20 },
+      { categoria: 'Agua turbia', cantidad: 10 }
+    ];
+
+    expect(component.totalReportesPorMesGrafico).toBe(61);
+    expect(component.totalTendenciaReportesGrafico).toBe(61);
+    expect(component.totalEstadosGrafico).toBe(72);
+    expect(component.totalUsuariosReportantesGrafico).toBe(52);
+    expect(component.totalZonasGrafico).toBe(26);
+    expect(component.totalCategoriasGrafico).toBe(30);
+  });
+
+  it('debe calcular totales visibles para cada grafico predictivo', () => {
+    const component = createComponent();
+    component.cambiarTipoAnalisis('predictivo');
+    component.proyeccionMensual = [
+      { mes: 'Oct', estimado: 34 },
+      { mes: 'Nov', estimado: 38 },
+      { mes: 'Dic', estimado: 42 }
+    ];
+    component.usuariosReportantesPorMes = [
+      { mes: 'Jul', cantidad: 20 },
+      { mes: 'Ago', cantidad: 24 },
+      { mes: 'Sep', cantidad: 28 }
+    ];
+    component.reportesPorEstado = [
+      { estado: 'Pendientes', cantidad: 30 },
+      { estado: 'Resueltos', cantidad: 70 }
+    ];
+    component.reportesPorZona = [
+      { nombre: 'Ate', cantidad: 14 },
+      { nombre: 'Callao', cantidad: 12 }
+    ];
+    component.reportesPorCategoria = [
+      { categoria: 'Fuga de Agua', cantidad: 20 },
+      { categoria: 'Agua turbia', cantidad: 10 }
+    ];
+
+    expect(component.totalReportesPorMesGrafico).toBe(114);
+    expect(component.totalTendenciaReportesGrafico).toBe(114);
+    expect(component.totalEstadosGrafico).toBe(114);
+    expect(component.totalUsuariosReportantesGrafico).toBe(98);
+    expect(component.totalZonasGrafico).toBeGreaterThan(26);
+    expect(component.totalCategoriasGrafico).toBeGreaterThan(30);
+  });
+
   it('debe usar escala de 5 en 5 hasta 50 en reportes por zona', () => {
     const component = createComponent();
     component.reportesPorZona = [{ nombre: 'Ate', cantidad: 14 }];

@@ -71,6 +71,7 @@
         <div>
           <h3>Reportes por mes</h3>
         </div>
+        <span class="chart-total">Total: {{ totalReportesPorMesGrafico }}</span>
       </div>
 
       <div class="chart-shell" *ngIf="hayReportesDescriptivos; else mesesVacios">
@@ -86,6 +87,7 @@
         <div>
           <h3>Tendencia de reportes</h3>
         </div>
+        <span class="chart-total">Total: {{ totalTendenciaReportesGrafico }}</span>
       </div>
 
       <div class="chart-shell" *ngIf="hayReportesDescriptivos; else tendenciaVacia">
@@ -101,6 +103,7 @@
         <div>
           <h3>Reportes por estado</h3>
         </div>
+        <span class="chart-total">Total: {{ totalEstadosGrafico }}</span>
       </div>
 
       <div class="chart-shell" *ngIf="reportesPorEstado.length; else estadosVacios">
@@ -116,6 +119,7 @@
         <div>
           <h3>Usuarios reportantes por mes</h3>
         </div>
+        <span class="chart-total">Total: {{ totalUsuariosReportantesGrafico }}</span>
       </div>
 
       <div class="chart-shell" *ngIf="hayUsuariosReportantesDescriptivos; else usuariosMesVacios">
@@ -131,6 +135,7 @@
         <div>
           <h3>Reportes por zona</h3>
         </div>
+        <span class="chart-total">Total: {{ totalZonasGrafico }}</span>
       </div>
 
       <div class="chart-shell" *ngIf="reportesPorZona.length; else zonasVacias">
@@ -146,6 +151,7 @@
         <div>
           <h3>Reportes por categoría</h3>
         </div>
+        <span class="chart-total">Total: {{ totalCategoriasGrafico }}</span>
       </div>
 
       <div class="chart-shell" *ngIf="reportesPorCategoria.length; else categoriasVacias">
@@ -164,6 +170,7 @@
           <div>
             <h3>Reportes por mes</h3>
           </div>
+          <span class="chart-total">Total: {{ totalReportesPorMesGrafico }}</span>
         </div>
 
         <div class="chart-shell" *ngIf="hayProyeccionPredictiva; else proyeccionVacia">
@@ -179,6 +186,7 @@
           <div>
             <h3>Tendencia de reportes</h3>
           </div>
+          <span class="chart-total">Total: {{ totalTendenciaReportesGrafico }}</span>
         </div>
 
         <div class="chart-shell" *ngIf="hayProyeccionPredictiva; else tendenciaProyectadaVacia">
@@ -194,6 +202,7 @@
           <div>
             <h3>Reportes por estado</h3>
           </div>
+          <span class="chart-total">Total: {{ totalEstadosGrafico }}</span>
         </div>
 
         <div class="chart-shell" *ngIf="hayEstadosGraficoActual; else riesgoOperativoVacio">
@@ -209,6 +218,7 @@
           <div>
             <h3>Usuarios reportantes por mes</h3>
           </div>
+          <span class="chart-total">Total: {{ totalUsuariosReportantesGrafico }}</span>
         </div>
 
         <div class="chart-shell" *ngIf="hayUsuariosReportantesDescriptivos; else estadosProyectadosVacios">
@@ -224,6 +234,7 @@
           <div>
             <h3>Reportes por zona</h3>
           </div>
+          <span class="chart-total">Total: {{ totalZonasGrafico }}</span>
         </div>
 
         <div class="chart-shell" *ngIf="hayZonasGraficoActual; else zonasRiesgoVacias">
@@ -239,6 +250,7 @@
           <div>
             <h3>Reportes por categoría</h3>
           </div>
+          <span class="chart-total">Total: {{ totalCategoriasGrafico }}</span>
         </div>
 
         <div class="chart-shell" *ngIf="hayCategoriasGraficoActual; else categoriasCrecimientoVacias">

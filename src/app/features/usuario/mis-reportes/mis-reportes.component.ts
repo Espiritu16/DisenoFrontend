@@ -104,7 +104,11 @@ export class MisReportesComponent implements OnInit, OnDestroy {
   historialCompleto(): HistorialCambio[] {
     const reporte = this.trazabilidad?.historialReporte ?? [];
     const caso = this.trazabilidad?.historialCaso ?? [];
-    return [...reporte, ...caso].sort((a, b) => new Date(b.fechaCambio).getTime() - new Date(a.fechaCambio).getTime());
+    const historialReporteVisible = caso.length
+      ? reporte.filter((item) => !item.estadoAnterior)
+      : reporte;
+    return [...historialReporteVisible, ...caso]
+      .sort((a, b) => new Date(b.fechaCambio).getTime() - new Date(a.fechaCambio).getTime());
   }
 
   private loadReports(): void {

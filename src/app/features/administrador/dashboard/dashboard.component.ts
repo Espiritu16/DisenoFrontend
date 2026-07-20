@@ -201,15 +201,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get hayReportesDescriptivos(): boolean {
-    return this.reportesPorMesDescriptivos.length > 0;
+    return this.reportesPorMesActuales.length > 0;
   }
 
   get hayUsuariosReportantesDescriptivos(): boolean {
-    return this.usuariosReportantesPorMesDescriptivos.length > 0;
+    return this.usuariosReportantesPorMesActuales.length > 0;
   }
 
   get hayProyeccionPredictiva(): boolean {
-    return this.proyeccionMensualPredictiva.length > 0;
+    return this.reportesPorMesPredictivos.length > 0;
+  }
+
+  get hayEstadosGraficoActual(): boolean {
+    return this.estadosGraficoActual.length > 0;
+  }
+
+  get hayZonasGraficoActual(): boolean {
+    return this.zonasGraficoActual.length > 0;
+  }
+
+  get hayCategoriasGraficoActual(): boolean {
+    return this.categoriasGraficoActual.length > 0;
   }
 
   get anioSeleccionado(): string {
@@ -451,86 +463,45 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (chartId) {
       case 'reportes-mes':
         return this.barChart(
-          this.reportesPorMesDescriptivos.map((item) => item.mes),
-          this.reportesPorMesDescriptivos.map((item) => item.cantidad),
+          this.reportesPorMesActuales.map((item) => item.mes),
+          this.reportesPorMesActuales.map((item) => item.cantidad),
           'Reportes',
-          '#2563eb',
+          this.tipoAnalisis === 'predictivo' ? '#7c3aed' : '#2563eb',
           this.monthlyBarChartOptions()
         );
       case 'tendencia-reportes':
         return this.lineChart(
-          this.reportesPorMesDescriptivos.map((item) => item.mes),
-          this.reportesPorMesDescriptivos.map((item) => item.cantidad),
+          this.reportesPorMesActuales.map((item) => item.mes),
+          this.reportesPorMesActuales.map((item) => item.cantidad),
           'Tendencia',
-          '#0f766e',
+          this.tipoAnalisis === 'predictivo' ? '#7c3aed' : '#0f766e',
           this.monthlyLineChartOptions()
         );
       case 'reportes-estado':
         return this.doughnutChart(
-          this.estadosVisiblesEnGrafico.map((item) => item.estado),
-          this.estadosVisiblesEnGrafico.map((item) => item.cantidad)
+          this.estadosGraficoActual.map((item) => item.estado),
+          this.estadosGraficoActual.map((item) => item.cantidad)
         );
       case 'reportes-categoria':
         return this.doughnutChart(
-          this.reportesPorCategoria.map((item) => item.categoria),
-          this.reportesPorCategoria.map((item) => item.cantidad)
+          this.categoriasGraficoActual.map((item) => item.categoria),
+          this.categoriasGraficoActual.map((item) => item.cantidad)
         );
       case 'usuarios-reportantes-mes':
         return this.barChart(
-          this.usuariosReportantesPorMesDescriptivos.map((item) => item.mes),
-          this.usuariosReportantesPorMesDescriptivos.map((item) => item.cantidad),
+          this.usuariosReportantesPorMesActuales.map((item) => item.mes),
+          this.usuariosReportantesPorMesActuales.map((item) => item.cantidad),
           'Usuarios',
-          '#f59e0b',
+          this.tipoAnalisis === 'predictivo' ? '#9333ea' : '#f59e0b',
           this.monthlyBarChartOptions()
         );
       case 'reportes-zona':
         return this.horizontalBarChart(
-          this.reportesPorZona.map((item) => item.nombre),
-          this.reportesPorZona.map((item) => item.cantidad),
+          this.zonasGraficoActual.map((item) => item.nombre),
+          this.zonasGraficoActual.map((item) => item.cantidad),
           'Reportes',
-          '#0f766e',
+          this.tipoAnalisis === 'predictivo' ? '#b45309' : '#0f766e',
           this.zonesBarChartOptions()
-        );
-      case 'proyeccion-reportes':
-        return this.barChart(
-          this.proyeccionMensualPredictiva.map((item) => item.mes),
-          this.proyeccionMensualPredictiva.map((item) => item.estimado),
-          'Reportes proyectados',
-          '#7c3aed',
-          this.monthlyBarChartOptions()
-        );
-      case 'tendencia-proyectada':
-        return this.lineChart(
-          this.proyeccionMensualPredictiva.map((item) => item.mes),
-          this.proyeccionMensualPredictiva.map((item) => item.estimado),
-          'Tendencia proyectada',
-          '#7c3aed',
-          this.monthlyLineChartOptions()
-        );
-      case 'crecimiento-categorias':
-        return this.barChart(
-          this.categoriasConCrecimiento.map((item) => item.categoria),
-          this.categoriasConCrecimiento.map((item) => item.estimadoSiguienteMes),
-          'Estimado',
-          '#dc2626'
-        );
-      case 'riesgo-zonas':
-        return this.horizontalBarChart(
-          this.zonasRiesgo.map((item) => item.zona),
-          this.zonasRiesgo.map((item) => item.reportes),
-          'Reportes esperados',
-          '#b45309',
-          this.zonesBarChartOptions()
-        );
-      case 'estados-proyectados':
-        return this.doughnutChart(
-          this.estadosProyectados.map((item) => item.estado),
-          this.estadosProyectados.map((item) => item.cantidad)
-        );
-      case 'riesgo-operativo':
-        return this.doughnutChart(
-          this.distribucionRiesgo.map((item) => item.nivel),
-          this.distribucionRiesgo.map((item) => item.cantidad)
         );
       default:
         return null;
@@ -538,23 +509,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private get totalProyectadoMensual(): number {
-    return this.proyeccionMensualPredictiva.reduce((total, item) => total + item.estimado, 0);
-  }
-
-  private get distribucionRiesgo(): Array<{ nivel: string; cantidad: number }> {
-    const niveles = new Map<string, number>();
-    this.zonasRiesgo.forEach((item) => {
-      const nivel = item.nivelRiesgo || 'Sin nivel';
-      niveles.set(nivel, (niveles.get(nivel) ?? 0) + 1);
-    });
-    return Array.from(niveles.entries()).map(([nivel, cantidad]) => ({ nivel, cantidad }));
+    return this.reportesPorMesPredictivos.reduce((total, item) => total + item.cantidad, 0);
   }
 
   private get estadosVisiblesEnGrafico(): ReportePorEstadoItem[] {
     return this.reportesPorEstado.filter((item) => item.estado.toLowerCase() !== 'duplicados');
   }
 
-  get estadosProyectados(): ReportePorEstadoItem[] {
+  private get estadosProyectados(): ReportePorEstadoItem[] {
     const totalProyectado = this.totalProyectadoMensual;
     const estadosBase = this.estadosVisiblesEnGrafico.filter((item) => item.cantidad > 0);
     const totalBase = estadosBase.reduce((total, item) => total + item.cantidad, 0);
@@ -573,16 +535,117 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return proyectados;
   }
 
+  private get reportesPorMesActuales(): ReportePorMesItem[] {
+    return this.tipoAnalisis === 'predictivo'
+      ? this.reportesPorMesPredictivos
+      : this.reportesPorMesDescriptivos;
+  }
+
   private get reportesPorMesDescriptivos(): ReportePorMesItem[] {
     return this.reportesPorMes.filter((item) => this.mesesDescriptivos.has(item.mes));
+  }
+
+  private get usuariosReportantesPorMesActuales(): UsuarioReportantePorMesItem[] {
+    return this.tipoAnalisis === 'predictivo'
+      ? this.usuariosReportantesPorMesPredictivos
+      : this.usuariosReportantesPorMesDescriptivos;
   }
 
   private get usuariosReportantesPorMesDescriptivos(): UsuarioReportantePorMesItem[] {
     return this.usuariosReportantesPorMes.filter((item) => this.mesesDescriptivos.has(item.mes));
   }
 
-  private get proyeccionMensualPredictiva(): ProyeccionMensualItem[] {
-    return this.proyeccionMensual.filter((item) => this.mesesPredictivos.has(item.mes));
+  private get reportesPorMesPredictivos(): ReportePorMesItem[] {
+    const proyeccionBackend = this.proyeccionMensual
+      .filter((item) => this.mesesPredictivos.has(item.mes))
+      .map((item) => ({ mes: item.mes, cantidad: item.estimado }));
+    if (proyeccionBackend.length > 0) {
+      return proyeccionBackend;
+    }
+    const base = this.reportesPorMes
+      .filter((item) => ['Jul', 'Ago', 'Sep'].includes(item.mes))
+      .map((item) => item.cantidad);
+    return this.crearSeriePredictiva(base, ['Oct', 'Nov', 'Dic'], 1).map((item) => ({
+      mes: item.label,
+      cantidad: item.cantidad
+    }));
+  }
+
+  private get usuariosReportantesPorMesPredictivos(): UsuarioReportantePorMesItem[] {
+    const baseUsuarios = this.usuariosReportantesPorMes
+      .filter((item) => ['Jul', 'Ago', 'Sep'].includes(item.mes))
+      .map((item) => item.cantidad);
+    const reportesPredictivos = this.reportesPorMesPredictivos.map((item) => item.cantidad);
+    const fallback = reportesPredictivos.map((cantidad) => Math.max(1, Math.round(cantidad * 0.62)));
+    const valores = baseUsuarios.length > 0
+      ? this.proyectarValores(baseUsuarios, 3, 1)
+      : fallback;
+    return ['Oct', 'Nov', 'Dic'].map((mes, index) => ({
+      mes,
+      cantidad: valores[index] ?? fallback[index] ?? 0
+    }));
+  }
+
+  private get estadosGraficoActual(): ReportePorEstadoItem[] {
+    return this.tipoAnalisis === 'predictivo'
+      ? this.estadosProyectados
+      : this.estadosVisiblesEnGrafico;
+  }
+
+  private get zonasGraficoActual(): ReportePorZonaItem[] {
+    if (this.tipoAnalisis === 'descriptivo') {
+      return this.reportesPorZona;
+    }
+    return this.proyectarDistribucion(
+      this.reportesPorZona,
+      (item) => item.cantidad,
+      (item, cantidad) => ({ nombre: item.nombre, cantidad })
+    );
+  }
+
+  private get categoriasGraficoActual(): ReportePorCategoriaItem[] {
+    if (this.tipoAnalisis === 'descriptivo') {
+      return this.reportesPorCategoria;
+    }
+    return this.proyectarDistribucion(
+      this.reportesPorCategoria,
+      (item) => item.cantidad,
+      (item, cantidad) => ({ categoria: item.categoria, cantidad })
+    );
+  }
+
+  private crearSeriePredictiva(base: number[], labels: string[], minDelta: number): Array<{ label: string; cantidad: number }> {
+    const valores = this.proyectarValores(base, labels.length, minDelta);
+    return labels.map((label, index) => ({ label, cantidad: valores[index] ?? 0 }));
+  }
+
+  private proyectarValores(base: number[], cantidad: number, minDelta: number): number[] {
+    if (base.length === 0) {
+      return Array.from({ length: cantidad }, () => 0);
+    }
+    const ultimo = base[base.length - 1] ?? 0;
+    const primer = base[0] ?? ultimo;
+    const pendiente = base.length > 1 ? (ultimo - primer) / (base.length - 1) : minDelta;
+    const delta = Math.max(minDelta, pendiente * 0.6);
+    return Array.from({ length: cantidad }, (_, index) => Math.max(0, Math.round(ultimo + delta * (index + 1))));
+  }
+
+  private proyectarDistribucion<T>(
+    base: T[],
+    getCantidad: (item: T) => number,
+    crearItem: (item: T, cantidad: number) => T
+  ): T[] {
+    const totalBase = base.reduce((total, item) => total + getCantidad(item), 0);
+    const totalProyectado = this.totalProyectadoMensual;
+    if (base.length === 0 || totalBase <= 0 || totalProyectado <= 0) {
+      return [];
+    }
+    const escala = totalProyectado / totalBase;
+    const ajustes = [1.18, 1.1, 1.04, 0.98, 0.93, 0.9];
+    return base.map((item, index) => {
+      const factor = ajustes[index] ?? 0.88;
+      return crearItem(item, Math.max(1, Math.round(getCantidad(item) * escala * factor)));
+    });
   }
 
   private barChart(

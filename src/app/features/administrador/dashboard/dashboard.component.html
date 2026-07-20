@@ -162,12 +162,12 @@
       <article class="dashboard-card">
         <div class="card-header">
           <div>
-            <h3>Proyección octubre - diciembre</h3>
+            <h3>Reportes por mes</h3>
           </div>
         </div>
 
         <div class="chart-shell" *ngIf="hayProyeccionPredictiva; else proyeccionVacia">
-          <canvas #dashboardChart data-chart-id="proyeccion-reportes" aria-label="Gráfico de barras de reportes proyectados"></canvas>
+          <canvas #dashboardChart data-chart-id="reportes-mes" aria-label="Gráfico de barras de reportes proyectados por mes"></canvas>
         </div>
         <ng-template #proyeccionVacia>
           <p class="empty-state">No hay datos suficientes para proyectar reportes.</p>
@@ -177,12 +177,12 @@
       <article class="dashboard-card">
         <div class="card-header">
           <div>
-            <h3>Tendencia proyectada</h3>
+            <h3>Tendencia de reportes</h3>
           </div>
         </div>
 
         <div class="chart-shell" *ngIf="hayProyeccionPredictiva; else tendenciaProyectadaVacia">
-          <canvas #dashboardChart data-chart-id="tendencia-proyectada" aria-label="Gráfico de línea de tendencia proyectada"></canvas>
+          <canvas #dashboardChart data-chart-id="tendencia-reportes" aria-label="Gráfico de línea de tendencia proyectada de reportes"></canvas>
         </div>
         <ng-template #tendenciaProyectadaVacia>
           <p class="empty-state">No hay tendencia predictiva disponible.</p>
@@ -192,29 +192,14 @@
       <article class="dashboard-card">
         <div class="card-header">
           <div>
-            <h3>Riesgo operativo</h3>
+            <h3>Reportes por estado</h3>
           </div>
         </div>
 
-        <div class="chart-shell" *ngIf="zonasRiesgo.length; else riesgoOperativoVacio">
-          <canvas #dashboardChart data-chart-id="riesgo-operativo" aria-label="Gráfico circular de riesgo operativo"></canvas>
+        <div class="chart-shell" *ngIf="hayEstadosGraficoActual; else riesgoOperativoVacio">
+          <canvas #dashboardChart data-chart-id="reportes-estado" aria-label="Gráfico circular de reportes proyectados por estado"></canvas>
         </div>
         <ng-template #riesgoOperativoVacio>
-          <p class="empty-state">No hay niveles de riesgo calculados.</p>
-        </ng-template>
-      </article>
-
-      <article class="dashboard-card">
-        <div class="card-header">
-          <div>
-            <h3>Estados proyectados</h3>
-          </div>
-        </div>
-
-        <div class="chart-shell" *ngIf="estadosProyectados.length; else estadosProyectadosVacios">
-          <canvas #dashboardChart data-chart-id="estados-proyectados" aria-label="Gráfico circular de estados proyectados"></canvas>
-        </div>
-        <ng-template #estadosProyectadosVacios>
           <p class="empty-state">No hay estados suficientes para proyectar.</p>
         </ng-template>
       </article>
@@ -222,30 +207,45 @@
       <article class="dashboard-card">
         <div class="card-header">
           <div>
-            <h3>Zonas con mayor riesgo</h3>
+            <h3>Usuarios reportantes por mes</h3>
           </div>
         </div>
 
-        <div class="chart-shell" *ngIf="zonasRiesgo.length; else zonasRiesgoVacias">
-          <canvas #dashboardChart data-chart-id="riesgo-zonas" aria-label="Gráfico de barras horizontales de zonas con mayor riesgo"></canvas>
+        <div class="chart-shell" *ngIf="hayUsuariosReportantesDescriptivos; else estadosProyectadosVacios">
+          <canvas #dashboardChart data-chart-id="usuarios-reportantes-mes" aria-label="Gráfico de barras de usuarios reportantes proyectados por mes"></canvas>
         </div>
-        <ng-template #zonasRiesgoVacias>
-          <p class="empty-state">No hay zonas de riesgo proyectadas.</p>
+        <ng-template #estadosProyectadosVacios>
+          <p class="empty-state">No hay usuarios reportantes suficientes para proyectar.</p>
         </ng-template>
       </article>
 
       <article class="dashboard-card">
         <div class="card-header">
           <div>
-            <h3>Categorías con crecimiento esperado</h3>
+            <h3>Reportes por zona</h3>
           </div>
         </div>
 
-        <div class="chart-shell" *ngIf="categoriasConCrecimiento.length; else categoriasCrecimientoVacias">
-          <canvas #dashboardChart data-chart-id="crecimiento-categorias" aria-label="Gráfico de categorías con crecimiento esperado"></canvas>
+        <div class="chart-shell" *ngIf="hayZonasGraficoActual; else zonasRiesgoVacias">
+          <canvas #dashboardChart data-chart-id="reportes-zona" aria-label="Gráfico de barras horizontales de reportes proyectados por zona"></canvas>
+        </div>
+        <ng-template #zonasRiesgoVacias>
+          <p class="empty-state">No hay zonas suficientes para proyectar.</p>
+        </ng-template>
+      </article>
+
+      <article class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Reportes por categoría</h3>
+          </div>
+        </div>
+
+        <div class="chart-shell" *ngIf="hayCategoriasGraficoActual; else categoriasCrecimientoVacias">
+          <canvas #dashboardChart data-chart-id="reportes-categoria" aria-label="Gráfico circular de reportes proyectados por categoría"></canvas>
         </div>
         <ng-template #categoriasCrecimientoVacias>
-          <p class="empty-state">No hay categorías con crecimiento calculado.</p>
+          <p class="empty-state">No hay categorías suficientes para proyectar.</p>
         </ng-template>
       </article>
     </section>

@@ -185,10 +185,11 @@ describe('DashboardComponent', () => {
 
   it('debe usar escala de 20 en 20 en graficos predictivos mensuales', () => {
     const component = createComponent();
+    component.cambiarTipoAnalisis('predictivo');
     component.proyeccionMensual = [{ mes: 'Oct', estimado: 68 }];
 
-    const proyeccionChart = (component as any).chartConfig('proyeccion-reportes');
-    const tendenciaProyectadaChart = (component as any).chartConfig('tendencia-proyectada');
+    const proyeccionChart = (component as any).chartConfig('reportes-mes');
+    const tendenciaProyectadaChart = (component as any).chartConfig('tendencia-reportes');
 
     expect(proyeccionChart.options.scales.y.ticks.stepSize).toBe(20);
     expect(proyeccionChart.options.scales.y.suggestedMax).toBe(120);
@@ -198,6 +199,7 @@ describe('DashboardComponent', () => {
 
   it('debe graficar solo octubre a diciembre en analisis predictivo', () => {
     const component = createComponent();
+    component.cambiarTipoAnalisis('predictivo');
     component.proyeccionMensual = [
       { mes: 'Sep', estimado: 30 },
       { mes: 'Oct', estimado: 32 },
@@ -206,15 +208,16 @@ describe('DashboardComponent', () => {
       { mes: 'Ene', estimado: 38 }
     ];
 
-    const proyeccionChart = (component as any).chartConfig('proyeccion-reportes');
-    const tendenciaProyectadaChart = (component as any).chartConfig('tendencia-proyectada');
+    const proyeccionChart = (component as any).chartConfig('reportes-mes');
+    const tendenciaProyectadaChart = (component as any).chartConfig('tendencia-reportes');
 
     expect(proyeccionChart.data.labels).toEqual(['Oct', 'Nov', 'Dic']);
     expect(tendenciaProyectadaChart.data.labels).toEqual(['Oct', 'Nov', 'Dic']);
   });
 
-  it('debe proyectar estados sobre el total futuro sin comparar con historico', () => {
+  it('debe proyectar estados, zonas y categorias en los mismos graficos del descriptivo', () => {
     const component = createComponent();
+    component.cambiarTipoAnalisis('predictivo');
     component.proyeccionMensual = [
       { mes: 'Oct', estimado: 34 },
       { mes: 'Nov', estimado: 38 },
@@ -226,14 +229,32 @@ describe('DashboardComponent', () => {
       { estado: 'Resueltos', cantidad: 50 },
       { estado: 'Duplicados', cantidad: 10 }
     ];
+    component.reportesPorZona = [
+      { nombre: 'Ate', cantidad: 14 },
+      { nombre: 'Callao', cantidad: 12 }
+    ];
+    component.reportesPorCategoria = [
+      { categoria: 'Fuga de Agua', cantidad: 20 },
+      { categoria: 'Agua turbia', cantidad: 10 }
+    ];
 
-    const estadosProyectadosChart = (component as any).chartConfig('estados-proyectados');
+    const estadosProyectadosChart = (component as any).chartConfig('reportes-estado');
+    const zonasProyectadasChart = (component as any).chartConfig('reportes-zona');
+    const categoriasProyectadasChart = (component as any).chartConfig('reportes-categoria');
     const comparacionChart = (component as any).chartConfig('historico-vs-proyectado');
+    const riesgoChart = (component as any).chartConfig('riesgo-zonas');
+    const crecimientoChart = (component as any).chartConfig('crecimiento-categorias');
 
     expect(estadosProyectadosChart.data.labels).toEqual(['Pendientes', 'En proceso', 'Resueltos']);
     expect(estadosProyectadosChart.data.datasets[0].data.reduce((total: number, value: number) => total + value, 0))
       .toBe(114);
+    expect(zonasProyectadasChart.data.labels).toEqual(['Ate', 'Callao']);
+    expect(zonasProyectadasChart.data.datasets[0].data).not.toEqual([14, 12]);
+    expect(categoriasProyectadasChart.data.labels).toEqual(['Fuga de Agua', 'Agua turbia']);
+    expect(categoriasProyectadasChart.data.datasets[0].data).not.toEqual([20, 10]);
     expect(comparacionChart).toBeNull();
+    expect(riesgoChart).toBeNull();
+    expect(crecimientoChart).toBeNull();
   });
 
   it('debe usar escala de 5 en 5 hasta 50 en reportes por zona', () => {
@@ -246,11 +267,12 @@ describe('DashboardComponent', () => {
     expect(zonasChart.options.scales.x.suggestedMax).toBe(50);
   });
 
-  it('debe usar escala de 5 en 5 hasta 50 en zonas de riesgo predictivas', () => {
+  it('debe usar escala de 5 en 5 hasta 50 en zonas predictivas', () => {
     const component = createComponent();
-    component.zonasRiesgo = [{ zona: 'Ate', reportes: 18, nivelRiesgo: 'Alto' }];
+    component.cambiarTipoAnalisis('predictivo');
+    component.reportesPorZona = [{ nombre: 'Ate', cantidad: 18 }];
 
-    const zonasRiesgoChart = (component as any).chartConfig('riesgo-zonas');
+    const zonasRiesgoChart = (component as any).chartConfig('reportes-zona');
 
     expect(zonasRiesgoChart.options.scales.x.ticks.stepSize).toBe(5);
     expect(zonasRiesgoChart.options.scales.x.suggestedMax).toBe(50);

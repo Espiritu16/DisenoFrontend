@@ -60,12 +60,20 @@ export class EstadoServicioComponent implements OnInit {
     return severidad === 'ALTA' || severidad === 'CRITICA' ? 'risk' : 'info';
   }
 
-  private cargarAlertas(): void {
-    if (!this.auth.token) {
-      this.alertasError = 'Inicia sesión para consultar alertas activas del servicio.';
-      this.actualizarMetricasAlertas();
-      return;
+  rangoAlerta(alerta: AlertaServicioResponse): string {
+    if (alerta.iniciaEn && alerta.finalizaEn) {
+      return `${this.formatearFechaHora(alerta.iniciaEn)} - ${this.formatearFechaHora(alerta.finalizaEn)}`;
     }
+    if (alerta.iniciaEn) {
+      return `Desde ${this.formatearFechaHora(alerta.iniciaEn)}`;
+    }
+    if (alerta.finalizaEn) {
+      return `Hasta ${this.formatearFechaHora(alerta.finalizaEn)}`;
+    }
+    return 'Vigencia inmediata';
+  }
+
+  private cargarAlertas(): void {
     this.loadingAlertas = true;
     this.alertasError = '';
     this.estadoServicioService.listarAlertas().subscribe({
@@ -101,5 +109,15 @@ export class EstadoServicioComponent implements OnInit {
     this.totalAlertas = this.alertas.length;
     this.alertasRiesgo = this.alertas.filter((alerta) => this.esRiesgo(alerta)).length;
     this.alertasInfo = this.totalAlertas - this.alertasRiesgo;
+  }
+
+  private formatearFechaHora(value: string): string {
+    return new Intl.DateTimeFormat('es-PE', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    }).format(new Date(value));
   }
 }

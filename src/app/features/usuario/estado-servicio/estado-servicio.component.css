@@ -256,6 +256,17 @@
   line-height: 1.58;
 }
 
+.service-card__range {
+  display: inline-flex;
+  margin-top: 12px;
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: #1e3a8a;
+  background: #eaf2ff;
+  font-size: 12px;
+  font-weight: 850;
+}
+
 .service-card > strong,
 .service-report > strong {
   flex: 0 0 auto;

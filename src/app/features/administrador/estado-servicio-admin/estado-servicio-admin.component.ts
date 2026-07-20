@@ -105,9 +105,12 @@ type AlertForm = FormGroup<{
         <p *ngIf="loading">Cargando alertas...</p>
         <p *ngIf="!loading && !alertas.length">No hay alertas vigentes.</p>
         <article *ngFor="let alerta of alertas">
-          <strong>{{ alerta.titulo }}</strong>
-          <span>{{ alerta.tipo }} · {{ alerta.severidad }}</span>
+          <div>
+            <strong>{{ alerta.titulo }}</strong>
+            <span>{{ etiquetaTipo(alerta.tipo) }} · {{ etiquetaSeveridad(alerta.severidad) }} · {{ alerta.estado }}</span>
+          </div>
           <p>{{ alerta.descripcion }}</p>
+          <small>{{ alerta.zona || 'Todas las zonas' }} · {{ rangoAlerta(alerta) }}</small>
         </article>
       </section>
     </section>
@@ -132,9 +135,10 @@ type AlertForm = FormGroup<{
     .feedback.success { color: #065f46; background: #d1fae5; }
     .admin-status__list { display: grid; gap: .8rem; }
     .admin-status__list h2 { margin: 0; color: #0f172a; }
-    .admin-status__list article { border-left: 3px solid #2563eb; padding-left: .8rem; display: grid; gap: .25rem; }
+    .admin-status__list article { border-left: 3px solid #2563eb; padding-left: .8rem; display: grid; gap: .35rem; }
     .admin-status__list article strong { color: #0f172a; }
-    .admin-status__list article span, .admin-status__list article p { margin: 0; color: #64748b; }
+    .admin-status__list article span, .admin-status__list article p, .admin-status__list article small { margin: 0; color: #64748b; }
+    .admin-status__list article small { font-weight: 800; }
     @media (max-width: 760px) { .admin-status__form { grid-template-columns: 1fr; } }
   `]
 })
@@ -243,6 +247,37 @@ export class EstadoServicioAdminComponent implements OnInit {
   campoInvalido(nombre: 'titulo' | 'descripcion'): boolean {
     const control = this.alertForm.controls[nombre];
     return control.invalid && (control.dirty || control.touched);
+  }
+
+  etiquetaTipo(tipo: ApiServiceAlertType): string {
+    return this.tipos.find((option) => option.value === tipo)?.label ?? tipo;
+  }
+
+  etiquetaSeveridad(severidad: ApiAlertSeverity): string {
+    return this.severidades.find((option) => option.value === severidad)?.label ?? severidad;
+  }
+
+  rangoAlerta(alerta: AlertaServicioResponse): string {
+    if (alerta.iniciaEn && alerta.finalizaEn) {
+      return `${this.formatearFechaHora(alerta.iniciaEn)} - ${this.formatearFechaHora(alerta.finalizaEn)}`;
+    }
+    if (alerta.iniciaEn) {
+      return `Desde ${this.formatearFechaHora(alerta.iniciaEn)}`;
+    }
+    if (alerta.finalizaEn) {
+      return `Hasta ${this.formatearFechaHora(alerta.finalizaEn)}`;
+    }
+    return 'Vigencia inmediata';
+  }
+
+  private formatearFechaHora(value: string): string {
+    return new Intl.DateTimeFormat('es-PE', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    }).format(new Date(value));
   }
 }
 

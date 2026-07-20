@@ -1,4 +1,6 @@
+import '@angular/compiler';
 import { of } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EstadoServicioService } from '../../../core/api/estado-servicio.service';
 import { EstadoServicioAdminComponent } from './estado-servicio-admin.component';
 

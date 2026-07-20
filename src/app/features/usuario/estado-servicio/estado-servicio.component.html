@@ -75,6 +75,7 @@
               <span>{{ alertaTipoLabel(alerta) }}</span>
               <h3>{{ alerta.titulo }}</h3>
               <p>{{ alerta.descripcion }}</p>
+              <small class="service-card__range">{{ rangoAlerta(alerta) }}</small>
             </div>
             <strong>{{ alerta.zona || 'Todas las zonas' }}</strong>
           </article>

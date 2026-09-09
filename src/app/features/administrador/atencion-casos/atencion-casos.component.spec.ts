@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CasosService } from '../../../core/api/casos.service';
 import { UploadService } from '../../../core/api/upload.service';
+import { UsuariosService } from '../../../core/api/usuarios.service';
 import { AtencionCasosComponent } from './atencion-casos.component';
 
 describe('AtencionCasosComponent', () => {
@@ -13,12 +14,15 @@ describe('AtencionCasosComponent', () => {
   const uploadService = {
     subirCasos: vi.fn()
   } as unknown as UploadService;
+  const usuariosService = {
+    listar: vi.fn(() => of([]))
+  } as unknown as UsuariosService;
   const cdr = {
     detectChanges: vi.fn()
   };
 
   function createComponent(): AtencionCasosComponent {
-    return new AtencionCasosComponent(casosService, uploadService, cdr as any);
+    return new AtencionCasosComponent(casosService, uploadService, usuariosService, cdr as any);
   }
 
   beforeEach(() => {

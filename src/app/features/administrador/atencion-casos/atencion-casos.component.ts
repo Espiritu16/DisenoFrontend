@@ -6,6 +6,7 @@ import { CasosService } from '../../../core/api/casos.service';
 import { UploadService } from '../../../core/api/upload.service';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import { caseStatusClass, caseStatusLabel, formatDateTime } from '../../../core/api/api-mappers';
+import { UsuariosService } from '../../../core/api/usuarios.service';
 
 @Component({
   selector: 'app-atencion-casos',
@@ -30,14 +31,37 @@ export class AtencionCasosComponent implements OnInit {
   fechaDesde = '';
   fechaHasta = '';
 
+  /** Nombres de los responsables, para no mostrar sólo su identificador. */
+  private nombresUsuarios = new Map<number, string>();
+
   constructor(
     private casosService: CasosService,
     private uploadService: UploadService,
+    private usuariosService: UsuariosService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    this.loadResponsables();
     this.loadCasos();
+  }
+
+  loadResponsables() {
+    this.usuariosService.listar().subscribe({
+      next: (usuarios) => {
+        this.nombresUsuarios = new Map(usuarios.map((u) => [u.id, u.nombre]));
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.nombresUsuarios = new Map();
+      }
+    });
+  }
+
+  /** Nombre del responsable; si aún no llegó la lista, muestra el identificador. */
+  nombreResponsable(usuarioId: number | null | undefined): string {
+    if (usuarioId == null) return 'Sin asignar';
+    return this.nombresUsuarios.get(usuarioId) ?? `Usuario #${usuarioId}`;
   }
 
   loadCasos() {

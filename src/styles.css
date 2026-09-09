@@ -1184,7 +1184,10 @@ textarea:focus-visible {
 
 .report-workspace {
   display: grid;
-  grid-template-columns: minmax(430px, 0.82fr) minmax(520px, 1.18fr);
+  /* Los mínimos anteriores (430 + 520 + gap) no cabían en el ancho del panel
+     administrativo y dejaban la página desplazable en horizontal. Las
+     proporciones se mantienen: son los `fr` los que reparten el espacio real. */
+  grid-template-columns: minmax(320px, 0.82fr) minmax(380px, 1.18fr);
   gap: 1.25rem;
   align-items: stretch;
   min-height: min(760px, calc(100svh - 6rem));

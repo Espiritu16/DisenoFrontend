@@ -10,6 +10,7 @@ import { UsuariosService } from '../../../core/api/usuarios.service';
 
 interface ReporteVista {
   id: number;
+  usuarioId: number;
   fecha: string;
   /** Versión corta para la tabla, donde la fecha completa no cabe. */
   fechaCorta: string;
@@ -37,6 +38,7 @@ export class ReportesCiudadanosComponent implements OnInit {
   reportes: ReporteVista[] = [];
   selectedReporte: ReporteVista | null = null;
   operadores: UsuarioResponse[] = [];
+  private nombresUsuarios = new Map<number, string>();
 
   loading = false;
   empty = false;
@@ -71,6 +73,17 @@ export class ReportesCiudadanosComponent implements OnInit {
     this.usuariosService.listar().subscribe({
       next: (usuarios) => {
         this.operadores = usuarios.filter((u) => u.rol === 'OPERADOR' && u.estado === 'ACTIVO');
+        this.nombresUsuarios = new Map(usuarios.map((u) => [u.id, u.nombre]));
+        // Los reportes pueden haberse cargado antes que los usuarios: se
+        // reescriben para mostrar el nombre en lugar del identificador.
+        this.reportes = this.reportes.map((vista) => ({
+          ...vista,
+          ciudadano: this.nombreUsuario(vista.usuarioId),
+          reportadoPor: this.nombreUsuario(vista.usuarioId)
+        }));
+        if (this.selectedReporte) {
+          this.selectedReporte = this.reportes.find((r) => r.id === this.selectedReporte?.id) ?? this.selectedReporte;
+        }
         this.scheduleDetectChanges();
       },
       error: () => {
@@ -231,20 +244,26 @@ export class ReportesCiudadanosComponent implements OnInit {
     return reportStatusClass(estado);
   }
 
+  /** Nombre del vecino; si aún no llegó la lista, muestra el identificador. */
+  private nombreUsuario(usuarioId: number): string {
+    return this.nombresUsuarios.get(usuarioId) ?? `Usuario #${usuarioId}`;
+  }
+
   private toVista(r: ReporteResponse): ReporteVista {
     return {
       id: r.id,
       fecha: formatDateTime(r.fechaCreacion),
       fechaCorta: new Date(r.fechaCreacion).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' }),
       fechaCreacion: r.fechaCreacion,
-      ciudadano: `Usuario #${r.usuarioId}`,
+      usuarioId: r.usuarioId,
+      ciudadano: this.nombreUsuario(r.usuarioId),
       zona: r.zona,
       tipo: r.tipo,
       estado: r.estado,
       estadoLabel: reportStatusLabel(r.estado),
       descripcion: r.descripcion,
       ubicacion: r.direccion,
-      reportadoPor: `Usuario #${r.usuarioId}`,
+      reportadoPor: this.nombreUsuario(r.usuarioId),
       evidencia: r.fotoUrl || r.fotoUrls?.[0],
       evidenciaUrls: this.evidenciasReporte(r)
     };

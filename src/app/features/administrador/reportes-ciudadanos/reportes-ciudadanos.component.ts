@@ -11,6 +11,8 @@ import { UsuariosService } from '../../../core/api/usuarios.service';
 interface ReporteVista {
   id: number;
   fecha: string;
+  /** Versión corta para la tabla, donde la fecha completa no cabe. */
+  fechaCorta: string;
   fechaCreacion: string;
   ciudadano: string;
   zona: string;
@@ -233,6 +235,7 @@ export class ReportesCiudadanosComponent implements OnInit {
     return {
       id: r.id,
       fecha: formatDateTime(r.fechaCreacion),
+      fechaCorta: new Date(r.fechaCreacion).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' }),
       fechaCreacion: r.fechaCreacion,
       ciudadano: `Usuario #${r.usuarioId}`,
       zona: r.zona,

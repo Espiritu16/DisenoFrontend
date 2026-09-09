@@ -68,7 +68,6 @@
               <tr class="table-header">
                 <th class="col-id">ID</th>
                 <th class="col-fecha">Fecha</th>
-                <th class="col-ciudadano">Ciudadano</th>
                 <th class="col-zona">Zona</th>
                 <th class="col-tipo">Tipo</th>
                 <th class="col-estado">Estado</th>
@@ -81,8 +80,7 @@
                   [ngClass]="{ 'row-active': selectedReporte?.id === reporte.id }"
                   (click)="onSelectReporte(reporte)">
                 <td class="col-id"><span class="id-badge">REP-{{ reporte.id }}</span></td>
-                <td class="col-fecha">{{ reporte.fecha }}</td>
-                <td class="col-ciudadano">{{ reporte.ciudadano }}</td>
+                <td class="col-fecha">{{ reporte.fechaCorta }}</td>
                 <td class="col-zona">{{ reporte.zona }}</td>
                 <td class="col-tipo">{{ reporte.tipo }}</td>
                 <td class="col-estado">

@@ -31,11 +31,11 @@ export class WireframeInicioComponent implements OnInit, OnDestroy {
   ];
 
   readonly partners: WireframePartner[] = [
-    { name: 'Sedapar' },
-    { name: 'Sedalib' },
-    { name: 'Sedacusco' },
-    { name: 'Epsel' },
-    { name: 'Emapa' }
+    { name: 'EPS Aguas Claras' },
+    { name: 'EPS Valle Verde' },
+    { name: 'EMAPA Los Andes' },
+    { name: 'EPS Río Sur' },
+    { name: 'SEDA Altiplano' }
   ];
 
   readonly steps: WireframeStep[] = [

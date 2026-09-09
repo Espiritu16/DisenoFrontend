@@ -6,7 +6,8 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng build && wrangler deploy"
   },
   "private": true,
   "packageManager": "pnpm@10.12.4",
@@ -34,6 +35,7 @@
     "prettier": "^3.8.1",
     "tailwindcss": "^4.3.0",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "wrangler": "^4.130.0"
   }
 }

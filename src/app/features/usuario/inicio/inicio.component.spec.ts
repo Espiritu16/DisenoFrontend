@@ -30,11 +30,10 @@ describe('InicioComponent', () => {
     expect(text).toContain('Atiende');
     expect(text).toContain('Consulta');
     expect(text).toContain('Sistema seguro · Portal ciudadano');
-    expect(compiled.querySelector('img[alt="Sedapar"]')).toBeTruthy();
-    expect(compiled.querySelector('img[alt="Sedalib"]')).toBeTruthy();
-    expect(compiled.querySelector('img[alt="Sedacusco"]')).toBeTruthy();
-    expect(compiled.querySelector('img[alt="Epsel"]')).toBeTruthy();
-    expect(compiled.querySelector('img[alt="Emapa"]')).toBeTruthy();
+    // En la demo los prestadores son ejemplos ficticios en texto, sin marcas reales.
+    expect(compiled.querySelectorAll('.aqua-partner__nombre').length).toBe(5);
+    expect(text).toContain('EPS Aguas Claras');
+    expect(text).toContain('SEDA Altiplano');
     expect(compiled.querySelector('[aria-label="Abrir chat de AQUACOMUNIDAD"]')).toBeNull();
     expect(compiled.querySelector('.aqua-chat')).toBeNull();
   });

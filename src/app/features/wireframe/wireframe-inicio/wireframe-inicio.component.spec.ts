@@ -34,12 +34,12 @@ describe('WireframeInicioComponent', () => {
     expect(text).toContain('Reporta incidencias, revisa avances y mantén trazabilidad clara desde cualquier dispositivo.');
     expect(text).toContain('Reportar ahora');
     expect(text).toContain('Ver plataforma');
-    expect(text).toContain('Aliados y referentes en servicios de saneamiento');
-    expect(text).toContain('Sedapar');
-    expect(text).toContain('Sedalib');
-    expect(text).toContain('Sedacusco');
-    expect(text).toContain('Epsel');
-    expect(text).toContain('Emapa');
+    expect(text).toContain('Pensado para prestadores de servicios de saneamiento (ejemplos ficticios)');
+    expect(text).toContain('EPS Aguas Claras');
+    expect(text).toContain('EPS Valle Verde');
+    expect(text).toContain('EMAPA Los Andes');
+    expect(text).toContain('EPS Río Sur');
+    expect(text).toContain('SEDA Altiplano');
     expect(text).toContain('Proceso de atención');
     expect(text).toContain('Desde el reporte ciudadano hasta la resolución con trazabilidad.');
     expect(text).toContain('Reporta');

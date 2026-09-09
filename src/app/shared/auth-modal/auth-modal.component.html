@@ -107,6 +107,28 @@
         </button>
       </form>
 
+      <div class="auth-demo">
+        <p class="auth-demo__titulo">Demostración</p>
+        <p class="auth-demo__texto">
+          Demo sin backend: los datos son ficticios y viven en tu navegador. Entra con un clic
+          para recorrerla con cada rol.
+        </p>
+        <div class="auth-demo__cuentas">
+          <button
+            *ngFor="let cuenta of cuentasDemo"
+            type="button"
+            class="auth-demo__cuenta"
+            [disabled]="loginLoading"
+            (click)="entrarComo(cuenta)">
+            <span>
+              <strong>{{ cuenta.rol }}</strong>
+              <small>{{ cuenta.descripcion }}</small>
+            </span>
+            <span aria-hidden="true">&rsaquo;</span>
+          </button>
+        </div>
+      </div>
+
       <div class="auth-switch">
         ¿Aún no tienes una cuenta? <button type="button" (click)="openView('register')">Regístrate</button>
       </div>

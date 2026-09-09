@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/api/auth.service';
 import { apiErrorMessage } from '../../core/api/api-error';
+import { CUENTAS_DEMO, CuentaDemo } from '../../../demo/demo.config';
 
 @Component({
   selector: 'app-auth-modal',
@@ -19,8 +20,10 @@ export class AuthModalComponent implements OnChanges, OnInit, OnDestroy {
   modalView: 'login' | 'register' | 'recover' = 'login';
   recoverStep: 'request' | 'code' | 'reset' | 'done' = 'request';
 
-  loginEmail = '';
-  loginPassword = '';
+  /** En la demo el formulario llega precargado con la cuenta ciudadana. */
+  loginEmail = CUENTAS_DEMO[0].correo;
+  loginPassword = CUENTAS_DEMO[0].password;
+  readonly cuentasDemo = CUENTAS_DEMO;
   showLoginPassword = false;
   loginLoading = false;
   loginError = '';
@@ -49,6 +52,13 @@ export class AuthModalComponent implements OnChanges, OnInit, OnDestroy {
   private recoveryToken = '';
 
   constructor(private auth: AuthService, private router: Router, private cdr: ChangeDetectorRef) {}
+
+  /** Acceso rápido de la demo: rellena las credenciales del rol y entra. */
+  entrarComo(cuenta: CuentaDemo): void {
+    this.loginEmail = cuenta.correo;
+    this.loginPassword = cuenta.password;
+    this.submitLogin();
+  }
 
   ngOnInit(): void {
     document.body.classList.add('aqua-auth-open');

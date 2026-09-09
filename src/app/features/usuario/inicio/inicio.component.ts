@@ -13,12 +13,14 @@ import { AquaMobileNavComponent } from '../../../shared/public/aqua-mobile-nav/a
   styleUrl: './inicio.component.css'
 })
 export class InicioComponent {
+  // En la demo pública no se muestran marcas de empresas reales: los prestadores
+  // de este listado son ejemplos inventados para ilustrar el tipo de entidad usuaria.
   readonly partners = [
-    { name: 'Sedapar', logo: '/brand-logos/sedapar.png' },
-    { name: 'Sedalib', logo: '/brand-logos/sedalib.png' },
-    { name: 'Sedacusco', logo: '/brand-logos/sedacusco.png' },
-    { name: 'Epsel', logo: '/brand-logos/epsel.png' },
-    { name: 'Emapa', logo: '/brand-logos/emapa.png' }
+    { name: 'EPS Aguas Claras', logo: '' },
+    { name: 'EPS Valle Verde', logo: '' },
+    { name: 'EMAPA Los Andes', logo: '' },
+    { name: 'EPS Río Sur', logo: '' },
+    { name: 'SEDA Altiplano', logo: '' }
   ];
 
   readonly processSteps = [

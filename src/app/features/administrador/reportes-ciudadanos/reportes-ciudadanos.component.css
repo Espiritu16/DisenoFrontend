@@ -52,7 +52,8 @@
 
 .filters-section {
   display: grid;
-  grid-template-columns: repeat(6, minmax(8.5rem, 1fr)) auto;
+  /* auto-fit permite que los filtros salten de línea en lugar de desbordar. */
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
   gap: .75rem;
   align-items: end;
   padding: 1rem;
@@ -187,14 +188,34 @@
 
 .table-wrapper {
   max-height: calc(100vh - 17rem);
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .reportes-table {
   width: 100%;
-  min-width: 880px;
+  /* Anchos fijos en lugar de un min-width que forzaba scroll horizontal
+     dentro del panel de la lista. */
+  table-layout: fixed;
   border-collapse: collapse;
 }
+
+.reportes-table th,
+.reportes-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* Relleno más ajustado: el panel de la lista es estrecho y cada píxel cuenta. */
+  padding-left: .55rem;
+  padding-right: .55rem;
+}
+
+.col-id { width: 15%; }
+.col-fecha { width: 19%; }
+.col-zona { width: 21%; }
+.col-tipo { width: 26%; }
+.col-estado { width: 13%; }
+.col-accion { width: 6%; }
 
 .table-header {
   background: #f8fbff;

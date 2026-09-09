@@ -1,0 +1,15 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "aquacomunidad-demo",
+	"compatibility_date": "2026-09-09",
+	// Demo 100% estática: sin "main", no se ejecuta ningún Worker.
+	// La API la resuelve el propio navegador (src/demo/mock-api.interceptor.ts).
+	"routes": [
+		{ "pattern": "aquacomunidad.kevin-espiritu.com", "custom_domain": true }
+	],
+	"assets": {
+		"directory": "./dist/diseno-frontend-ng/browser",
+		// Angular es una SPA: cualquier ruta profunda debe servir index.html.
+		"not_found_handling": "single-page-application"
+	}
+}

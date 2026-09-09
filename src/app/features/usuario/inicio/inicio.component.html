@@ -33,10 +33,11 @@
   </main>
 
   <section class="aqua-trust" aria-label="Aliados">
-    <p>Aliados y referentes en servicios de saneamiento</p>
+    <p>Pensado para prestadores de servicios de saneamiento <span class="aqua-trust__nota">(ejemplos ficticios)</span></p>
     <div class="aqua-trust__list">
       <article *ngFor="let partner of partners" class="aqua-partner">
-        <img class="aqua-partner__logo" [src]="partner.logo" [alt]="partner.name" loading="lazy" />
+        <img *ngIf="partner.logo" class="aqua-partner__logo" [src]="partner.logo" [alt]="partner.name" loading="lazy" />
+        <span *ngIf="!partner.logo" class="aqua-partner__nombre">{{ partner.name }}</span>
       </article>
     </div>
   </section>
